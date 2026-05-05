@@ -1,0 +1,10 @@
+module QT456TDirect
+typeinfo appQT456TDirect.qmltypes
+prefer :/qt/qml/QT456TDirect/
+Main 254.0 Main.qml
+CameraTile 254.0 qml/components/CameraTile.qml
+DashboardPage 254.0 qml/pages/DashboardPage.qml
+RoiItem 254.0 qml/components/RoiItem.qml
+ImageCanvas 254.0 qml/components/ImageCanvas.qml
+RoiEditorWindow 254.0 qml/components/RoiEditorWindow.qml
+

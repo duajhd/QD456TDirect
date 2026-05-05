@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/qt/qml/QT456TDirect/">
+    <file alias="qml/theme/qmldir">D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/QT456TDirect/qml/theme/qmldir</file>
+    <file alias="qml/components/qmldir">D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/QT456TDirect/qml/components/qmldir</file>
+    <file alias="qml/pages/qmldir">D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/QT456TDirect/qml/pages/qmldir</file>
+  </qresource>
+</RCC>
+

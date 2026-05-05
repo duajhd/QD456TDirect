@@ -1,0 +1,152 @@
+{
+    "classes": [
+        {
+            "className": "RoiManager",
+            "lineNumber": 15,
+            "methods": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "roiType",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "centerX",
+                            "type": "double"
+                        },
+                        {
+                            "name": "centerY",
+                            "type": "double"
+                        },
+                        {
+                            "name": "roiWidth",
+                            "type": "double"
+                        },
+                        {
+                            "name": "roiHeight",
+                            "type": "double"
+                        },
+                        {
+                            "name": "angle",
+                            "type": "double"
+                        },
+                        {
+                            "name": "color",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 1,
+                    "name": "AddRoi",
+                    "returnType": "RoiData*"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "roiId",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 2,
+                    "name": "RemoveRoi",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 3,
+                    "name": "ClearAllRois",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "roiId",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 4,
+                    "name": "GetRoiById",
+                    "returnType": "RoiData*"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "roiId",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 5,
+                    "name": "SelectOnly",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 6,
+                    "name": "UnselectAll",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "filePath",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 7,
+                    "name": "SaveToJson",
+                    "returnType": "bool"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "filePath",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 8,
+                    "name": "LoadFromJson",
+                    "returnType": "bool"
+                }
+            ],
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "name": "roiList",
+                    "notify": "RoiListChanged",
+                    "read": "GetRoiList",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QQmlListProperty<RoiData>",
+                    "user": false
+                }
+            ],
+            "qualifiedClassName": "RoiManager",
+            "signals": [
+                {
+                    "access": "public",
+                    "index": 0,
+                    "name": "RoiListChanged",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "RoiManager.h",
+    "outputRevision": 68
+}

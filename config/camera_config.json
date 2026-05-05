@@ -1,0 +1,26 @@
+{
+  "cameras": [
+    {
+      "serialNumber": "DA12345678",
+      "imageWidth": 1024,
+      "imageHeight": 1024,
+      "channel": 1
+    },
+    {
+      "serialNumber": "DA87654321",
+      "imageWidth": 1024,
+      "imageHeight": 1024
+    },
+ {
+      "serialNumber": "DA87654325",
+      "imageWidth": 1024,
+      "imageHeight": 1024
+    }
+, {
+      "serialNumber": "DA87654326",
+      "imageWidth": 1024,
+      "imageHeight": 1024
+    }
+
+  ]
+}

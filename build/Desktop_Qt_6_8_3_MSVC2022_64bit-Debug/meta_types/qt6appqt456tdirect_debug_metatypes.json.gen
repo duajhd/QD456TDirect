@@ -1,0 +1,549 @@
+[
+    {
+        "classes": [
+            {
+                "className": "CameraFrameItem",
+                "lineNumber": 10,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "name": "cameraVm",
+                        "notify": "cameraVmChanged",
+                        "read": "cameraVm",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QObject*",
+                        "user": false,
+                        "write": "setCameraVm"
+                    }
+                ],
+                "qualifiedClassName": "CameraFrameItem",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "name": "cameraVmChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "frameId",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 1,
+                        "name": "onFrameUpdated",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QQuickItem"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "CameraFrameItem.h",
+        "outputRevision": 68
+    },
+    {
+        "classes": [
+            {
+                "className": "CameraViewModel",
+                "lineNumber": 11,
+                "object": true,
+                "qualifiedClassName": "CameraViewModel",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "channelId",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 0,
+                        "name": "resultReady",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "frameId",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 1,
+                        "name": "frameUpdated",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "CameraViewModel.h",
+        "outputRevision": 68
+    },
+    {
+        "classes": [
+            {
+                "className": "CaptureWorker",
+                "lineNumber": 7,
+                "object": true,
+                "qualifiedClassName": "CaptureWorker",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "frameId",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 0,
+                        "name": "frameArrived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "name": "finished",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "name": "startWork",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "name": "stopWork",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "CaptureWorker.h",
+        "outputRevision": 68
+    },
+    {
+        "classes": [
+            {
+                "className": "ProcessWorker",
+                "lineNumber": 7,
+                "object": true,
+                "qualifiedClassName": "ProcessWorker",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "name": "finished",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "frameId",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 1,
+                        "name": "frameUpdated",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "frameId",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 2,
+                        "name": "OnFrameArrived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "name": "StartWork",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "name": "StopWork",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "ProcessWorker.h",
+        "outputRevision": 68
+    },
+    {
+        "classes": [
+            {
+                "className": "RoiData",
+                "lineNumber": 11,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "name": "roiId",
+                        "notify": "RoiChanged",
+                        "read": "GetRoiId",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "SetRoiId"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "name": "roiName",
+                        "notify": "RoiChanged",
+                        "read": "GetRoiName",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "SetRoiName"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "name": "roiType",
+                        "notify": "RoiChanged",
+                        "read": "GetRoiType",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "SetRoiType"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "name": "centerX",
+                        "notify": "RoiChanged",
+                        "read": "GetCenterX",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "write": "SetCenterX"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "name": "centerY",
+                        "notify": "RoiChanged",
+                        "read": "GetCenterY",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "write": "SetCenterY"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "name": "roiWidth",
+                        "notify": "RoiChanged",
+                        "read": "GetRoiWidth",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "write": "SetRoiWidth"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "name": "roiHeight",
+                        "notify": "RoiChanged",
+                        "read": "GetRoiHeight",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "write": "SetRoiHeight"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 7,
+                        "name": "angle",
+                        "notify": "RoiChanged",
+                        "read": "GetAngle",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "write": "SetAngle"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 8,
+                        "name": "color",
+                        "notify": "RoiChanged",
+                        "read": "GetColor",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "SetColor"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 9,
+                        "name": "selected",
+                        "notify": "RoiChanged",
+                        "read": "GetSelected",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "SetSelected"
+                    }
+                ],
+                "qualifiedClassName": "RoiData",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "name": "RoiChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "RoiData.h",
+        "outputRevision": 68
+    },
+    {
+        "classes": [
+            {
+                "className": "RoiManager",
+                "lineNumber": 15,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "roiType",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "centerX",
+                                "type": "double"
+                            },
+                            {
+                                "name": "centerY",
+                                "type": "double"
+                            },
+                            {
+                                "name": "roiWidth",
+                                "type": "double"
+                            },
+                            {
+                                "name": "roiHeight",
+                                "type": "double"
+                            },
+                            {
+                                "name": "angle",
+                                "type": "double"
+                            },
+                            {
+                                "name": "color",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 1,
+                        "name": "AddRoi",
+                        "returnType": "RoiData*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "roiId",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 2,
+                        "name": "RemoveRoi",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "name": "ClearAllRois",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "roiId",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 4,
+                        "name": "GetRoiById",
+                        "returnType": "RoiData*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "roiId",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 5,
+                        "name": "SelectOnly",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "name": "UnselectAll",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "filePath",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 7,
+                        "name": "SaveToJson",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "filePath",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 8,
+                        "name": "LoadFromJson",
+                        "returnType": "bool"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "name": "roiList",
+                        "notify": "RoiListChanged",
+                        "read": "GetRoiList",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QQmlListProperty<RoiData>",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "RoiManager",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "name": "RoiListChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "RoiManager.h",
+        "outputRevision": 68
+    }
+]

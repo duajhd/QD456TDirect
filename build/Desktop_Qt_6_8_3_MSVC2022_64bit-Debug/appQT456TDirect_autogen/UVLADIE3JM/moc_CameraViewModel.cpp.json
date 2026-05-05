@@ -1,0 +1,44 @@
+{
+    "classes": [
+        {
+            "className": "CameraViewModel",
+            "lineNumber": 11,
+            "object": true,
+            "qualifiedClassName": "CameraViewModel",
+            "signals": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "channelId",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 0,
+                    "name": "resultReady",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "frameId",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 1,
+                    "name": "frameUpdated",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "CameraViewModel.h",
+    "outputRevision": 68
+}

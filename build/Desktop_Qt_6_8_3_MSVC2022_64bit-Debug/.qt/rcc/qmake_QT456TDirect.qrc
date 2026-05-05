@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/qt/qml/QT456TDirect">
+    <file alias="qmldir">D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/QT456TDirect/qmldir</file>
+  </qresource>
+</RCC>
+

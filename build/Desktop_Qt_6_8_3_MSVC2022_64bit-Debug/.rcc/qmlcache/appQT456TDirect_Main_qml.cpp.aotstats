@@ -1,0 +1,28 @@
+[
+    {
+        "moduleFiles": [
+            {
+                "entries": [
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 19,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find property \"fill\".",
+                        "functionName": "fill",
+                        "line": 16
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 23,
+                        "durationMicroseconds": 68,
+                        "errorMessage": "Cannot access value for name stackView",
+                        "functionName": "stackViewRef",
+                        "line": 19
+                    }
+                ],
+                "filepath": "D:/zhijain/QT456TDirect/Main.qml"
+            }
+        ],
+        "moduleId": "QT456TDirect(appQT456TDirect)"
+    }
+]

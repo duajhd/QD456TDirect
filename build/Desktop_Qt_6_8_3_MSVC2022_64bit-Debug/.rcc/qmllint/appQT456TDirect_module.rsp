@@ -1,0 +1,12 @@
+-I
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug
+-I
+D:/Qt/6.8.3/msvc2022_64/qml
+--resource
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.qt/rcc/qmake_QT456TDirect.qrc
+--resource
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.qt/rcc/appQT456TDirect_raw_qml_0.qrc
+--resource
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.qt/rcc/appQT456TDirect_raw_qml_0_extra_qmldirs.qrc
+--module
+QT456TDirect

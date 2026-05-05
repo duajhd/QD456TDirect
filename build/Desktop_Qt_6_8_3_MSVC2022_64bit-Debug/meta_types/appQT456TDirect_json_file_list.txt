@@ -1,0 +1,6 @@
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/appQT456TDirect_autogen/include/../UVLADIE3JM/moc_CameraFrameItem.cpp.json
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/appQT456TDirect_autogen/include/../UVLADIE3JM/moc_CameraViewModel.cpp.json
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/appQT456TDirect_autogen/include/../UVLADIE3JM/moc_CaptureWorker.cpp.json
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/appQT456TDirect_autogen/include/../UVLADIE3JM/moc_ProcessWorker.cpp.json
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/appQT456TDirect_autogen/include/../UVLADIE3JM/moc_RoiData.cpp.json
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/appQT456TDirect_autogen/include/../UVLADIE3JM/moc_RoiManager.cpp.json

@@ -1,0 +1,57 @@
+{
+    "classes": [
+        {
+            "className": "CameraFrameItem",
+            "lineNumber": 10,
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "name": "cameraVm",
+                    "notify": "cameraVmChanged",
+                    "read": "cameraVm",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QObject*",
+                    "user": false,
+                    "write": "setCameraVm"
+                }
+            ],
+            "qualifiedClassName": "CameraFrameItem",
+            "signals": [
+                {
+                    "access": "public",
+                    "index": 0,
+                    "name": "cameraVmChanged",
+                    "returnType": "void"
+                }
+            ],
+            "slots": [
+                {
+                    "access": "private",
+                    "arguments": [
+                        {
+                            "name": "frameId",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 1,
+                    "name": "onFrameUpdated",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QQuickItem"
+                }
+            ]
+        }
+    ],
+    "inputFile": "CameraFrameItem.h",
+    "outputRevision": 68
+}

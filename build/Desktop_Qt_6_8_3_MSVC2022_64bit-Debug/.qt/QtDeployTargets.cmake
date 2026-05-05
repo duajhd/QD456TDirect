@@ -1,0 +1,3 @@
+set(__QT_DEPLOY_TARGET_appQT456TDirect_FILE D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/appQT456TDirect.exe)
+set(__QT_DEPLOY_TARGET_appQT456TDirect_TYPE EXECUTABLE)
+set(__QT_DEPLOY_TARGET_appQT456TDirect_RUNTIME_DLLS D:/Qt/6.8.3/msvc2022_64/bin/Qt6Quickd.dll;D:/Qt/6.8.3/msvc2022_64/bin/Qt6QmlMetad.dll;D:/Qt/6.8.3/msvc2022_64/bin/Qt6QmlWorkerScriptd.dll;D:/Qt/6.8.3/msvc2022_64/bin/Qt6QmlModelsd.dll;D:/Qt/6.8.3/msvc2022_64/bin/Qt6Qmld.dll;D:/Qt/6.8.3/msvc2022_64/bin/Qt6Networkd.dll;D:/Qt/6.8.3/msvc2022_64/bin/Qt6OpenGLd.dll;D:/Qt/6.8.3/msvc2022_64/bin/Qt6Guid.dll;D:/Qt/6.8.3/msvc2022_64/bin/Qt6Cored.dll)

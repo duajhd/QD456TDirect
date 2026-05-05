@@ -1,0 +1,15 @@
+-rootPath
+D:/zhijain/QT456TDirect
+-cmake-output
+-output-file
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.qt/qml_imports/appQT456TDirect_build.cmake
+-importPath
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/QT456TDirect
+-importPath
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug
+-importPath
+D:/Qt/6.8.3/msvc2022_64/qml
+-qrcFiles
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.qt/rcc/qmake_QT456TDirect.qrc
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.qt/rcc/appQT456TDirect_raw_qml_0.qrc
+D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.qt/rcc/appQT456TDirect_raw_qml_0_extra_qmldirs.qrc

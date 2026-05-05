@@ -1,0 +1,52 @@
+{
+    "classes": [
+        {
+            "className": "CaptureWorker",
+            "lineNumber": 7,
+            "object": true,
+            "qualifiedClassName": "CaptureWorker",
+            "signals": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "frameId",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 0,
+                    "name": "frameArrived",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 1,
+                    "name": "finished",
+                    "returnType": "void"
+                }
+            ],
+            "slots": [
+                {
+                    "access": "public",
+                    "index": 2,
+                    "name": "startWork",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 3,
+                    "name": "stopWork",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "CaptureWorker.h",
+    "outputRevision": 68
+}
