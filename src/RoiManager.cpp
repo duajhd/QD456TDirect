@@ -58,7 +58,7 @@ RoiData* RoiManager::AddRoi(const QString& roiType,
 {
     RoiData* roi = new RoiData(this);
     roi->SetRoiId(GenerateRoiId());
-    roi->SetRoiName(QString("ROI_%1").arg(m_roiList.size() + 1));
+    roi->SetRoiName(QString("%1_%2").arg(roiType).arg(m_roiList.size() + 1));
     roi->SetRoiType(roiType);
     roi->SetCenterX(centerX);
     roi->SetCenterY(centerY);
@@ -138,6 +138,7 @@ bool RoiManager::SaveToJson(const QString& filePath)
         obj["roiHeight"] = roi->GetRoiHeight();
         obj["angle"] = roi->GetAngle();
         obj["color"] = roi->GetColor();
+        obj["selected"] = roi->GetSelected();
         roiArray.append(obj);
     }
 
@@ -194,7 +195,7 @@ bool RoiManager::LoadFromJson(const QString& filePath)
         roi->SetRoiHeight(obj["roiHeight"].toDouble());
         roi->SetAngle(obj["angle"].toDouble());
         roi->SetColor(obj["color"].toString());
-        roi->SetSelected(false);
+        roi->SetSelected(obj["selected"].toBool(false));
 
         m_roiList.append(roi);
     }

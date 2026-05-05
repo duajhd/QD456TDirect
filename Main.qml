@@ -12,11 +12,12 @@ ApplicationWindow {
 
     color: "#f5f7fa"
 //1.初始界面默认DashboardPage2.将自己传给stackViewRef3.在
-StackView { id: stackView
-    anchors.fill: parent
-    initialItem: DashboardPage
-    {
-        stackViewRef: stackView
-    }
+    StackView {
+        id: stackView
+        anchors.fill: parent
+
+        initialItem: DashboardPage {
+            stackViewRef: stackView
+        }
     }
 }

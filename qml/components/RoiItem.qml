@@ -5,6 +5,7 @@ Item {
     id: root
 
     required property var imageCanvas
+    required property var roiManager
     property var roiData: null
 
     visible: roiData !== null
@@ -186,7 +187,8 @@ Item {
             if (!root.roiData)
                 return
 
-            roiManager.SelectOnly(root.safeId)
+            if (root.roiManager)
+                root.roiManager.SelectOnly(root.safeId)
 
             const p = mapToItem(imageCanvas, mouse.x, mouse.y)
             pressSceneX = p.x

@@ -20,6 +20,8 @@ void MianViewModel::Initialize(){
         const CameraConfig& cfg = cameras[i];
         auto* vm = new CameraViewModel(cfg.imageWidth,cfg.imageHeight,cfg.serialNumber,cfg.channel,this);
         m_cameras.push_back(vm);
+        auto* roiManager = new RoiManager(this);
+        m_roiManagers.push_back(roiManager);
         qDebug() << "Camera" << i
                  << "SN:" << cfg.serialNumber
                  << "Width:" << cfg.imageWidth
@@ -36,4 +38,11 @@ QObject* MianViewModel::getCamera(int count) const{
     return m_cameras[count];
 
 
+};
+QObject* MianViewModel::getRoiManager(int count) const{
+    if(count<0 || count>=m_roiManagers.size())
+    {
+        return nullptr;
+    }
+    return m_roiManagers[count];
 };

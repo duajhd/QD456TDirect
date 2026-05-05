@@ -7,6 +7,7 @@ Item {
        z: 100
 
       property string imageSource: ""
+      property var roiManager: null
 
       property bool imageReady: imageItem.status === Image.Ready
 
@@ -68,16 +69,18 @@ Item {
           anchors.fill: parent
           acceptedButtons: Qt.LeftButton
           onPressed: {
-              roiManager.UnselectAll()
+              if (root.roiManager)
+                  root.roiManager.UnselectAll()
           }
       }
       Repeater {
-          model: roiManager.roiList
+          model: root.roiManager ? root.roiManager.roiList : []
 
             delegate: RoiItem {
                 required property var modelData
 
                 imageCanvas: root
+                roiManager: root.roiManager
                 roiData: modelData
 
                 Component.onCompleted: {
