@@ -10,6 +10,8 @@ set(src_and_dest_list
     "D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/QT456TDirect/qml/components/CameraTile.qml"
     "D:/zhijain/QT456TDirect/qml/pages/DashboardPage.qml"
     "D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/QT456TDirect/qml/pages/DashboardPage.qml"
+    "D:/zhijain/QT456TDirect/qml/pages/RoiEditorPage.qml"
+    "D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/QT456TDirect/qml/pages/RoiEditorPage.qml"
     "D:/zhijain/QT456TDirect/qml/components/RoiItem.qml"
     "D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/QT456TDirect/qml/components/RoiItem.qml"
     "D:/zhijain/QT456TDirect/qml/components/ImageCanvas.qml"

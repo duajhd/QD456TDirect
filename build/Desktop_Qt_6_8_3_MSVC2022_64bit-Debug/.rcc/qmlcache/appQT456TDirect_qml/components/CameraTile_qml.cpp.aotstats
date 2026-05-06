@@ -6,7 +6,7 @@
                     {
                         "codegenSuccessfull": true,
                         "column": 23,
-                        "durationMicroseconds": 352,
+                        "durationMicroseconds": 230,
                         "errorMessage": "",
                         "functionName": "fill",
                         "line": 20
@@ -38,7 +38,7 @@
                     {
                         "codegenSuccessfull": false,
                         "column": 28,
-                        "durationMicroseconds": 32,
+                        "durationMicroseconds": 19,
                         "errorMessage": "Cannot access value for name parent",
                         "functionName": "color",
                         "line": 55
@@ -46,7 +46,7 @@
                     {
                         "codegenSuccessfull": false,
                         "column": 27,
-                        "durationMicroseconds": 12,
+                        "durationMicroseconds": 7,
                         "errorMessage": "Cannot access value for name parent",
                         "functionName": "text",
                         "line": 59
@@ -54,7 +54,7 @@
                     {
                         "codegenSuccessfull": false,
                         "column": 42,
-                        "durationMicroseconds": 428,
+                        "durationMicroseconds": 275,
                         "errorMessage": "Cannot access value for name Text",
                         "functionName": "horizontalAlignment",
                         "line": 61
@@ -62,7 +62,7 @@
                     {
                         "codegenSuccessfull": false,
                         "column": 40,
-                        "durationMicroseconds": 327,
+                        "durationMicroseconds": 209,
                         "errorMessage": "Cannot access value for name Text",
                         "functionName": "verticalAlignment",
                         "line": 62
@@ -73,7 +73,7 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Could not find property \"cameraVm\".",
                         "functionName": "cameraVm",
-                        "line": 90
+                        "line": 85
                     },
                     {
                         "codegenSuccessfull": false,
@@ -81,71 +81,71 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Could not find property \"fill\".",
                         "functionName": "fill",
-                        "line": 89
+                        "line": 84
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 31,
-                        "durationMicroseconds": 327,
+                        "durationMicroseconds": 233,
                         "errorMessage": "",
                         "functionName": "left",
-                        "line": 95
+                        "line": 90
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 33,
-                        "durationMicroseconds": 197,
+                        "durationMicroseconds": 113,
                         "errorMessage": "",
                         "functionName": "bottom",
-                        "line": 96
+                        "line": 91
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 39,
-                        "durationMicroseconds": 98,
+                        "durationMicroseconds": 52,
                         "errorMessage": "",
                         "functionName": "centerIn",
-                        "line": 105
+                        "line": 100
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 31,
-                        "durationMicroseconds": 55,
+                        "durationMicroseconds": 34,
                         "errorMessage": "Cannot access value for name cameraVm",
                         "functionName": "text",
-                        "line": 109
+                        "line": 104
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 31,
-                        "durationMicroseconds": 42,
+                        "durationMicroseconds": 22,
                         "errorMessage": "Cannot access value for name cameraVm",
                         "functionName": "text",
-                        "line": 115
+                        "line": 110
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 32,
-                        "durationMicroseconds": 216,
+                        "durationMicroseconds": 136,
                         "errorMessage": "",
                         "functionName": "right",
-                        "line": 123
+                        "line": 118
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 30,
-                        "durationMicroseconds": 171,
+                        "durationMicroseconds": 118,
                         "errorMessage": "",
                         "functionName": "top",
-                        "line": 124
+                        "line": 119
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 39,
-                        "durationMicroseconds": 94,
+                        "durationMicroseconds": 51,
                         "errorMessage": "",
                         "functionName": "centerIn",
-                        "line": 132
+                        "line": 127
                     }
                 ],
                 "filepath": "D:/zhijain/QT456TDirect/qml/components/CameraTile.qml"

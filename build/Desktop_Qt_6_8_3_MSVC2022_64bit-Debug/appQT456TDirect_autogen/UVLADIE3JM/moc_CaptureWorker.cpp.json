@@ -2,7 +2,7 @@
     "classes": [
         {
             "className": "CaptureWorker",
-            "lineNumber": 7,
+            "lineNumber": 9,
             "object": true,
             "qualifiedClassName": "CaptureWorker",
             "signals": [

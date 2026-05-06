@@ -5,19 +5,19 @@
                 "entries": [
                     {
                         "codegenSuccessfull": false,
-                        "column": 19,
+                        "column": 23,
                         "durationMicroseconds": 0,
                         "errorMessage": "Could not find property \"fill\".",
                         "functionName": "fill",
-                        "line": 16
+                        "line": 17
                     },
                     {
                         "codegenSuccessfull": false,
-                        "column": 23,
-                        "durationMicroseconds": 68,
+                        "column": 27,
+                        "durationMicroseconds": 70,
                         "errorMessage": "Cannot access value for name stackView",
                         "functionName": "stackViewRef",
-                        "line": 19
+                        "line": 20
                     }
                 ],
                 "filepath": "D:/zhijain/QT456TDirect/Main.qml"

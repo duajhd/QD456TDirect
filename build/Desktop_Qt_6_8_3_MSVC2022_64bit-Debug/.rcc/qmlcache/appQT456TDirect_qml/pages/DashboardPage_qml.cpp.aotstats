@@ -5,35 +5,307 @@
                 "entries": [
                     {
                         "codegenSuccessfull": false,
-                        "column": 27,
-                        "durationMicroseconds": 68,
+                        "column": 5,
+                        "durationMicroseconds": 180,
+                        "errorMessage": "Cannot retrieve a non-object type by ID: cameraSelectBox",
+                        "functionName": "openRoiEditor",
+                        "line": 12
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 13,
+                        "durationMicroseconds": 49,
+                        "errorMessage": "Cannot retrieve a non-object type by ID: roiTypeBox",
+                        "functionName": "selectedRoiColor",
+                        "line": 48
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 13,
+                        "durationMicroseconds": 19,
+                        "errorMessage": "Cannot retrieve a non-object type by ID: roiTypeBox",
+                        "functionName": "selectedRoiType",
+                        "line": 54
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 13,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Functions without type annotations won't be compiled",
+                        "functionName": "localFilePath",
+                        "line": 60
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 13,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Functions without type annotations won't be compiled",
+                        "functionName": "jsonPath",
+                        "line": 69
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 13,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Functions without type annotations won't be compiled",
+                        "functionName": "loadImage",
+                        "line": 76
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 13,
+                        "durationMicroseconds": 87,
+                        "errorMessage": "Cannot access value for name statusLabel",
+                        "functionName": "addRoi",
+                        "line": 81
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 35,
+                        "durationMicroseconds": 11,
                         "errorMessage": "Cannot access value for name parent",
                         "functionName": "fill",
-                        "line": 22
+                        "line": 108
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 36,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 115
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 31,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find property \"text\".",
+                        "functionName": "text",
+                        "line": 122
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 31,
+                        "durationMicroseconds": 119,
+                        "errorMessage": "",
+                        "functionName": "fill",
+                        "line": 140
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 39,
+                        "durationMicroseconds": 51,
+                        "errorMessage": "",
+                        "functionName": "fill",
+                        "line": 149
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 40,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 175
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 40,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 181
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 40,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 193
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 40,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 199
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 40,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 205
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 34,
+                        "durationMicroseconds": 19,
+                        "errorMessage": "Cannot retrieve a non-object type by ID: roiPage",
+                        "functionName": "imageSource",
+                        "line": 221
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 33,
+                        "durationMicroseconds": 14,
+                        "errorMessage": "Cannot retrieve a non-object type by ID: roiPage",
+                        "functionName": "roiManager",
+                        "line": 222
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 27,
+                        "durationMicroseconds": 100,
+                        "errorMessage": "",
+                        "functionName": "fileMode",
+                        "line": 229
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 30,
+                        "durationMicroseconds": 145,
+                        "errorMessage": "",
+                        "functionName": "nameFilters",
+                        "line": 230
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 29,
+                        "durationMicroseconds": 22,
+                        "errorMessage": "Cannot retrieve a non-object type by ID: roiPage",
+                        "functionName": "onAccepted",
+                        "line": 231
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 27,
+                        "durationMicroseconds": 76,
+                        "errorMessage": "",
+                        "functionName": "fileMode",
+                        "line": 237
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 30,
+                        "durationMicroseconds": 108,
+                        "errorMessage": "",
+                        "functionName": "nameFilters",
+                        "line": 238
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 29,
+                        "durationMicroseconds": 29,
+                        "errorMessage": "Cannot retrieve a non-object type by ID: roiPage",
+                        "functionName": "onAccepted",
+                        "line": 239
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 27,
+                        "durationMicroseconds": 85,
+                        "errorMessage": "",
+                        "functionName": "fileMode",
+                        "line": 252
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 30,
+                        "durationMicroseconds": 98,
+                        "errorMessage": "",
+                        "functionName": "nameFilters",
+                        "line": 253
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 29,
+                        "durationMicroseconds": 34,
+                        "errorMessage": "Cannot retrieve a non-object type by ID: roiPage",
+                        "functionName": "onAccepted",
+                        "line": 254
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 27,
+                        "durationMicroseconds": 14,
+                        "errorMessage": "Cannot access value for name parent",
+                        "functionName": "fill",
+                        "line": 277
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 23,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find property \"text\".",
+                        "functionName": "text",
+                        "line": 308
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 28,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 327
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 28,
+                        "durationMicroseconds": 281,
+                        "errorMessage": "Cannot access value for name mainViewModel",
+                        "functionName": "color",
+                        "line": 313
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 27,
+                        "durationMicroseconds": 21,
+                        "errorMessage": "Cannot access value for name globalRunButton",
+                        "functionName": "text",
+                        "line": 319
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 42,
+                        "durationMicroseconds": 217,
+                        "errorMessage": "Cannot access value for name Text",
+                        "functionName": "horizontalAlignment",
+                        "line": 323
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 40,
+                        "durationMicroseconds": 194,
+                        "errorMessage": "Cannot access value for name Text",
+                        "functionName": "verticalAlignment",
+                        "line": 324
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 39,
-                        "durationMicroseconds": 11,
+                        "durationMicroseconds": 8,
                         "errorMessage": "Cannot access value for name parent",
                         "functionName": "centerIn",
-                        "line": 57
+                        "line": 338
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 49,
-                        "durationMicroseconds": 8,
+                        "durationMicroseconds": 5,
                         "errorMessage": "Cannot access value for name parent",
                         "functionName": "verticalCenter",
-                        "line": 65
+                        "line": 346
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 23,
-                        "durationMicroseconds": 164,
+                        "durationMicroseconds": 93,
                         "errorMessage": "",
                         "functionName": "fill",
-                        "line": 80
+                        "line": 361
                     },
                     {
                         "codegenSuccessfull": false,
@@ -41,39 +313,39 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Functions without type annotations won't be compiled",
                         "functionName": "antInputBg",
-                        "line": 172
+                        "line": 453
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 31,
-                        "durationMicroseconds": 81,
+                        "durationMicroseconds": 49,
                         "errorMessage": "",
                         "functionName": "fill",
-                        "line": 93
+                        "line": 374
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 39,
-                        "durationMicroseconds": 123,
+                        "durationMicroseconds": 98,
                         "errorMessage": "",
                         "functionName": "alignment",
-                        "line": 99
+                        "line": 380
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 39,
-                        "durationMicroseconds": 114,
+                        "durationMicroseconds": 66,
                         "errorMessage": "",
                         "functionName": "alignment",
-                        "line": 119
+                        "line": 400
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 39,
-                        "durationMicroseconds": 77,
+                        "durationMicroseconds": 63,
                         "errorMessage": "",
                         "functionName": "alignment",
-                        "line": 124
+                        "line": 405
                     },
                     {
                         "codegenSuccessfull": false,
@@ -81,15 +353,15 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Could not find property \"model\".",
                         "functionName": "model",
-                        "line": 138
+                        "line": 419
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 43,
-                        "durationMicroseconds": 47,
+                        "durationMicroseconds": 74,
                         "errorMessage": "Cannot access value for name cameraSelectBox",
                         "functionName": "color",
-                        "line": 149
+                        "line": 430
                     },
                     {
                         "codegenSuccessfull": false,
@@ -97,47 +369,47 @@
                         "durationMicroseconds": 35,
                         "errorMessage": "Cannot access value for name cameraSelectBox",
                         "functionName": "text",
-                        "line": 153
+                        "line": 434
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 48,
-                        "durationMicroseconds": 412,
+                        "durationMicroseconds": 286,
                         "errorMessage": "Cannot access value for name Text",
                         "functionName": "verticalAlignment",
-                        "line": 156
+                        "line": 437
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 36,
-                        "durationMicroseconds": 283,
+                        "durationMicroseconds": 205,
                         "errorMessage": "Cannot access value for name Text",
                         "functionName": "elide",
-                        "line": 159
+                        "line": 440
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 32,
-                        "durationMicroseconds": 30,
+                        "durationMicroseconds": 21,
                         "errorMessage": "Cannot access value for name cameraSelectBox",
                         "functionName": "x",
-                        "line": 163
+                        "line": 444
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 32,
-                        "durationMicroseconds": 19,
+                        "durationMicroseconds": 24,
                         "errorMessage": "Cannot access value for name cameraSelectBox",
                         "functionName": "y",
-                        "line": 164
+                        "line": 445
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 39,
-                        "durationMicroseconds": 142,
+                        "durationMicroseconds": 147,
                         "errorMessage": "",
                         "functionName": "alignment",
-                        "line": 179
+                        "line": 460
                     },
                     {
                         "codegenSuccessfull": false,
@@ -145,7 +417,7 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Could not find property \"inputMethodHints\".",
                         "functionName": "inputMethodHints",
-                        "line": 194
+                        "line": 475
                     },
                     {
                         "codegenSuccessfull": false,
@@ -153,23 +425,23 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Could not find property \"verticalAlignment\".",
                         "functionName": "verticalAlignment",
-                        "line": 202
+                        "line": 483
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 43,
-                        "durationMicroseconds": 24,
+                        "durationMicroseconds": 40,
                         "errorMessage": "Cannot access value for name root",
                         "functionName": "color",
-                        "line": 208
+                        "line": 489
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 39,
-                        "durationMicroseconds": 91,
+                        "durationMicroseconds": 134,
                         "errorMessage": "",
                         "functionName": "alignment",
-                        "line": 214
+                        "line": 495
                     },
                     {
                         "codegenSuccessfull": false,
@@ -177,7 +449,7 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Could not find property \"inputMethodHints\".",
                         "functionName": "inputMethodHints",
-                        "line": 229
+                        "line": 510
                     },
                     {
                         "codegenSuccessfull": false,
@@ -185,7 +457,7 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Could not find property \"verticalAlignment\".",
                         "functionName": "verticalAlignment",
-                        "line": 237
+                        "line": 518
                     },
                     {
                         "codegenSuccessfull": false,
@@ -193,15 +465,15 @@
                         "durationMicroseconds": 24,
                         "errorMessage": "Cannot access value for name root",
                         "functionName": "color",
-                        "line": 243
+                        "line": 524
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 39,
-                        "durationMicroseconds": 85,
+                        "durationMicroseconds": 80,
                         "errorMessage": "",
                         "functionName": "alignment",
-                        "line": 249
+                        "line": 530
                     },
                     {
                         "codegenSuccessfull": false,
@@ -209,7 +481,7 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Could not find property \"inputMethodHints\".",
                         "functionName": "inputMethodHints",
-                        "line": 264
+                        "line": 545
                     },
                     {
                         "codegenSuccessfull": false,
@@ -217,167 +489,215 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Could not find property \"verticalAlignment\".",
                         "functionName": "verticalAlignment",
-                        "line": 272
+                        "line": 553
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 43,
-                        "durationMicroseconds": 24,
+                        "durationMicroseconds": 20,
                         "errorMessage": "Cannot access value for name root",
                         "functionName": "color",
-                        "line": 278
+                        "line": 559
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 39,
-                        "durationMicroseconds": 84,
+                        "durationMicroseconds": 95,
                         "errorMessage": "",
                         "functionName": "alignment",
-                        "line": 284
+                        "line": 565
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 36,
-                        "durationMicroseconds": 36,
+                        "durationMicroseconds": 23,
                         "errorMessage": "Cannot access value for name confirmButton",
                         "functionName": "color",
-                        "line": 301
+                        "line": 582
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 35,
-                        "durationMicroseconds": 18,
+                        "durationMicroseconds": 15,
                         "errorMessage": "Cannot access value for name confirmButton",
                         "functionName": "text",
-                        "line": 307
+                        "line": 588
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 50,
-                        "durationMicroseconds": 255,
+                        "durationMicroseconds": 240,
                         "errorMessage": "Cannot access value for name Text",
                         "functionName": "horizontalAlignment",
-                        "line": 310
+                        "line": 591
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 48,
-                        "durationMicroseconds": 217,
+                        "durationMicroseconds": 196,
                         "errorMessage": "Cannot access value for name Text",
                         "functionName": "verticalAlignment",
-                        "line": 311
+                        "line": 592
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 39,
-                        "durationMicroseconds": 93,
+                        "durationMicroseconds": 94,
                         "errorMessage": "",
                         "functionName": "alignment",
-                        "line": 326
+                        "line": 598
                     },
                     {
-                        "codegenSuccessfull": true,
-                        "column": 43,
-                        "durationMicroseconds": 65,
-                        "errorMessage": "",
-                        "functionName": "centerIn",
-                        "line": 329
-                    },
-                    {
-                        "codegenSuccessfull": true,
+                        "codegenSuccessfull": false,
                         "column": 36,
-                        "durationMicroseconds": 460,
-                        "errorMessage": "",
-                        "functionName": "color",
-                        "line": 339
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 53,
-                        "durationMicroseconds": 125,
-                        "errorMessage": "",
-                        "functionName": "verticalCenter",
-                        "line": 337
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 43,
-                        "durationMicroseconds": 510,
-                        "errorMessage": "",
-                        "functionName": "color",
-                        "line": 341
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 42,
-                        "durationMicroseconds": 92,
-                        "errorMessage": "",
-                        "functionName": "visible",
-                        "line": 348
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 51,
-                        "durationMicroseconds": 55,
-                        "errorMessage": "",
-                        "functionName": "centerIn",
-                        "line": 346
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 53,
-                        "durationMicroseconds": 109,
-                        "errorMessage": "",
-                        "functionName": "verticalCenter",
-                        "line": 359
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 38,
-                        "durationMicroseconds": 87,
-                        "errorMessage": "",
-                        "functionName": "cursorShape",
-                        "line": 367
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 36,
-                        "durationMicroseconds": 195,
-                        "errorMessage": "",
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
                         "functionName": "onClicked",
-                        "line": 369
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 39,
-                        "durationMicroseconds": 67,
-                        "errorMessage": "",
-                        "functionName": "fill",
-                        "line": 365
+                        "line": 628
                     },
                     {
                         "codegenSuccessfull": false,
-                        "column": 34,
-                        "durationMicroseconds": 29,
-                        "errorMessage": "Cannot access value for name index",
-                        "functionName": "cameraIndex",
-                        "line": 389
-                    },
-                    {
-                        "codegenSuccessfull": false,
-                        "column": 31,
-                        "durationMicroseconds": 332,
-                        "errorMessage": "Cannot access value for name mainViewModel",
-                        "functionName": "cameraVm",
-                        "line": 390
+                        "column": 36,
+                        "durationMicroseconds": 21,
+                        "errorMessage": "Cannot access value for name editRoiButton",
+                        "functionName": "color",
+                        "line": 615
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 35,
-                        "durationMicroseconds": 23,
+                        "durationMicroseconds": 21,
+                        "errorMessage": "Cannot access value for name editRoiButton",
+                        "functionName": "text",
+                        "line": 621
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 50,
+                        "durationMicroseconds": 276,
+                        "errorMessage": "Cannot access value for name Text",
+                        "functionName": "horizontalAlignment",
+                        "line": 624
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 48,
+                        "durationMicroseconds": 252,
+                        "errorMessage": "Cannot access value for name Text",
+                        "functionName": "verticalAlignment",
+                        "line": 625
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 39,
+                        "durationMicroseconds": 106,
+                        "errorMessage": "",
+                        "functionName": "alignment",
+                        "line": 642
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 43,
+                        "durationMicroseconds": 61,
+                        "errorMessage": "",
+                        "functionName": "centerIn",
+                        "line": 645
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 36,
+                        "durationMicroseconds": 389,
+                        "errorMessage": "",
+                        "functionName": "color",
+                        "line": 655
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 53,
+                        "durationMicroseconds": 131,
+                        "errorMessage": "",
+                        "functionName": "verticalCenter",
+                        "line": 653
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 43,
+                        "durationMicroseconds": 471,
+                        "errorMessage": "",
+                        "functionName": "color",
+                        "line": 657
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 42,
+                        "durationMicroseconds": 72,
+                        "errorMessage": "",
+                        "functionName": "visible",
+                        "line": 664
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 51,
+                        "durationMicroseconds": 48,
+                        "errorMessage": "",
+                        "functionName": "centerIn",
+                        "line": 662
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 53,
+                        "durationMicroseconds": 118,
+                        "errorMessage": "",
+                        "functionName": "verticalCenter",
+                        "line": 675
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 38,
+                        "durationMicroseconds": 117,
+                        "errorMessage": "",
+                        "functionName": "cursorShape",
+                        "line": 683
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 36,
+                        "durationMicroseconds": 189,
+                        "errorMessage": "",
+                        "functionName": "onClicked",
+                        "line": 685
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 39,
+                        "durationMicroseconds": 52,
+                        "errorMessage": "",
+                        "functionName": "fill",
+                        "line": 681
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 34,
+                        "durationMicroseconds": 27,
+                        "errorMessage": "Cannot access value for name index",
+                        "functionName": "cameraIndex",
+                        "line": 705
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 31,
+                        "durationMicroseconds": 298,
+                        "errorMessage": "Cannot access value for name mainViewModel",
+                        "functionName": "cameraVm",
+                        "line": 706
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 35,
+                        "durationMicroseconds": 21,
                         "errorMessage": "Cannot access value for name root",
                         "functionName": "stackViewRef",
-                        "line": 391
+                        "line": 707
                     }
                 ],
                 "filepath": "D:/zhijain/QT456TDirect/qml/pages/DashboardPage.qml"

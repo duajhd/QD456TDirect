@@ -1,0 +1,86 @@
+{
+    "classes": [
+        {
+            "className": "MianViewModel",
+            "lineNumber": 7,
+            "methods": [
+                {
+                    "access": "public",
+                    "index": 1,
+                    "name": "StartDetect",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 2,
+                    "name": "StopDetect",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 3,
+                    "name": "ToggleDetect",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "coount",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 4,
+                    "name": "getCamera",
+                    "returnType": "QObject*"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "count",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 5,
+                    "name": "getRoiManager",
+                    "returnType": "QObject*"
+                }
+            ],
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "name": "isRunning",
+                    "notify": "isRunningChanged",
+                    "read": "isRunning",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "bool",
+                    "user": false
+                }
+            ],
+            "qualifiedClassName": "MianViewModel",
+            "signals": [
+                {
+                    "access": "public",
+                    "index": 0,
+                    "name": "isRunningChanged",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "MainViewWindow.h",
+    "outputRevision": 68
+}

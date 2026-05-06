@@ -1129,6 +1129,8 @@ appQT456TDirect_autogen/timestamp: \
 	D:/zhijain/QT456TDirect/src/CaptureWorker.h \
 	D:/zhijain/QT456TDirect/src/ConfigReader.cpp \
 	D:/zhijain/QT456TDirect/src/ConfigReader.h \
+	D:/zhijain/QT456TDirect/src/GPIOController.cpp \
+	D:/zhijain/QT456TDirect/src/GPIOController.h \
 	D:/zhijain/QT456TDirect/src/HikCamera.cpp \
 	D:/zhijain/QT456TDirect/src/HikCamera.h \
 	D:/zhijain/QT456TDirect/src/HikSdkRuntime.h \
@@ -1149,6 +1151,13 @@ appQT456TDirect_autogen/timestamp: \
 	D:/zhijain/QT456TDirect/third_party/HikCamera/includes/MvSdkExport.h \
 	D:/zhijain/QT456TDirect/third_party/HikCamera/includes/ObsoleteCamParams.h \
 	D:/zhijain/QT456TDirect/third_party/HikCamera/includes/PixelType.h \
+	D:/zhijain/QT456TDirect/third_party/RM/includes/adc.h \
+	D:/zhijain/QT456TDirect/third_party/RM/includes/device.h \
+	D:/zhijain/QT456TDirect/third_party/RM/includes/dio.h \
+	D:/zhijain/QT456TDirect/third_party/RM/includes/gpio.h \
+	D:/zhijain/QT456TDirect/third_party/RM/includes/misc.h \
+	D:/zhijain/QT456TDirect/third_party/RM/includes/pwm.h \
+	D:/zhijain/QT456TDirect/third_party/RM/includes/usb_device.h \
 	D:/zhijain/QT456TDirect/third_party/SPSC/atomicops.h \
 	D:/zhijain/QT456TDirect/third_party/SPSC/readerwritercircularbuffer.h \
 	D:/zhijain/QT456TDirect/third_party/SPSC/readerwriterqueue.h \

@@ -1303,6 +1303,12 @@
 			null
 		],
 		[
+			"D:/zhijain/QT456TDirect/src/GPIOController.h",
+			"MU",
+			"UVLADIE3JM/moc_GPIOController.cpp",
+			null
+		],
+		[
 			"D:/zhijain/QT456TDirect/src/HikCamera.h",
 			"MU",
 			"UVLADIE3JM/moc_HikCamera.cpp",
@@ -1393,6 +1399,48 @@
 			null
 		],
 		[
+			"D:/zhijain/QT456TDirect/third_party/RM/includes/adc.h",
+			"MU",
+			"OATHPN6TTH/moc_adc.cpp",
+			null
+		],
+		[
+			"D:/zhijain/QT456TDirect/third_party/RM/includes/device.h",
+			"MU",
+			"OATHPN6TTH/moc_device.cpp",
+			null
+		],
+		[
+			"D:/zhijain/QT456TDirect/third_party/RM/includes/dio.h",
+			"MU",
+			"OATHPN6TTH/moc_dio.cpp",
+			null
+		],
+		[
+			"D:/zhijain/QT456TDirect/third_party/RM/includes/gpio.h",
+			"MU",
+			"OATHPN6TTH/moc_gpio.cpp",
+			null
+		],
+		[
+			"D:/zhijain/QT456TDirect/third_party/RM/includes/misc.h",
+			"MU",
+			"OATHPN6TTH/moc_misc.cpp",
+			null
+		],
+		[
+			"D:/zhijain/QT456TDirect/third_party/RM/includes/pwm.h",
+			"MU",
+			"OATHPN6TTH/moc_pwm.cpp",
+			null
+		],
+		[
+			"D:/zhijain/QT456TDirect/third_party/RM/includes/usb_device.h",
+			"MU",
+			"OATHPN6TTH/moc_usb_device.cpp",
+			null
+		],
+		[
 			"D:/zhijain/QT456TDirect/third_party/SPSC/atomicops.h",
 			"MU",
 			"TQWF3P4GZE/moc_atomicops.cpp",
@@ -1451,7 +1499,7 @@
 		"D:/zhijain/QT456TDirect/third_party/halcon/includes/hclib",
 		"D:/zhijain/QT456TDirect/third_party/halcon/includes/hdevengine",
 		"D:/zhijain/QT456TDirect/third_party/SPSC",
-		"D:/zhijain/QT456TDirect/third_party/RM",
+		"D:/zhijain/QT456TDirect/third_party/RM/includes",
 		"D:/zhijain/QT456TDirect/src",
 		"D:/Qt/6.8.3/msvc2022_64/include/QtQml/6.8.3",
 		"D:/Qt/6.8.3/msvc2022_64/include/QtQml/6.8.3/QtQml",
@@ -1495,6 +1543,7 @@
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qml/components/RoiEditorWindow_qml.cpp",
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qml/components/RoiItem_qml.cpp",
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qml/pages/DashboardPage_qml.cpp",
+		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qml/pages/RoiEditorPage_qml.cpp",
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qml/theme/theme_qml.cpp",
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qmlcache_loader.cpp",
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/appqt456tdirect_qmltyperegistrations.cpp"
@@ -1515,6 +1564,7 @@
 		[ "D:/zhijain/QT456TDirect/src/CameraViewModel.cpp", "MU", null ],
 		[ "D:/zhijain/QT456TDirect/src/CaptureWorker.cpp", "MU", null ],
 		[ "D:/zhijain/QT456TDirect/src/ConfigReader.cpp", "MU", null ],
+		[ "D:/zhijain/QT456TDirect/src/GPIOController.cpp", "MU", null ],
 		[ "D:/zhijain/QT456TDirect/src/HikCamera.cpp", "MU", null ],
 		[ "D:/zhijain/QT456TDirect/src/MainViewWindow.cpp", "MU", null ],
 		[ "D:/zhijain/QT456TDirect/src/ProcessWorker.cpp", "MU", null ],
@@ -1534,6 +1584,7 @@
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qml/components/RoiEditorWindow_qml.cpp",
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qml/components/RoiItem_qml.cpp",
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qml/pages/DashboardPage_qml.cpp",
+		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qml/pages/RoiEditorPage_qml.cpp",
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qml/theme/theme_qml.cpp",
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/.rcc/qmlcache/appQT456TDirect_qmlcache_loader.cpp",
 		"D:/zhijain/QT456TDirect/build/Desktop_Qt_6_8_3_MSVC2022_64bit-Debug/appqt456tdirect_qmltyperegistrations.cpp"

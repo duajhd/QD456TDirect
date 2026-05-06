@@ -4,10 +4,14 @@
     <file alias="qml/theme/theme.qml">D:/zhijain/QT456TDirect/qml/theme/theme.qml</file>
     <file alias="qml/components/CameraTile.qml">D:/zhijain/QT456TDirect/qml/components/CameraTile.qml</file>
     <file alias="qml/pages/DashboardPage.qml">D:/zhijain/QT456TDirect/qml/pages/DashboardPage.qml</file>
+    <file alias="qml/pages/RoiEditorPage.qml">D:/zhijain/QT456TDirect/qml/pages/RoiEditorPage.qml</file>
     <file alias="qml/components/RoiItem.qml">D:/zhijain/QT456TDirect/qml/components/RoiItem.qml</file>
     <file alias="qml/components/ImageCanvas.qml">D:/zhijain/QT456TDirect/qml/components/ImageCanvas.qml</file>
     <file alias="qml/components/RoiEditorWindow.qml">D:/zhijain/QT456TDirect/qml/components/RoiEditorWindow.qml</file>
     <file alias="third_party/HikCamera/libs/MvCameraControl.lib">D:/zhijain/QT456TDirect/third_party/HikCamera/libs/MvCameraControl.lib</file>
+    <file alias="third_party/RM/libs/librockmong.dll">D:/zhijain/QT456TDirect/third_party/RM/libs/librockmong.dll</file>
+    <file alias="third_party/RM/libs/librockmong.lib">D:/zhijain/QT456TDirect/third_party/RM/libs/librockmong.lib</file>
+    <file alias="third_party/RM/libs/libusb-1.0.dll">D:/zhijain/QT456TDirect/third_party/RM/libs/libusb-1.0.dll</file>
   </qresource>
 </RCC>
 

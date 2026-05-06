@@ -2,7 +2,7 @@
     "classes": [
         {
             "className": "CameraViewModel",
-            "lineNumber": 11,
+            "lineNumber": 12,
             "object": true,
             "qualifiedClassName": "CameraViewModel",
             "signals": [

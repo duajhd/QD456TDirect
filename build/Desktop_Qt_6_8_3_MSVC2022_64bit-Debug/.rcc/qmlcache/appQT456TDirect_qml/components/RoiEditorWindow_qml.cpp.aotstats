@@ -6,106 +6,258 @@
                     {
                         "codegenSuccessfull": true,
                         "column": 15,
-                        "durationMicroseconds": 422,
+                        "durationMicroseconds": 424,
                         "errorMessage": "",
                         "functionName": "modality",
-                        "line": 11
+                        "line": 12
                     },
                     {
-                        "codegenSuccessfull": true,
-                        "column": 23,
-                        "durationMicroseconds": 112,
-                        "errorMessage": "",
-                        "functionName": "fill",
-                        "line": 16
+                        "codegenSuccessfull": false,
+                        "column": 5,
+                        "durationMicroseconds": 70,
+                        "errorMessage": "Cannot retrieve a non-object type by ID: roiTypeBox",
+                        "functionName": "selectedRoiColor",
+                        "line": 17
                     },
                     {
-                        "codegenSuccessfull": true,
-                        "column": 27,
-                        "durationMicroseconds": 68,
-                        "errorMessage": "",
-                        "functionName": "fill",
-                        "line": 20
+                        "codegenSuccessfull": false,
+                        "column": 5,
+                        "durationMicroseconds": 41,
+                        "errorMessage": "Cannot retrieve a non-object type by ID: roiTypeBox",
+                        "functionName": "selectedRoiType",
+                        "line": 23
                     },
                     {
-                        "codegenSuccessfull": true,
-                        "column": 30,
-                        "durationMicroseconds": 157,
-                        "errorMessage": "",
-                        "functionName": "top",
-                        "line": 24
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 33,
-                        "durationMicroseconds": 116,
-                        "errorMessage": "",
-                        "functionName": "bottom",
-                        "line": 25
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 35,
-                        "durationMicroseconds": 55,
-                        "errorMessage": "",
-                        "functionName": "fill",
+                        "codegenSuccessfull": false,
+                        "column": 5,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Functions without type annotations won't be compiled",
+                        "functionName": "localFilePath",
                         "line": 29
                     },
                     {
                         "codegenSuccessfull": false,
-                        "column": 36,
+                        "column": 5,
                         "durationMicroseconds": 0,
-                        "errorMessage": "Could not find signal \"clicked\".",
-                        "functionName": "onClicked",
-                        "line": 35
+                        "errorMessage": "Functions without type annotations won't be compiled",
+                        "functionName": "jsonPath",
+                        "line": 38
                     },
                     {
                         "codegenSuccessfull": false,
-                        "column": 36,
+                        "column": 5,
                         "durationMicroseconds": 0,
-                        "errorMessage": "Could not find signal \"clicked\".",
-                        "functionName": "onClicked",
-                        "line": 40
+                        "errorMessage": "Functions without type annotations won't be compiled",
+                        "functionName": "loadImage",
+                        "line": 45
                     },
                     {
                         "codegenSuccessfull": false,
-                        "column": 36,
-                        "durationMicroseconds": 0,
-                        "errorMessage": "Could not find signal \"clicked\".",
-                        "functionName": "onClicked",
-                        "line": 58
+                        "column": 5,
+                        "durationMicroseconds": 1273,
+                        "errorMessage": "Cannot generate efficient code for call to untyped JavaScript function",
+                        "functionName": "addRoi",
+                        "line": 49
                     },
                     {
                         "codegenSuccessfull": true,
-                        "column": 24,
-                        "durationMicroseconds": 179,
+                        "column": 23,
+                        "durationMicroseconds": 73,
                         "errorMessage": "",
-                        "functionName": "width",
+                        "functionName": "fill",
+                        "line": 63
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 27,
+                        "durationMicroseconds": 52,
+                        "errorMessage": "",
+                        "functionName": "fill",
                         "line": 67
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 30,
-                        "durationMicroseconds": 95,
-                        "errorMessage": "",
-                        "functionName": "imageSource",
-                        "line": 68
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 30,
-                        "durationMicroseconds": 128,
+                        "durationMicroseconds": 166,
                         "errorMessage": "",
                         "functionName": "top",
-                        "line": 65
+                        "line": 71
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 33,
-                        "durationMicroseconds": 110,
+                        "durationMicroseconds": 119,
                         "errorMessage": "",
                         "functionName": "bottom",
-                        "line": 66
+                        "line": 72
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 35,
+                        "durationMicroseconds": 53,
+                        "errorMessage": "",
+                        "functionName": "fill",
+                        "line": 76
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 36,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 82
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 32,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find property \"width\".",
+                        "functionName": "width",
+                        "line": 87
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 36,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 99
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 36,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 104
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 36,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 109
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 36,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Could not find signal \"clicked\".",
+                        "functionName": "onClicked",
+                        "line": 114
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 24,
+                        "durationMicroseconds": 157,
+                        "errorMessage": "",
+                        "functionName": "width",
+                        "line": 123
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 30,
+                        "durationMicroseconds": 71,
+                        "errorMessage": "",
+                        "functionName": "imageSource",
+                        "line": 124
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 29,
+                        "durationMicroseconds": 77,
+                        "errorMessage": "",
+                        "functionName": "roiManager",
+                        "line": 125
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 30,
+                        "durationMicroseconds": 100,
+                        "errorMessage": "",
+                        "functionName": "top",
+                        "line": 121
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 33,
+                        "durationMicroseconds": 98,
+                        "errorMessage": "",
+                        "functionName": "bottom",
+                        "line": 122
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 19,
+                        "durationMicroseconds": 70,
+                        "errorMessage": "",
+                        "functionName": "fileMode",
+                        "line": 133
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 22,
+                        "durationMicroseconds": 133,
+                        "errorMessage": "",
+                        "functionName": "nameFilters",
+                        "line": 134
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 21,
+                        "durationMicroseconds": 162,
+                        "errorMessage": "Cannot generate efficient code for call to untyped JavaScript function",
+                        "functionName": "onAccepted",
+                        "line": 135
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 19,
+                        "durationMicroseconds": 65,
+                        "errorMessage": "",
+                        "functionName": "fileMode",
+                        "line": 141
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 22,
+                        "durationMicroseconds": 88,
+                        "errorMessage": "",
+                        "functionName": "nameFilters",
+                        "line": 142
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 21,
+                        "durationMicroseconds": 420,
+                        "errorMessage": "Cannot generate efficient code for call to untyped JavaScript function",
+                        "functionName": "onAccepted",
+                        "line": 143
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 19,
+                        "durationMicroseconds": 83,
+                        "errorMessage": "",
+                        "functionName": "fileMode",
+                        "line": 152
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 22,
+                        "durationMicroseconds": 95,
+                        "errorMessage": "",
+                        "functionName": "nameFilters",
+                        "line": 153
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 21,
+                        "durationMicroseconds": 410,
+                        "errorMessage": "Cannot generate efficient code for call to untyped JavaScript function",
+                        "functionName": "onAccepted",
+                        "line": 154
                     }
                 ],
                 "filepath": "D:/zhijain/QT456TDirect/qml/components/RoiEditorWindow.qml"

@@ -45,6 +45,10 @@ SOURCES
 SOURCES src/ConfigReader.h
 SOURCES src/CameraConfig.h
 SOURCES src/ConfigReader.cpp
+SOURCES src/GPIOController.h
+SOURCES src/GPIOController.cpp
+SOURCES third_party/RM/includes/adc.h third_party/RM/includes/device.h third_party/RM/includes/dio.h third_party/RM/includes/gpio.h third_party/RM/includes/misc.h third_party/RM/includes/pwm.h third_party/RM/includes/usb_device.h
+RESOURCES third_party/RM/libs/librockmong.dll third_party/RM/libs/librockmong.lib third_party/RM/libs/libusb-1.0.dll
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -64,9 +68,9 @@ target_include_directories(appQT456TDirect PRIVATE
     ${CMAKE_SOURCE_DIR}/third_party/halcon/includes/halconc
     ${CMAKE_SOURCE_DIR}/third_party/halcon/includes/halconcpp
     ${CMAKE_SOURCE_DIR}/third_party/halcon/includes/hclib
-     ${CMAKE_SOURCE_DIR}/third_party/halcon/includes/hdevengine
+    ${CMAKE_SOURCE_DIR}/third_party/halcon/includes/hdevengine
     ${CMAKE_SOURCE_DIR}/third_party/SPSC
-    ${CMAKE_SOURCE_DIR}/third_party/RM
+    ${CMAKE_SOURCE_DIR}/third_party/RM/includes
     ${CMAKE_SOURCE_DIR}/src
 )
 target_link_libraries(appQT456TDirect
@@ -75,6 +79,8 @@ target_link_libraries(appQT456TDirect
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/halcon/libs/halconc.lib
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/halcon/libs/halconcpp.lib
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/halcon/libs/halcon.lib
+     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/RM/libs/librockmong.lib
+
 
 )
 

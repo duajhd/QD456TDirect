@@ -2,25 +2,38 @@
 #define MAINVIEWWINDOW_H
 #include <CameraFrameItem.h>
 #include <CameraViewModel.h>
+#include <GPIOController.h>
 #include <RoiManager.h>
 #include <QObject>
+#include <QThread>
+#include <memory>
 class MianViewModel:public QObject {
   Q_OBJECT
+  Q_PROPERTY(bool isRunning READ isRunning NOTIFY isRunningChanged)
 
 
 private:
-  bool  m_isRunning;
+  bool  m_isRunning = false;
    QVector<CameraViewModel*> m_cameras;
    QVector<RoiManager*> m_roiManagers;
+   std::unique_ptr<moodycamel::ReaderWriterQueue<int>> m_dropQueue;
+   GPIOController* m_gpioController = nullptr;
+   QThread* m_gpioThread = nullptr;
    // std::array<std::unique_ptr<CameraFrameItem>, 4> m_cameraItem;
 
 public:
-  void StartDetect();
+  ~MianViewModel() override;
+  Q_INVOKABLE void StartDetect();
   void Initialize();
-  void StopDetect();
+  Q_INVOKABLE void StopDetect();
+  Q_INVOKABLE void ToggleDetect();
+  bool isRunning() const;
 
  Q_INVOKABLE  QObject* getCamera(int coount) const;
  Q_INVOKABLE  QObject* getRoiManager(int count) const;
+
+signals:
+ void isRunningChanged();
 
 
 

@@ -6,66 +6,66 @@
                     {
                         "codegenSuccessfull": true,
                         "column": 33,
-                        "durationMicroseconds": 348,
+                        "durationMicroseconds": 326,
                         "errorMessage": "",
                         "functionName": "imageReady",
-                        "line": 11
+                        "line": 12
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 41,
-                        "durationMicroseconds": 598,
+                        "durationMicroseconds": 473,
                         "errorMessage": "",
                         "functionName": "imageOriginalWidth",
-                        "line": 13
+                        "line": 14
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 42,
-                        "durationMicroseconds": 568,
+                        "durationMicroseconds": 406,
                         "errorMessage": "",
                         "functionName": "imageOriginalHeight",
-                        "line": 17
+                        "line": 18
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 35,
-                        "durationMicroseconds": 661,
+                        "durationMicroseconds": 461,
                         "errorMessage": "",
                         "functionName": "displayScale",
-                        "line": 21
+                        "line": 22
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 35,
-                        "durationMicroseconds": 310,
+                        "durationMicroseconds": 204,
                         "errorMessage": "",
                         "functionName": "displayWidth",
-                        "line": 26
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 36,
-                        "durationMicroseconds": 264,
-                        "errorMessage": "",
-                        "functionName": "displayHeight",
                         "line": 27
                     },
                     {
                         "codegenSuccessfull": true,
-                        "column": 30,
-                        "durationMicroseconds": 232,
+                        "column": 36,
+                        "durationMicroseconds": 188,
                         "errorMessage": "",
-                        "functionName": "offsetX",
+                        "functionName": "displayHeight",
                         "line": 28
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 30,
-                        "durationMicroseconds": 220,
+                        "durationMicroseconds": 162,
+                        "errorMessage": "",
+                        "functionName": "offsetX",
+                        "line": 29
+                    },
+                    {
+                        "codegenSuccessfull": true,
+                        "column": 30,
+                        "durationMicroseconds": 152,
                         "errorMessage": "",
                         "functionName": "offsetY",
-                        "line": 29
+                        "line": 30
                     },
                     {
                         "codegenSuccessfull": false,
@@ -73,14 +73,6 @@
                         "durationMicroseconds": 0,
                         "errorMessage": "Functions without type annotations won't be compiled",
                         "functionName": "imageToViewX",
-                        "line": 31
-                    },
-                    {
-                        "codegenSuccessfull": false,
-                        "column": 7,
-                        "durationMicroseconds": 0,
-                        "errorMessage": "Functions without type annotations won't be compiled",
-                        "functionName": "imageToViewY",
                         "line": 32
                     },
                     {
@@ -88,7 +80,7 @@
                         "column": 7,
                         "durationMicroseconds": 0,
                         "errorMessage": "Functions without type annotations won't be compiled",
-                        "functionName": "viewToImageX",
+                        "functionName": "imageToViewY",
                         "line": 33
                     },
                     {
@@ -96,7 +88,7 @@
                         "column": 7,
                         "durationMicroseconds": 0,
                         "errorMessage": "Functions without type annotations won't be compiled",
-                        "functionName": "viewToImageY",
+                        "functionName": "viewToImageX",
                         "line": 34
                     },
                     {
@@ -104,7 +96,7 @@
                         "column": 7,
                         "durationMicroseconds": 0,
                         "errorMessage": "Functions without type annotations won't be compiled",
-                        "functionName": "imageToViewW",
+                        "functionName": "viewToImageY",
                         "line": 35
                     },
                     {
@@ -112,136 +104,152 @@
                         "column": 7,
                         "durationMicroseconds": 0,
                         "errorMessage": "Functions without type annotations won't be compiled",
-                        "functionName": "imageToViewH",
+                        "functionName": "imageToViewW",
                         "line": 36
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 7,
+                        "durationMicroseconds": 0,
+                        "errorMessage": "Functions without type annotations won't be compiled",
+                        "functionName": "imageToViewH",
+                        "line": 37
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 25,
-                        "durationMicroseconds": 86,
+                        "durationMicroseconds": 62,
                         "errorMessage": "",
                         "functionName": "fill",
-                        "line": 39
+                        "line": 40
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 19,
-                        "durationMicroseconds": 177,
+                        "durationMicroseconds": 110,
                         "errorMessage": "",
                         "functionName": "source",
-                        "line": 46
-                    },
-                    {
-                        "codegenSuccessfull": true,
-                        "column": 21,
-                        "durationMicroseconds": 112,
-                        "errorMessage": "",
-                        "functionName": "fillMode",
                         "line": 47
                     },
                     {
                         "codegenSuccessfull": true,
-                        "column": 18,
-                        "durationMicroseconds": 97,
+                        "column": 21,
+                        "durationMicroseconds": 75,
                         "errorMessage": "",
-                        "functionName": "width",
+                        "functionName": "fillMode",
                         "line": 48
                     },
                     {
                         "codegenSuccessfull": true,
-                        "column": 19,
-                        "durationMicroseconds": 103,
+                        "column": 18,
+                        "durationMicroseconds": 66,
                         "errorMessage": "",
-                        "functionName": "height",
+                        "functionName": "width",
                         "line": 49
                     },
                     {
                         "codegenSuccessfull": true,
+                        "column": 19,
+                        "durationMicroseconds": 61,
+                        "errorMessage": "",
+                        "functionName": "height",
+                        "line": 50
+                    },
+                    {
+                        "codegenSuccessfull": true,
                         "column": 28,
-                        "durationMicroseconds": 916,
+                        "durationMicroseconds": 579,
                         "errorMessage": "",
                         "functionName": "onStatusChanged",
-                        "line": 53
+                        "line": 54
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 29,
-                        "durationMicroseconds": 94,
+                        "durationMicroseconds": 69,
                         "errorMessage": "",
                         "functionName": "centerIn",
-                        "line": 45
+                        "line": 46
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 20,
-                        "durationMicroseconds": 228,
+                        "durationMicroseconds": 157,
                         "errorMessage": "",
                         "functionName": "visible",
-                        "line": 62
+                        "line": 63
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 29,
-                        "durationMicroseconds": 73,
+                        "durationMicroseconds": 48,
                         "errorMessage": "",
                         "functionName": "centerIn",
-                        "line": 61
+                        "line": 62
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 28,
-                        "durationMicroseconds": 153,
+                        "durationMicroseconds": 118,
                         "errorMessage": "",
                         "functionName": "acceptedButtons",
-                        "line": 69
+                        "line": 70
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 22,
-                        "durationMicroseconds": 459,
-                        "errorMessage": "Cannot access value for name roiManager",
+                        "durationMicroseconds": 253,
+                        "errorMessage": "Cannot generate efficient code for call to untyped JavaScript function",
                         "functionName": "onPressed",
-                        "line": 70
+                        "line": 71
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 25,
-                        "durationMicroseconds": 97,
+                        "durationMicroseconds": 49,
                         "errorMessage": "",
                         "functionName": "fill",
-                        "line": 68
+                        "line": 69
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 18,
-                        "durationMicroseconds": 324,
-                        "errorMessage": "Cannot access value for name roiManager",
+                        "durationMicroseconds": 33,
+                        "errorMessage": "Cannot load property roiList from (component in D:/zhijain/QT456TDirect/qml/components/ImageCanvas.qml)::roiManager with type QVariant.",
                         "functionName": "model",
-                        "line": 75
+                        "line": 77
                     },
                     {
                         "codegenSuccessfull": false,
                         "column": 30,
-                        "durationMicroseconds": 28,
+                        "durationMicroseconds": 27,
                         "errorMessage": "Cannot access value for name root",
                         "functionName": "imageCanvas",
-                        "line": 80
+                        "line": 82
+                    },
+                    {
+                        "codegenSuccessfull": false,
+                        "column": 29,
+                        "durationMicroseconds": 13,
+                        "errorMessage": "Cannot access value for name root",
+                        "functionName": "roiManager",
+                        "line": 83
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 26,
-                        "durationMicroseconds": 103,
+                        "durationMicroseconds": 65,
                         "errorMessage": "",
                         "functionName": "roiData",
-                        "line": 81
+                        "line": 84
                     },
                     {
                         "codegenSuccessfull": true,
                         "column": 40,
-                        "durationMicroseconds": 285,
+                        "durationMicroseconds": 208,
                         "errorMessage": "",
                         "functionName": "onCompleted",
-                        "line": 83
+                        "line": 86
                     }
                 ],
                 "filepath": "D:/zhijain/QT456TDirect/qml/components/ImageCanvas.qml"

@@ -1,52 +1,85 @@
 #include <ProcessWorker.h>
-#include <QThread>
-#include <QDebug>
+
 #include <Algorithm.h>
-ProcessWorker::ProcessWorker(int width,int height,int channel, unsigned char* imageByteAddr,
-                             moodycamel::ReaderWriterQueue<int>* queue,QObject* parent):
-    QObject(parent),
-    m_width(width),
-    m_height(height),
-    m_channel(channel),
-    m_imageByteAddr(imageByteAddr),
-    m_queue(queue)
+#include <CameraViewModel.h>
+#include <QThread>
+
+ProcessWorker::ProcessWorker(int width,
+                             int height,
+                             int channel,
+                             unsigned char* imageByteAddr,
+                             moodycamel::ReaderWriterQueue<int>* queue,
+                             int cameraIndex,
+                             moodycamel::ReaderWriterQueue<int>* dropQueue,
+                             QObject* parent)
+    : QObject(parent),
+      m_width(width),
+      m_height(height),
+      m_channel(channel),
+      m_cameraIndex(cameraIndex),
+      m_imageByteAddr(imageByteAddr),
+      bufferSize(static_cast<std::size_t>(width) *
+                 static_cast<std::size_t>(height) *
+                 static_cast<std::size_t>(channel)),
+      m_queue(queue),
+      m_dropQueue(dropQueue)
 {
-    // 安全计算 buffer 大小
-    std::size_t bufferSize = static_cast<std::size_t>(m_width)
-                             * static_cast<std::size_t>(m_height)
-                             * static_cast<std::size_t>(m_channel);
-};
+}
+
 void ProcessWorker::StartWork()
 {
-    m_running.store(true);
-    VisionAlgorithm::DirectionResult res;
-    while (m_running.load()) {
+    if (!m_imageByteAddr || !m_queue || bufferSize == 0) {
+        emit finished();
+        return;
+    }
 
+    m_running.store(true, std::memory_order_release);
+
+    while (m_running.load(std::memory_order_acquire)) {
         int frameId = 0;
 
         if (!m_queue->try_dequeue(frameId)) {
-          //  QThread::msleep(1);
+            QThread::msleep(1);
             continue;
         }
 
-        unsigned char* imageByte = frameId*bufferSize + m_imageByteAddr;
-        HalconCpp::GenImage1(&DetecImage,"byte",m_width,m_height, HalconCpp::HTuple(reinterpret_cast<Hlong>(imageByte)));
-        res = VisionAlgorithm::DirectionRecognize(DetecImage,TopRegion,DownRegion,m_offsetX,m_offsetY,m_offsetXDown,m_offsetYDown,m_dropThres);
-        // ⚠️ 注意：这里读取的是同一个 m_imageBuffer
-       // processFrame(m_imageByteAddr);
+        const int slotIndex = frameId % CameraViewModel::FrameSlotCount;
+        unsigned char* imageByte = m_imageByteAddr + static_cast<std::size_t>(slotIndex) * bufferSize;
+
+        HalconCpp::GenImage1(&DetecImage,
+                             "byte",
+                             m_width,
+                             m_height,
+                             HalconCpp::HTuple(reinterpret_cast<Hlong>(imageByte)));
+
+        const VisionAlgorithm::DirectionResult result =
+            VisionAlgorithm::DirectionRecognize(DetecImage,
+                                                TopRegion,
+                                                DownRegion,
+                                                m_offsetX,
+                                                m_offsetY,
+                                                m_offsetXDown,
+                                                m_offsetYDown,
+                                                m_dropThres);
+
+        if (result == VisionAlgorithm::DirectionResult::Reject && m_dropQueue) {
+            m_dropQueue->try_enqueue(m_cameraIndex);
+        }
 
         emit frameUpdated(frameId);
     }
 
     emit finished();
-};
-void ProcessWorker::StopWork(){
-     m_running.store(false, std::memory_order_release);
+}
 
-};
+void ProcessWorker::StopWork()
+{
+    m_running.store(false, std::memory_order_release);
+}
+
 void ProcessWorker::OnFrameArrived(int frameId)
 {
-
-
-
-};
+    if (m_queue) {
+        m_queue->try_enqueue(frameId);
+    }
+}

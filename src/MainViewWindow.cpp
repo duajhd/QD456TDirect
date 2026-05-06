@@ -1,6 +1,27 @@
 #include <MainViewWindow.h>
 #include "ConfigReader.h"
+#include <QDebug>
+
+MianViewModel::~MianViewModel()
+{
+    StopDetect();
+    delete m_gpioController;
+}
+
 void MianViewModel::Initialize(){
+
+    if (!m_dropQueue) {
+        m_dropQueue = std::make_unique<moodycamel::ReaderWriterQueue<int>>(1024);
+    }
+
+    if (!m_gpioController) {
+        m_gpioController = new GPIOController(m_dropQueue.get());
+        m_gpioThread = new QThread(this);
+        m_gpioController->moveToThread(m_gpioThread);
+
+        connect(m_gpioThread, &QThread::started, m_gpioController, &GPIOController::startWork);
+        connect(m_gpioController, &GPIOController::finished, m_gpioThread, &QThread::quit);
+    }
 
     QVector<CameraConfig> cameras;
     QString error;
@@ -18,7 +39,13 @@ void MianViewModel::Initialize(){
 
     for (int i = 0; i < cameras.size(); ++i) {
         const CameraConfig& cfg = cameras[i];
-        auto* vm = new CameraViewModel(cfg.imageWidth,cfg.imageHeight,cfg.serialNumber,cfg.channel,this);
+        auto* vm = new CameraViewModel(cfg.imageWidth,
+                                       cfg.imageHeight,
+                                       cfg.serialNumber,
+                                       cfg.channel,
+                                       i,
+                                       m_dropQueue.get(),
+                                       this);
         m_cameras.push_back(vm);
         auto* roiManager = new RoiManager(this);
         m_roiManagers.push_back(roiManager);
@@ -46,3 +73,61 @@ QObject* MianViewModel::getRoiManager(int count) const{
     }
     return m_roiManagers[count];
 };
+
+void MianViewModel::StartDetect()
+{
+    if (m_isRunning) {
+        return;
+    }
+
+    if (m_gpioThread && !m_gpioThread->isRunning()) {
+        m_gpioThread->start();
+    }
+
+    for (CameraViewModel* camera : m_cameras) {
+        if (camera) {
+            camera->Start();
+        }
+    }
+
+    m_isRunning = true;
+    emit isRunningChanged();
+}
+
+void MianViewModel::StopDetect()
+{
+    if (!m_isRunning) {
+        return;
+    }
+
+    for (CameraViewModel* camera : m_cameras) {
+        if (camera) {
+            camera->Stop();
+        }
+    }
+
+    if (m_gpioController) {
+        m_gpioController->StopWork();
+    }
+    if (m_gpioThread && m_gpioThread->isRunning()) {
+        m_gpioThread->quit();
+        m_gpioThread->wait();
+    }
+
+    m_isRunning = false;
+    emit isRunningChanged();
+}
+
+void MianViewModel::ToggleDetect()
+{
+    if (m_isRunning) {
+        StopDetect();
+    } else {
+        StartDetect();
+    }
+}
+
+bool MianViewModel::isRunning() const
+{
+    return m_isRunning;
+}

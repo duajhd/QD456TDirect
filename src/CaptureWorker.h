@@ -4,6 +4,8 @@
 
 #include <HikCamera.h>
 #include "readerwriterqueue.h"
+#include <atomic>
+#include <cstddef>
 class CaptureWorker:public QObject
 {
 

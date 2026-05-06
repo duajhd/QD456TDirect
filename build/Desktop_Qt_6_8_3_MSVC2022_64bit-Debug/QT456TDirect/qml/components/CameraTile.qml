@@ -67,12 +67,7 @@ Rectangle {
                     if (!stackViewRef || !cameraVm)
                         return
 
-                    stackViewRef.push(Qt.resolvedUrl("../pages/RoiEditorPage.qml"), {
-                        cameraIndex: cameraIndex,
-                        cameraVm: cameraVm,
-                        roiManager: appController.getRoiManager(cameraIndex),
-                        stackViewRef: stackViewRef
-                    })
+                    console.warn("Use the Dashboard toolbar ROI editor button for this build.")
                 }
             }
         }

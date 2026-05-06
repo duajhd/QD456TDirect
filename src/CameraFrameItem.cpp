@@ -67,8 +67,7 @@ void CameraFrameItem::onFrameUpdated(int frameId)
         return;
     }
 
-    const int slotCount = 1200;
-    const int slotIndex = frameId % slotCount;
+    const int slotIndex = frameId % CameraViewModel::FrameSlotCount;
 
     const qsizetype frameBytes =
         static_cast<qsizetype>(width) *

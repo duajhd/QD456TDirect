@@ -2,7 +2,7 @@
     "classes": [
         {
             "className": "ProcessWorker",
-            "lineNumber": 7,
+            "lineNumber": 9,
             "object": true,
             "qualifiedClassName": "ProcessWorker",
             "signals": [

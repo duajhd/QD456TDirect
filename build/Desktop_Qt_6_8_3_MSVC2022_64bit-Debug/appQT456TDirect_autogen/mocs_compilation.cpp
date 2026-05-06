@@ -2,6 +2,7 @@
 #include "UVLADIE3JM/moc_CameraFrameItem.cpp"
 #include "UVLADIE3JM/moc_CameraViewModel.cpp"
 #include "UVLADIE3JM/moc_CaptureWorker.cpp"
+#include "UVLADIE3JM/moc_MainViewWindow.cpp"
 #include "UVLADIE3JM/moc_ProcessWorker.cpp"
 #include "UVLADIE3JM/moc_RoiData.cpp"
 #include "UVLADIE3JM/moc_RoiManager.cpp"

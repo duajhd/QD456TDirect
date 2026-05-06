@@ -301,6 +301,32 @@ Page {
                 Layout.fillWidth: true
             }
 
+            Button {
+                id: globalRunButton
+                Layout.preferredWidth: 92
+                Layout.preferredHeight: 34
+                text: mainViewModel.isRunning ? "停止" : "启动"
+                padding: 0
+
+                background: Rectangle {
+                    radius: 8
+                    color: mainViewModel.isRunning
+                           ? (globalRunButton.down ? "#a8071a" : globalRunButton.hovered ? "#ff7875" : "#ff4d4f")
+                           : (globalRunButton.down ? "#237804" : globalRunButton.hovered ? "#73d13d" : "#52c41a")
+                }
+
+                contentItem: Text {
+                    text: globalRunButton.text
+                    color: "#ffffff"
+                    font.pixelSize: 14
+                    font.bold: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                onClicked: mainViewModel.ToggleDetect()
+            }
+
             Rectangle {
                 radius: 8
                 color: "#f0f5ff"
