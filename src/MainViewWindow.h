@@ -22,6 +22,7 @@ private:
    // std::array<std::unique_ptr<CameraFrameItem>, 4> m_cameraItem;
 
 public:
+  explicit MianViewModel(QObject* parent = nullptr);
   ~MianViewModel() override;
   Q_INVOKABLE void StartDetect();
   void Initialize();

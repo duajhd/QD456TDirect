@@ -2,10 +2,18 @@
 #include "ConfigReader.h"
 #include <QDebug>
 
+MianViewModel::MianViewModel(QObject* parent)
+    : QObject(parent)
+{
+}
+
 MianViewModel::~MianViewModel()
 {
     StopDetect();
-    delete m_gpioController;
+    if (m_gpioController) {
+        delete m_gpioController;
+        m_gpioController = nullptr;
+    }
 }
 
 void MianViewModel::Initialize(){
@@ -17,10 +25,6 @@ void MianViewModel::Initialize(){
     if (!m_gpioController) {
         m_gpioController = new GPIOController(m_dropQueue.get());
         m_gpioThread = new QThread(this);
-        m_gpioController->moveToThread(m_gpioThread);
-
-        connect(m_gpioThread, &QThread::started, m_gpioController, &GPIOController::startWork);
-        connect(m_gpioController, &GPIOController::finished, m_gpioThread, &QThread::quit);
     }
 
     QVector<CameraConfig> cameras;
@@ -80,7 +84,18 @@ void MianViewModel::StartDetect()
         return;
     }
 
+    if (!m_gpioController) {
+        m_gpioController = new GPIOController(m_dropQueue.get());
+    }
+    if (!m_gpioThread) {
+        m_gpioThread = new QThread(this);
+    }
+
     if (m_gpioThread && !m_gpioThread->isRunning()) {
+        m_gpioController->moveToThread(m_gpioThread);
+        connect(m_gpioThread, &QThread::started, m_gpioController, &GPIOController::startWork, Qt::UniqueConnection);
+        connect(m_gpioController, &GPIOController::finished, m_gpioThread, &QThread::quit, Qt::UniqueConnection);
+        connect(m_gpioController, &GPIOController::finished, m_gpioController, &QObject::deleteLater, Qt::UniqueConnection);
         m_gpioThread->start();
     }
 
@@ -96,9 +111,7 @@ void MianViewModel::StartDetect()
 
 void MianViewModel::StopDetect()
 {
-    if (!m_isRunning) {
-        return;
-    }
+    const bool wasRunning = m_isRunning;
 
     for (CameraViewModel* camera : m_cameras) {
         if (camera) {
@@ -112,10 +125,21 @@ void MianViewModel::StopDetect()
     if (m_gpioThread && m_gpioThread->isRunning()) {
         m_gpioThread->quit();
         m_gpioThread->wait();
+        m_gpioController = nullptr;
+    } else if (m_gpioController) {
+        delete m_gpioController;
+        m_gpioController = nullptr;
+    }
+
+    if (m_gpioThread) {
+        delete m_gpioThread;
+        m_gpioThread = nullptr;
     }
 
     m_isRunning = false;
-    emit isRunningChanged();
+    if (wasRunning) {
+        emit isRunningChanged();
+    }
 }
 
 void MianViewModel::ToggleDetect()

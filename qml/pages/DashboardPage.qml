@@ -44,6 +44,8 @@ Page {
             property var roiManager: null
             property var stackViewRef: null
             property string imageSource: ""
+            property real offsetBaseX: 512
+            property real offsetBaseY: 512
 
             function selectedRoiColor() {
                 if (roiTypeBox.currentIndex < 0)
@@ -92,6 +94,47 @@ Page {
 
                 roiManager.AddRoi(selectedRoiType(), cx, cy, 160, 100, 0, selectedRoiColor())
                 statusLabel.text = "已添加 " + selectedRoiType()
+            }
+
+            function fieldNumber(field, fallbackValue) {
+                var value = Number(field.text)
+                return isNaN(value) ? fallbackValue : value
+            }
+
+            function createOffsetRoi() {
+                if (!roiManager)
+                    return
+
+                var offsetX = fieldNumber(offsetXField, 0)
+                var offsetY = fieldNumber(offsetYField, 0)
+                var angle = fieldNumber(rotationField, 0)
+                var roiWidth = Math.max(1, fieldNumber(widthField, 160))
+                var roiHeight = Math.max(1, fieldNumber(heightField, 100))
+                var centerX = offsetBaseX + offsetX
+                var centerY = offsetBaseY + offsetY
+                var roiType = selectedRoiType()
+
+                roiManager.AddRoi(roiType,
+                                  centerX,
+                                  centerY,
+                                  roiWidth,
+                                  roiHeight,
+                                  angle,
+                                  selectedRoiColor())
+                statusLabel.text = "已创建偏移 " + roiType
+            }
+
+            function executeHalcon() {
+                if (!roiManager)
+                    return
+
+                var result = roiManager.ExecuteHalcon(localFilePath(roiPage.imageSource))
+                if (result.ok) {
+                    roiPage.offsetBaseX = result.baseX
+                    roiPage.offsetBaseY = result.baseY
+                }
+
+                statusLabel.text = result.message
             }
 
             background: Rectangle {
@@ -179,6 +222,119 @@ Page {
                             Layout.fillWidth: true
                             text: "添加"
                             onClicked: roiPage.addRoi()
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 1
+                            color: "#3f3f46"
+                        }
+
+                        Label {
+                            text: "偏移创建"
+                            color: "#ffffff"
+                            font.pixelSize: 14
+                            font.bold: true
+                        }
+
+                        Label {
+                            text: "基准点: (" + roiPage.offsetBaseX + ", " + roiPage.offsetBaseY + ")"
+                            color: "#cbd5e1"
+                            font.pixelSize: 12
+                        }
+
+                        GridLayout {
+                            Layout.fillWidth: true
+                            columns: 2
+                            columnSpacing: 8
+                            rowSpacing: 8
+
+                            Label {
+                                text: "offsetX"
+                                color: "#d1d5db"
+                                font.pixelSize: 12
+                            }
+
+                            TextField {
+                                id: offsetXField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "0"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+
+                            Label {
+                                text: "offsetY"
+                                color: "#d1d5db"
+                                font.pixelSize: 12
+                            }
+
+                            TextField {
+                                id: offsetYField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "0"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+
+                            Label {
+                                text: "rotation"
+                                color: "#d1d5db"
+                                font.pixelSize: 12
+                            }
+
+                            TextField {
+                                id: rotationField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "0"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+
+                            Label {
+                                text: "width"
+                                color: "#d1d5db"
+                                font.pixelSize: 12
+                            }
+
+                            TextField {
+                                id: widthField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "160"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+
+                            Label {
+                                text: "height"
+                                color: "#d1d5db"
+                                font.pixelSize: 12
+                            }
+
+                            TextField {
+                                id: heightField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "100"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+                        }
+
+                        Button {
+                            Layout.fillWidth: true
+                            text: "创建偏移"
+                            onClicked: roiPage.createOffsetRoi()
+                        }
+
+                        Button {
+                            Layout.fillWidth: true
+                            text: "执行halcond"
+                            onClicked: roiPage.executeHalcon()
                         }
 
                         Rectangle {

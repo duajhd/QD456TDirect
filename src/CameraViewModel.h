@@ -11,6 +11,11 @@
 #include <memory>
 class CameraViewModel: public QObject{
     Q_OBJECT
+    Q_PROPERTY(QString name READ name CONSTANT)
+    Q_PROPERTY(QString statusText READ statusText NOTIFY statusTextChanged)
+    Q_PROPERTY(int frameId READ frameId NOTIFY frameIdChanged)
+    Q_PROPERTY(int width READ width CONSTANT)
+    Q_PROPERTY(int height READ height CONSTANT)
 public:
     static constexpr int FrameSlotCount = 1200;
 
@@ -36,11 +41,15 @@ private:
     ProcessWorker* m_processWorker = nullptr;
     bool m_initialize = false;
     bool m_started = false;
+    int m_frameId = -1;
+    QString m_statusText = QStringLiteral("未连接");
 
       std::unique_ptr<moodycamel::ReaderWriterQueue<int>> m_frameQueue;
       std::unique_ptr<unsigned char[]> m_imageStorage;
       moodycamel::ReaderWriterQueue<int>* m_dropQueue = nullptr;
 
+    void setStatusText(const QString& statusText);
+    void setFrameId(int frameId);
 
 public:
     unsigned char* m_imageBuffer = nullptr;
@@ -48,17 +57,25 @@ public:
  signals:
      void resultReady(int channelId);
      void frameUpdated(int frameId);
+     void statusTextChanged();
+     void frameIdChanged();
 
 
 public:
     void Init();
     void Start();
     void Stop();
+    void CleanupThreads();
     void SetCameraParameter();
 
     int imageWidth() const { return m_width; }
     int imageHeight() const { return m_height; }
     int channel() const { return m_channel; }
+    QString name() const;
+    QString statusText() const;
+    int frameId() const;
+    int width() const;
+    int height() const;
 
 };
 #endif

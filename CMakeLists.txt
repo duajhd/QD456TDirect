@@ -36,10 +36,8 @@ SOURCES src/Algorithm.cpp
 #QML_FILES qml/pages/DashboardPage.qml
 QML_FILES qml/theme/theme.qml
 QML_FILES qml/components/CameraTile.qml qml/pages/DashboardPage.qml
-QML_FILES qml/pages/RoiEditorPage.qml
 QML_FILES qml/components/RoiItem.qml
 QML_FILES qml/components/ImageCanvas.qml
-QML_FILES qml/components/RoiEditorWindow.qml
 SOURCES
 SOURCES
 SOURCES src/ConfigReader.h

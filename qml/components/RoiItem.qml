@@ -32,6 +32,18 @@ Item {
     rotation: safeAngle
     transformOrigin: Item.Center
 
+    Menu {
+        id: contextMenu
+
+        MenuItem {
+            text: "删除"
+            onTriggered: {
+                if (root.roiManager)
+                    root.roiManager.RemoveRoi(root.safeId)
+            }
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "transparent"
@@ -174,7 +186,7 @@ Item {
     MouseArea {
         anchors.fill: parent
         enabled: root.roiData !== null
-        acceptedButtons: Qt.LeftButton
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
         cursorShape: Qt.SizeAllCursor
 
@@ -186,6 +198,13 @@ Item {
         onPressed: function(mouse) {
             if (!root.roiData)
                 return
+
+            if (mouse.button === Qt.RightButton) {
+                if (root.roiManager)
+                    root.roiManager.SelectOnly(root.safeId)
+                contextMenu.popup()
+                return
+            }
 
             if (root.roiManager)
                 root.roiManager.SelectOnly(root.safeId)
@@ -199,7 +218,7 @@ Item {
         }
 
         onPositionChanged: function(mouse) {
-            if (!pressed || !root.roiData)
+            if (!pressed || !root.roiData || pressedButtons !== Qt.LeftButton)
                 return
 
             const p = mapToItem(imageCanvas, mouse.x, mouse.y)

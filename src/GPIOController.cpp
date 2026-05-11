@@ -11,7 +11,7 @@ GPIOController::GPIOController(moodycamel::ReaderWriterQueue<int>* queue, QObjec
 
 int GPIOController::Initialize()
 {
-    int ret = UsbDevice_Scan(SerialNumbers);
+    int ret = UsbDevice_Scan(SerialNumbers.data());
     if (ret < 0) {
         qWarning() << "GPIO scan error:" << ret;
         return ret;
@@ -22,12 +22,17 @@ int GPIOController::Initialize()
         return ret;
     }
 
-    for (int i = 0; i < ret; i++) {
+    const int deviceCount = qMin(ret, MaxDeviceCount);
+    if (ret > MaxDeviceCount) {
+        qWarning() << "GPIO scan returned more devices than local buffer:" << ret;
+    }
+
+    for (int i = 0; i < deviceCount; i++) {
         qDebug() << "GPIO device" << i << "SN:" << SerialNumbers[i];
     }
 
-    IO_InitStruct_Tx_t initStruct_Tx[16];
-    IO_InitStruct_Rx_t initStruct_Rx[16];
+    IO_InitStruct_Tx_t initStruct_Tx[16] = {};
+    IO_InitStruct_Rx_t initStruct_Rx[16] = {};
     for (int i = 0; i < 16; i++) {
         initStruct_Tx[i].Pin = i;
         initStruct_Tx[i].Mode = 1;

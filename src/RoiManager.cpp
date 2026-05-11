@@ -1,5 +1,43 @@
 #include "RoiManager.h"
+#include <HalconCpp.h>
+#include <QUrl>
 #include <QUuid>
+#include <QtMath>
+
+namespace {
+
+RoiData* FirstRoiOfType(const QList<RoiData*>& roiList, const QString& roiType)
+{
+    for (RoiData* roi : roiList) {
+        if (roi && roi->GetRoiType() == roiType) {
+            return roi;
+        }
+    }
+
+    return nullptr;
+}
+
+QString NormalizeImagePath(const QString& imagePath)
+{
+    const QUrl url(imagePath);
+    if (url.isLocalFile()) {
+        return url.toLocalFile();
+    }
+
+    return imagePath;
+}
+
+void GenRectangleFromRoi(RoiData* roi, HalconCpp::HObject* rectangle)
+{
+    HalconCpp::GenRectangle2(rectangle,
+                             roi->GetCenterY(),
+                             roi->GetCenterX(),
+                             qDegreesToRadians(roi->GetAngle()),
+                             roi->GetRoiWidth() * 0.5,
+                             roi->GetRoiHeight() * 0.5);
+}
+
+}
 
 RoiManager::RoiManager(QObject* parent)
     : QObject(parent)
@@ -202,4 +240,95 @@ bool RoiManager::LoadFromJson(const QString& filePath)
 
     emit RoiListChanged();
     return true;
+}
+
+QVariantMap RoiManager::ExecuteHalcon(const QString& imagePath)
+{
+    QVariantMap result;
+    result["ok"] = false;
+
+    RoiData* topRoi = FirstRoiOfType(m_roiList, "TopROI");
+    RoiData* downRoi = FirstRoiOfType(m_roiList, "DownROI");
+
+    if (!topRoi || !downRoi) {
+        result["message"] = "需要至少一个TopROI和一个DownROI";
+        return result;
+    }
+
+    const QString normalizedImagePath = NormalizeImagePath(imagePath);
+    if (normalizedImagePath.isEmpty()) {
+        result["message"] = "请先加载图片";
+        return result;
+    }
+
+    try {
+        using namespace HalconCpp;
+
+        HObject image;
+        HObject topRectangle, downRectangle;
+        HObject topReducedDomain, downReducedDomain;
+        HObject topRegion, downRegion;
+        HObject topConnectedRegion, downConnectedRegion;
+        HObject topSelectedRegion, downSelectedRegion;
+        HTuple topNumber, downNumber;
+        HTuple topRows, downColumns;
+
+        const QByteArray pathBytes = normalizedImagePath.toLocal8Bit();
+        ReadImage(&image, pathBytes.constData());
+
+        GenRectangleFromRoi(topRoi, &topRectangle);
+        GenRectangleFromRoi(downRoi, &downRectangle);
+
+        ReduceDomain(image, topRectangle, &topReducedDomain);
+        ReduceDomain(image, downRectangle, &downReducedDomain);
+
+        Threshold(topReducedDomain, &topRegion, 0, 240);
+        Threshold(downReducedDomain, &downRegion, 0, 240);
+
+        Connection(topRegion, &topConnectedRegion);
+        Connection(downRegion, &downConnectedRegion);
+
+        SelectShape(topConnectedRegion,
+                    &topSelectedRegion,
+                    HTuple("ratio").Append("height").Append("width"),
+                    "and",
+                    HTuple(0).Append(1).Append(30),
+                    HTuple(3).Append(20).Append(300));
+
+        SelectShape(downConnectedRegion,
+                    &downSelectedRegion,
+                    HTuple("ratio").Append("height").Append("width"),
+                    "and",
+                    HTuple(3).Append(90).Append(1),
+                    HTuple(40).Append(2000).Append(15));
+
+        CountObj(topSelectedRegion, &topNumber);
+        CountObj(downSelectedRegion, &downNumber);
+
+        const int topCount = topNumber[0].I();
+        const int downCount = downNumber[0].I();
+
+        result["topCount"] = topCount;
+        result["downCount"] = downCount;
+
+        if (topCount != 1 || downCount != 1) {
+            result["message"] = QString("区域数量不满足要求: TopROI=%1, DownROI=%2")
+                                    .arg(topCount)
+                                    .arg(downCount);
+            return result;
+        }
+
+        RegionFeatures(topSelectedRegion, "row", &topRows);
+        RegionFeatures(downSelectedRegion, "column", &downColumns);
+
+        result["baseY"] = topRows[0].D();
+        result["baseX"] = downColumns[0].D();
+        result["ok"] = true;
+        result["message"] = "HALCON执行完成";
+        return result;
+    }
+    catch (const HalconCpp::HException&) {
+        result["message"] = "HALCON执行失败";
+        return result;
+    }
 }

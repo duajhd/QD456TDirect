@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFile>
+#include <QVariantMap>
 #include "RoiData.h"
 
 class RoiManager : public QObject
@@ -40,6 +41,7 @@ public:
 
     Q_INVOKABLE bool SaveToJson(const QString& filePath);
     Q_INVOKABLE bool LoadFromJson(const QString& filePath);
+    Q_INVOKABLE QVariantMap ExecuteHalcon(const QString& imagePath);
 
 signals:
     void RoiListChanged();

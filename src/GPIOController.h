@@ -11,6 +11,7 @@
 #include "pwm.h"
 #include "usb_device.h"
 #include "readerwriterqueue.h"
+#include <array>
 #include <atomic>
 class GPIOController:public QObject{
     Q_OBJECT
@@ -20,7 +21,8 @@ public:
     ~GPIOController() override= default;
 
 private :
-    int SerialNumbers[16];
+    static constexpr int MaxDeviceCount = 256;
+    std::array<int, MaxDeviceCount> SerialNumbers {};
     moodycamel::ReaderWriterQueue<int>* m_queue = nullptr;
     std::atomic_bool m_running { false };
     bool m_initialized = false;
