@@ -103,11 +103,43 @@ RoiData* RoiManager::AddRoi(const QString& roiType,
     roi->SetRoiWidth(roiWidth);
     roi->SetRoiHeight(roiHeight);
     roi->SetAngle(angle);
+    roi->SetOffsetX(0.0);
+    roi->SetOffsetY(0.0);
+    roi->SetWidth(roiWidth);
+    roi->SetHeight(roiHeight);
     roi->SetColor(color);
     roi->SetSelected(false);
 
     m_roiList.append(roi);
     emit RoiListChanged();
+    return roi;
+}
+
+RoiData* RoiManager::AddOffsetRoi(const QString& roiType,
+                                  double baseX,
+                                  double baseY,
+                                  double offsetX,
+                                  double offsetY,
+                                  double width,
+                                  double height,
+                                  double angle,
+                                  const QString& color)
+{
+    RoiData* roi = AddRoi(roiType,
+                          baseX + offsetX,
+                          baseY + offsetY,
+                          width,
+                          height,
+                          angle,
+                          color);
+    if (!roi) {
+        return nullptr;
+    }
+
+    roi->SetOffsetX(offsetX);
+    roi->SetOffsetY(offsetY);
+    roi->SetWidth(width);
+    roi->SetHeight(height);
     return roi;
 }
 
@@ -175,6 +207,10 @@ bool RoiManager::SaveToJson(const QString& filePath)
         obj["roiWidth"] = roi->GetRoiWidth();
         obj["roiHeight"] = roi->GetRoiHeight();
         obj["angle"] = roi->GetAngle();
+        obj["offsetX"] = roi->GetOffsetX();
+        obj["offsetY"] = roi->GetOffsetY();
+        obj["width"] = roi->GetWidth();
+        obj["height"] = roi->GetHeight();
         obj["color"] = roi->GetColor();
         obj["selected"] = roi->GetSelected();
         roiArray.append(obj);
@@ -232,6 +268,10 @@ bool RoiManager::LoadFromJson(const QString& filePath)
         roi->SetRoiWidth(obj["roiWidth"].toDouble());
         roi->SetRoiHeight(obj["roiHeight"].toDouble());
         roi->SetAngle(obj["angle"].toDouble());
+        roi->SetOffsetX(obj["offsetX"].toDouble());
+        roi->SetOffsetY(obj["offsetY"].toDouble());
+        roi->SetWidth(obj.contains("width") ? obj["width"].toDouble() : roi->GetRoiWidth());
+        roi->SetHeight(obj.contains("height") ? obj["height"].toDouble() : roi->GetRoiHeight());
         roi->SetColor(obj["color"].toString());
         roi->SetSelected(obj["selected"].toBool(false));
 

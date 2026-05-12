@@ -7,6 +7,10 @@ RoiData::RoiData(QObject* parent)
     m_roiWidth(100.0),
     m_roiHeight(80.0),
     m_angle(0.0),
+    m_offsetX(0.0),
+    m_offsetY(0.0),
+    m_width(100.0),
+    m_height(80.0),
     m_color("#00AEEF"),
     m_selected(false)
 {
@@ -105,6 +109,54 @@ void RoiData::SetAngle(double value)
 {
     if (qFuzzyCompare(m_angle, value)) return;
     m_angle = value;
+    emit RoiChanged();
+}
+
+double RoiData::GetOffsetX() const
+{
+    return m_offsetX;
+}
+
+void RoiData::SetOffsetX(double value)
+{
+    if (qFuzzyCompare(m_offsetX, value)) return;
+    m_offsetX = value;
+    emit RoiChanged();
+}
+
+double RoiData::GetOffsetY() const
+{
+    return m_offsetY;
+}
+
+void RoiData::SetOffsetY(double value)
+{
+    if (qFuzzyCompare(m_offsetY, value)) return;
+    m_offsetY = value;
+    emit RoiChanged();
+}
+
+double RoiData::GetWidth() const
+{
+    return m_width;
+}
+
+void RoiData::SetWidth(double value)
+{
+    if (qFuzzyCompare(m_width, value)) return;
+    m_width = value;
+    emit RoiChanged();
+}
+
+double RoiData::GetHeight() const
+{
+    return m_height;
+}
+
+void RoiData::SetHeight(double value)
+{
+    if (qFuzzyCompare(m_height, value)) return;
+    m_height = value;
     emit RoiChanged();
 }
 

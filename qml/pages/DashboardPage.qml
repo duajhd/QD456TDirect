@@ -105,23 +105,35 @@ Page {
                 if (!roiManager)
                     return
 
-                var offsetX = fieldNumber(offsetXField, 0)
-                var offsetY = fieldNumber(offsetYField, 0)
                 var angle = fieldNumber(rotationField, 0)
-                var roiWidth = Math.max(1, fieldNumber(widthField, 160))
-                var roiHeight = Math.max(1, fieldNumber(heightField, 100))
-                var centerX = offsetBaseX + offsetX
-                var centerY = offsetBaseY + offsetY
-                var roiType = selectedRoiType()
+                var topOffsetX = fieldNumber(topOffsetXField, 0)
+                var topOffsetY = fieldNumber(topOffsetYField, 0)
+                var topWidth = Math.max(1, fieldNumber(topWidthField, 160))
+                var topHeight = Math.max(1, fieldNumber(topHeightField, 100))
+                var downOffsetX = fieldNumber(downOffsetXField, 0)
+                var downOffsetY = fieldNumber(downOffsetYField, 0)
+                var downWidth = Math.max(1, fieldNumber(downWidthField, 160))
+                var downHeight = Math.max(1, fieldNumber(downHeightField, 100))
 
-                roiManager.AddRoi(roiType,
-                                  centerX,
-                                  centerY,
-                                  roiWidth,
-                                  roiHeight,
-                                  angle,
-                                  selectedRoiColor())
-                statusLabel.text = "已创建偏移 " + roiType
+                roiManager.AddOffsetRoi("TopROI",
+                                        offsetBaseX,
+                                        offsetBaseY,
+                                        topOffsetX,
+                                        topOffsetY,
+                                        topWidth,
+                                        topHeight,
+                                        angle,
+                                        "#1677ff")
+                roiManager.AddOffsetRoi("DownROI",
+                                        offsetBaseX,
+                                        offsetBaseY,
+                                        downOffsetX,
+                                        downOffsetY,
+                                        downWidth,
+                                        downHeight,
+                                        angle,
+                                        "#22c55e")
+                statusLabel.text = "已创建TopROI/DownROI偏移组"
             }
 
             function executeHalcon() {
@@ -245,18 +257,43 @@ Page {
 
                         GridLayout {
                             Layout.fillWidth: true
-                            columns: 2
+                            columns: 3
                             columnSpacing: 8
                             rowSpacing: 8
+
+                            Label {
+                                text: "field"
+                                color: "#94a3b8"
+                                font.pixelSize: 12
+                            }
+                            Label {
+                                text: "TopROI"
+                                color: "#60a5fa"
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+                            Label {
+                                text: "DownROI"
+                                color: "#4ade80"
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
 
                             Label {
                                 text: "offsetX"
                                 color: "#d1d5db"
                                 font.pixelSize: 12
                             }
-
                             TextField {
-                                id: offsetXField
+                                id: topOffsetXField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "0"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+                            TextField {
+                                id: downOffsetXField
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 30
                                 text: "0"
@@ -269,24 +306,16 @@ Page {
                                 color: "#d1d5db"
                                 font.pixelSize: 12
                             }
-
                             TextField {
-                                id: offsetYField
+                                id: topOffsetYField
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 30
                                 text: "0"
                                 selectByMouse: true
                                 inputMethodHints: Qt.ImhFormattedNumbersOnly
                             }
-
-                            Label {
-                                text: "rotation"
-                                color: "#d1d5db"
-                                font.pixelSize: 12
-                            }
-
                             TextField {
-                                id: rotationField
+                                id: downOffsetYField
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 30
                                 text: "0"
@@ -299,9 +328,16 @@ Page {
                                 color: "#d1d5db"
                                 font.pixelSize: 12
                             }
-
                             TextField {
-                                id: widthField
+                                id: topWidthField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "160"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+                            TextField {
+                                id: downWidthField
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 30
                                 text: "160"
@@ -314,12 +350,34 @@ Page {
                                 color: "#d1d5db"
                                 font.pixelSize: 12
                             }
-
                             TextField {
-                                id: heightField
+                                id: topHeightField
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 30
                                 text: "100"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+                            TextField {
+                                id: downHeightField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "100"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+
+                            Label {
+                                text: "rotation"
+                                color: "#d1d5db"
+                                font.pixelSize: 12
+                            }
+                            TextField {
+                                id: rotationField
+                                Layout.columnSpan: 2
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "0"
                                 selectByMouse: true
                                 inputMethodHints: Qt.ImhFormattedNumbersOnly
                             }

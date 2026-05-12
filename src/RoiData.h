@@ -21,6 +21,10 @@ class RoiData : public QObject
     Q_PROPERTY(double roiWidth READ GetRoiWidth WRITE SetRoiWidth NOTIFY RoiChanged)
     Q_PROPERTY(double roiHeight READ GetRoiHeight WRITE SetRoiHeight NOTIFY RoiChanged)
     Q_PROPERTY(double angle READ GetAngle WRITE SetAngle NOTIFY RoiChanged)
+    Q_PROPERTY(double offsetX READ GetOffsetX WRITE SetOffsetX NOTIFY RoiChanged)
+    Q_PROPERTY(double offsetY READ GetOffsetY WRITE SetOffsetY NOTIFY RoiChanged)
+    Q_PROPERTY(double width READ GetWidth WRITE SetWidth NOTIFY RoiChanged)
+    Q_PROPERTY(double height READ GetHeight WRITE SetHeight NOTIFY RoiChanged)
 
     Q_PROPERTY(QString color READ GetColor WRITE SetColor NOTIFY RoiChanged)
     Q_PROPERTY(bool selected READ GetSelected WRITE SetSelected NOTIFY RoiChanged)
@@ -52,6 +56,18 @@ public:
     double GetAngle() const;
     void SetAngle(double value);
 
+    double GetOffsetX() const;
+    void SetOffsetX(double value);
+
+    double GetOffsetY() const;
+    void SetOffsetY(double value);
+
+    double GetWidth() const;
+    void SetWidth(double value);
+
+    double GetHeight() const;
+    void SetHeight(double value);
+
     QString GetColor() const;
     void SetColor(const QString& value);
 
@@ -71,6 +87,10 @@ private:
     double m_roiWidth;
     double m_roiHeight;
     double m_angle;
+    double m_offsetX;
+    double m_offsetY;
+    double m_width;
+    double m_height;
 
     QString m_color;
     bool m_selected;

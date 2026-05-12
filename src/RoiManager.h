@@ -31,6 +31,15 @@ public:
                                 double roiHeight,
                                 double angle,
                                 const QString& color);
+    Q_INVOKABLE RoiData* AddOffsetRoi(const QString& roiType,
+                                      double baseX,
+                                      double baseY,
+                                      double offsetX,
+                                      double offsetY,
+                                      double width,
+                                      double height,
+                                      double angle,
+                                      const QString& color);
 
     Q_INVOKABLE void RemoveRoi(const QString& roiId);
     Q_INVOKABLE void ClearAllRois();
