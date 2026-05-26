@@ -2,7 +2,9 @@
 
 #include <Algorithm.h>
 #include <CameraViewModel.h>
+#include <QMutexLocker>
 #include <QThread>
+#include <QtMath>
 
 ProcessWorker::ProcessWorker(int width,
                              int height,
@@ -52,15 +54,32 @@ void ProcessWorker::StartWork()
                              m_height,
                              HalconCpp::HTuple(reinterpret_cast<Hlong>(imageByte)));
 
+        DetectionRoiConfig config;
+        HalconCpp::HObject topRectangle;
+        HalconCpp::HObject downRectangle;
+        bool hasDetectionRois = false;
+        {
+            QMutexLocker locker(&m_configMutex);
+            config = m_detectionConfig;
+            topRectangle = m_topRectangle;
+            downRectangle = m_downRectangle;
+            hasDetectionRois = m_hasDetectionRois;
+        }
+
+        if (!config.valid || !hasDetectionRois) {
+            emit frameUpdated(frameId);
+            continue;
+        }
+
         const VisionAlgorithm::DirectionResult result =
             VisionAlgorithm::DirectionRecognize(DetecImage,
-                                                TopRegion,
-                                                DownRegion,
-                                                m_offsetX,
-                                                m_offsetY,
-                                                m_offsetXDown,
-                                                m_offsetYDown,
-                                                m_dropThres);
+                                                topRectangle,
+                                                downRectangle,
+                                                config.top.offsetX,
+                                                config.top.offsetY,
+                                                config.down.offsetX,
+                                                config.down.offsetY,
+                                                config.dropThres);
 
         if (result == VisionAlgorithm::DirectionResult::Reject && m_dropQueue) {
             m_dropQueue->try_enqueue(m_cameraIndex);
@@ -75,6 +94,38 @@ void ProcessWorker::StartWork()
 void ProcessWorker::StopWork()
 {
     m_running.store(false, std::memory_order_release);
+}
+
+void ProcessWorker::SetDetectionConfig(const DetectionRoiConfig& config)
+{
+    QMutexLocker locker(&m_configMutex);
+    m_detectionConfig = config;
+    m_hasDetectionRois = false;
+    m_topRectangle = HalconCpp::HObject();
+    m_downRectangle = HalconCpp::HObject();
+
+    if (!m_detectionConfig.valid) {
+        return;
+    }
+
+    try {
+        HalconCpp::GenRectangle2(&m_topRectangle,
+                                 m_detectionConfig.top.centerY,
+                                 m_detectionConfig.top.centerX,
+                                 qDegreesToRadians(m_detectionConfig.top.angle),
+                                 m_detectionConfig.top.width * 0.5,
+                                 m_detectionConfig.top.height * 0.5);
+        HalconCpp::GenRectangle2(&m_downRectangle,
+                                 m_detectionConfig.down.centerY,
+                                 m_detectionConfig.down.centerX,
+                                 qDegreesToRadians(m_detectionConfig.down.angle),
+                                 m_detectionConfig.down.width * 0.5,
+                                 m_detectionConfig.down.height * 0.5);
+        m_hasDetectionRois = true;
+    }
+    catch (const HalconCpp::HException&) {
+        m_hasDetectionRois = false;
+    }
 }
 
 void ProcessWorker::OnFrameArrived(int frameId)

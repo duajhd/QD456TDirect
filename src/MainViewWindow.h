@@ -28,6 +28,8 @@ public:
   void Initialize();
   Q_INVOKABLE void StopDetect();
   Q_INVOKABLE void ToggleDetect();
+  Q_INVOKABLE bool ApplyRoiConfig(int cameraIndex);
+  Q_INVOKABLE bool SetCameraParameter(int cameraIndex, double exposureTime, double gain, int dropThres);
   bool isRunning() const;
 
  Q_INVOKABLE  QObject* getCamera(int coount) const;

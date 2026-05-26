@@ -98,6 +98,75 @@ bool HikCamera::IsGrabbing() const
     return m_isGrabbing;
 }
 
+int HikCamera::SetExposureTime(float exposureTime)
+{
+    if (m_cameraHandle == nullptr || !m_isOpen)
+    {
+        SetLastError(MV_E_CALLORDER, "SetExposureTime failed: camera is not open");
+        return MV_E_CALLORDER;
+    }
+
+    const int autoRet = MV_CC_SetEnumValue(m_cameraHandle, "ExposureAuto", 0);
+    if (autoRet != MV_OK)
+    {
+        qWarning() << BuildErrorString("Set ExposureAuto Off failed", static_cast<unsigned int>(autoRet));
+    }
+
+    const int nRet = MV_CC_SetExposureTime(m_cameraHandle, exposureTime);
+    if (nRet != MV_OK)
+    {
+        SetLastError(nRet, "Set ExposureTime failed");
+        return nRet;
+    }
+
+    m_lastError = MV_OK;
+    m_lastErrorString.clear();
+    return MV_OK;
+}
+
+int HikCamera::SetGain(float gain)
+{
+    if (m_cameraHandle == nullptr || !m_isOpen)
+    {
+        SetLastError(MV_E_CALLORDER, "SetGain failed: camera is not open");
+        return MV_E_CALLORDER;
+    }
+
+    const int autoRet = MV_CC_SetEnumValue(m_cameraHandle, "GainAuto", 0);
+    if (autoRet != MV_OK)
+    {
+        qWarning() << BuildErrorString("Set GainAuto Off failed", static_cast<unsigned int>(autoRet));
+    }
+
+    const int nRet = MV_CC_SetGain(m_cameraHandle, gain);
+    if (nRet != MV_OK)
+    {
+        SetLastError(nRet, "Set Gain failed");
+        return nRet;
+    }
+
+    m_lastError = MV_OK;
+    m_lastErrorString.clear();
+    return MV_OK;
+}
+
+int HikCamera::SetCameraParameters(float exposureTime, float gain)
+{
+    int nRet = SetExposureTime(exposureTime);
+    if (nRet != MV_OK)
+    {
+        return nRet;
+    }
+
+    nRet = SetGain(gain);
+    if (nRet != MV_OK)
+    {
+        return nRet;
+    }
+
+    return MV_OK;
+}
+
 int HikCamera::GrabOneFrame(unsigned char* imageBuffer, std::size_t bufferSize,  unsigned int timeoutMs)
 {
     if (imageBuffer == nullptr)

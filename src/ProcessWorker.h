@@ -1,7 +1,9 @@
 #ifndef PROCESSWORKER_H
 #define PROCESSWORKER_H
+#include "DetectionRoiConfig.h"
 #include "readerwriterqueue.h"
 #include <HalconCpp.h>
+#include <QMutex>
 #include <QObject>
 #include <atomic>
 #include <cstddef>
@@ -31,13 +33,11 @@ private:
     int m_processFrameId = 0;
 
     HalconCpp::HObject DetecImage;
-    HalconCpp::HObject TopRegion;
-    HalconCpp::HObject DownRegion;
-    float m_dropThres = 27.0;
-    int m_offsetX = 0;
-    int m_offsetY = 0;
-    int m_offsetXDown = 0;
-    int m_offsetYDown = 0;
+    QMutex m_configMutex;
+    DetectionRoiConfig m_detectionConfig;
+    HalconCpp::HObject m_topRectangle;
+    HalconCpp::HObject m_downRectangle;
+    bool m_hasDetectionRois = false;
 
 
 
@@ -48,6 +48,7 @@ public slots:
   void OnFrameArrived(int frameId);
   void StartWork();
   void StopWork();
+  void SetDetectionConfig(const DetectionRoiConfig& config);
 
 };
 #endif // PROCESSWORKER_H

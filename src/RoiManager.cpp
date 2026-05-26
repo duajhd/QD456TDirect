@@ -3,6 +3,7 @@
 #include <QUrl>
 #include <QUuid>
 #include <QtMath>
+#include <cmath>
 
 namespace {
 
@@ -157,6 +158,27 @@ void RoiManager::RemoveRoi(const QString& roiId)
     }
 }
 
+void RoiManager::RemoveRoisByType(const QString& roiType)
+{
+    bool removed = false;
+
+    for (int i = m_roiList.size() - 1; i >= 0; --i)
+    {
+        RoiData* roi = m_roiList[i];
+        if (roi && roi->GetRoiType() == roiType)
+        {
+            m_roiList.removeAt(i);
+            roi->deleteLater();
+            removed = true;
+        }
+    }
+
+    if (removed)
+    {
+        emit RoiListChanged();
+    }
+}
+
 void RoiManager::ClearAllRois()
 {
     qDeleteAll(m_roiList);
@@ -279,6 +301,42 @@ bool RoiManager::LoadFromJson(const QString& filePath)
     }
 
     emit RoiListChanged();
+    return true;
+}
+
+bool RoiManager::BuildDetectionConfig(DetectionRoiConfig* config) const
+{
+    if (!config) {
+        return false;
+    }
+
+    DetectionRoiConfig nextConfig;
+    RoiData* topRoi = FirstRoiOfType(m_roiList, "TopROI");
+    RoiData* downRoi = FirstRoiOfType(m_roiList, "DownROI");
+
+    if (!topRoi || !downRoi) {
+        *config = nextConfig;
+        return false;
+    }
+
+    nextConfig.valid = true;
+    nextConfig.top.centerX = topRoi->GetCenterX();
+    nextConfig.top.centerY = topRoi->GetCenterY();
+    nextConfig.top.width = topRoi->GetRoiWidth();
+    nextConfig.top.height = topRoi->GetRoiHeight();
+    nextConfig.top.angle = topRoi->GetAngle();
+    nextConfig.top.offsetX = static_cast<int>(std::lround(topRoi->GetOffsetX()));
+    nextConfig.top.offsetY = static_cast<int>(std::lround(topRoi->GetOffsetY()));
+
+    nextConfig.down.centerX = downRoi->GetCenterX();
+    nextConfig.down.centerY = downRoi->GetCenterY();
+    nextConfig.down.width = downRoi->GetRoiWidth();
+    nextConfig.down.height = downRoi->GetRoiHeight();
+    nextConfig.down.angle = downRoi->GetAngle();
+    nextConfig.down.offsetX = static_cast<int>(std::lround(downRoi->GetOffsetX()));
+    nextConfig.down.offsetY = static_cast<int>(std::lround(downRoi->GetOffsetY()));
+
+    *config = nextConfig;
     return true;
 }
 

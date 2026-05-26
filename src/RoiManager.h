@@ -11,6 +11,7 @@
 #include <QJsonObject>
 #include <QFile>
 #include <QVariantMap>
+#include "DetectionRoiConfig.h"
 #include "RoiData.h"
 
 class RoiManager : public QObject
@@ -42,6 +43,7 @@ public:
                                       const QString& color);
 
     Q_INVOKABLE void RemoveRoi(const QString& roiId);
+    Q_INVOKABLE void RemoveRoisByType(const QString& roiType);
     Q_INVOKABLE void ClearAllRois();
     Q_INVOKABLE RoiData* GetRoiById(const QString& roiId);
 
@@ -51,6 +53,8 @@ public:
     Q_INVOKABLE bool SaveToJson(const QString& filePath);
     Q_INVOKABLE bool LoadFromJson(const QString& filePath);
     Q_INVOKABLE QVariantMap ExecuteHalcon(const QString& imagePath);
+
+    bool BuildDetectionConfig(DetectionRoiConfig* config) const;
 
 signals:
     void RoiListChanged();

@@ -3,6 +3,7 @@
 #define CAMERAVIEWMODEL_H
 
 
+#include <DetectionRoiConfig.h>
 #include <HikCamera.h>
 #include <QThread>
 #include <QObject>
@@ -42,6 +43,9 @@ private:
     bool m_initialize = false;
     bool m_started = false;
     int m_frameId = -1;
+    float m_exposureTime = 5000.0f;
+    float m_gain = 1.0f;
+    DetectionRoiConfig m_detectionConfig;
     QString m_statusText = QStringLiteral("未连接");
 
       std::unique_ptr<moodycamel::ReaderWriterQueue<int>> m_frameQueue;
@@ -66,7 +70,8 @@ public:
     void Start();
     void Stop();
     void CleanupThreads();
-    void SetCameraParameter();
+    bool SetCameraParameter(double exposureTime, double gain, int dropThres);
+    void SetDetectionConfig(const DetectionRoiConfig& config);
 
     int imageWidth() const { return m_width; }
     int imageHeight() const { return m_height; }

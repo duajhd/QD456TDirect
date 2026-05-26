@@ -42,6 +42,7 @@ SOURCES
 SOURCES
 SOURCES src/ConfigReader.h
 SOURCES src/CameraConfig.h
+SOURCES src/DetectionRoiConfig.h
 SOURCES src/ConfigReader.cpp
 SOURCES src/GPIOController.h
 SOURCES src/GPIOController.cpp

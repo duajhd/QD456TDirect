@@ -78,6 +78,38 @@ QObject* MianViewModel::getRoiManager(int count) const{
     return m_roiManagers[count];
 };
 
+bool MianViewModel::ApplyRoiConfig(int cameraIndex)
+{
+    if (cameraIndex < 0 ||
+        cameraIndex >= m_cameras.size() ||
+        cameraIndex >= m_roiManagers.size()) {
+        return false;
+    }
+
+    DetectionRoiConfig config;
+    if (!m_roiManagers[cameraIndex] ||
+        !m_roiManagers[cameraIndex]->BuildDetectionConfig(&config)) {
+        qWarning() << "Invalid ROI config for camera" << cameraIndex;
+        return false;
+    }
+
+    if (!m_cameras[cameraIndex]) {
+        return false;
+    }
+
+    m_cameras[cameraIndex]->SetDetectionConfig(config);
+    return true;
+}
+
+bool MianViewModel::SetCameraParameter(int cameraIndex, double exposureTime, double gain, int dropThres)
+{
+    if (cameraIndex < 0 || cameraIndex >= m_cameras.size() || !m_cameras[cameraIndex]) {
+        return false;
+    }
+
+    return m_cameras[cameraIndex]->SetCameraParameter(exposureTime, gain, dropThres);
+}
+
 void MianViewModel::StartDetect()
 {
     if (m_isRunning) {
@@ -97,6 +129,10 @@ void MianViewModel::StartDetect()
         connect(m_gpioController, &GPIOController::finished, m_gpioThread, &QThread::quit, Qt::UniqueConnection);
         connect(m_gpioController, &GPIOController::finished, m_gpioController, &QObject::deleteLater, Qt::UniqueConnection);
         m_gpioThread->start();
+    }
+
+    for (int i = 0; i < m_cameras.size(); ++i) {
+        ApplyRoiConfig(i);
     }
 
     for (CameraViewModel* camera : m_cameras) {

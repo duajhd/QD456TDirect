@@ -61,14 +61,16 @@ DirectionResult DirectionRecognize(const HObject& image,
         AreaCenter(topSelectedRegion, &topArea, &topRow, &topColumn);
         AreaCenter(downSelectedRegion, &downArea, &downRow, &downColumn);
 
-        const double refRow = topRow[0].D() + offsetY;
-        const double refCol = downColumn[0].D() + offsetX;
+        const double refRow = topRow[0].D();
+        const double refCol = downColumn[0].D();
+
+
 
         // 如果你这里不是 10 度而是水平矩形，应改成 0.0
         const double phi = 10.0 * 3.14159265358979323846 / 180.0;
 
-        GenRectangle2(&genTopRegion,  refRow + 45.0,  refCol + 365.0, phi, 90.0, 25.0);
-        GenRectangle2(&genDownRegion, refRow + 445.0, refCol + 365.0, phi, 90.0, 25.0);
+        GenRectangle2(&genTopRegion,  refRow + offsetX,  refCol+offsetY + 365.0, phi, 90.0, 25.0);
+        GenRectangle2(&genDownRegion, refRow + offsetXDown, refCol + offsetYDown, phi, 90.0, 25.0);
 
         Intensity(genTopRegion, image, &meanTop, &topDeviation);
         Intensity(genDownRegion, image, &meanDown, &downDeviation);

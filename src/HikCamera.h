@@ -35,6 +35,10 @@ public:
     bool IsOpened() const;
     bool IsGrabbing() const;
 
+    int SetExposureTime(float exposureTime);
+    int SetGain(float gain);
+    int SetCameraParameters(float exposureTime, float gain);
+
     int GrabOneFrame(QImage& outImage, unsigned int timeoutMs = 1000);
     int GrabOneFrame(unsigned char* imageBuffer, std::size_t bufferSize, unsigned int timeoutMs = 1000);
 

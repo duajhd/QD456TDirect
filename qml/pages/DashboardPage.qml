@@ -9,6 +9,24 @@ Page {
     id: root
     property var stackViewRef: null
 
+    function applyCameraSettings() {
+        var index = cameraSelectBox.currentIndex
+        if (index < 0)
+            index = 0
+
+        var exposure = Number(exposureField.text)
+        var gain = Number(gainField.text)
+        var dropThres = Math.round(Number(rejectThresholdField.text))
+
+        if (isNaN(exposure) || exposure <= 0 || isNaN(gain) || gain < 0 || isNaN(dropThres) || dropThres < 0) {
+            console.warn("Invalid camera settings", exposureField.text, gainField.text, rejectThresholdField.text)
+            return
+        }
+
+        var ok = mainViewModel.SetCameraParameter(index, exposure, gain, dropThres)
+        console.log("SetCameraParameter", "camera =", index, "exposure =", exposure, "gain =", gain, "dropThres =", dropThres, "ok =", ok)
+    }
+
     function openRoiEditor() {
         console.log("openRoiEditor clicked", "stackViewRef =", stackViewRef)
 
@@ -99,6 +117,54 @@ Page {
             function fieldNumber(field, fallbackValue) {
                 var value = Number(field.text)
                 return isNaN(value) ? fallbackValue : value
+            }
+
+            function createTopOffsetRoi() {
+                if (!roiManager)
+                    return
+
+                var angle = fieldNumber(rotationField, 0)
+                var topOffsetX = fieldNumber(topOffsetXField, 0)
+                var topOffsetY = fieldNumber(topOffsetYField, 0)
+                var topWidth = Math.max(1, fieldNumber(topWidthField, 160))
+                var topHeight = Math.max(1, fieldNumber(topHeightField, 100))
+
+                roiManager.RemoveRoisByType("TopROI")
+                roiManager.AddOffsetRoi("TopROI",
+                                        offsetBaseX,
+                                        offsetBaseY,
+                                        topOffsetX,
+                                        topOffsetY,
+                                        topWidth,
+                                        topHeight,
+                                        angle,
+                                        "#1677ff")
+                var applied = mainViewModel.ApplyRoiConfig(roiPage.cameraIndex)
+                statusLabel.text = applied ? "已创建并应用TopROI偏移" : "已创建TopROI偏移"
+            }
+
+            function createDownOffsetRoi() {
+                if (!roiManager)
+                    return
+
+                var angle = fieldNumber(rotationField, 0)
+                var downOffsetX = fieldNumber(downOffsetXField, 0)
+                var downOffsetY = fieldNumber(downOffsetYField, 0)
+                var downWidth = Math.max(1, fieldNumber(downWidthField, 160))
+                var downHeight = Math.max(1, fieldNumber(downHeightField, 100))
+
+                roiManager.RemoveRoisByType("DownROI")
+                roiManager.AddOffsetRoi("DownROI",
+                                        offsetBaseX,
+                                        offsetBaseY,
+                                        downOffsetX,
+                                        downOffsetY,
+                                        downWidth,
+                                        downHeight,
+                                        angle,
+                                        "#22c55e")
+                var applied = mainViewModel.ApplyRoiConfig(roiPage.cameraIndex)
+                statusLabel.text = applied ? "已创建并应用DownROI偏移" : "已创建DownROI偏移"
             }
 
             function createOffsetRoi() {
@@ -385,8 +451,14 @@ Page {
 
                         Button {
                             Layout.fillWidth: true
-                            text: "创建偏移"
-                            onClicked: roiPage.createOffsetRoi()
+                            text: "创建TopROI偏移"
+                            onClicked: roiPage.createTopOffsetRoi()
+                        }
+
+                        Button {
+                            Layout.fillWidth: true
+                            text: "创建DownROI偏移"
+                            onClicked: roiPage.createDownOffsetRoi()
                         }
 
                         Button {
@@ -469,9 +541,14 @@ Page {
                     if (!roiPage.roiManager)
                         return
                     var path = roiPage.localFilePath(selectedFile)
-                    statusLabel.text = roiPage.roiManager.LoadFromJson(path)
-                                     ? "已读取: " + path
-                                     : "读取失败: " + path
+                    if (roiPage.roiManager.LoadFromJson(path)) {
+                        var applied = mainViewModel.ApplyRoiConfig(roiPage.cameraIndex)
+                        statusLabel.text = applied
+                                         ? "已读取并应用: " + path
+                                         : "已读取，应用失败: " + path
+                    } else {
+                        statusLabel.text = "读取失败: " + path
+                    }
                 }
             }
         }
@@ -754,7 +831,7 @@ Page {
                         id: rejectThresholdField
                         Layout.preferredWidth: 120
                         Layout.preferredHeight: 32
-                        text: "0.80"
+                        text: "27"
                         selectByMouse: true
                         inputMethodHints: Qt.ImhFormattedNumbersOnly
                         padding: 0
@@ -805,6 +882,8 @@ Page {
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                         }
+
+                        onClicked: root.applyCameraSettings()
                     }
                 }
 

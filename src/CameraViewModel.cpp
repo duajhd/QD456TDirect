@@ -1,6 +1,7 @@
 #include <CameraViewModel.h>
 
 #include <QDebug>
+#include <cmath>
 
 CameraViewModel::CameraViewModel(int width,
                                  int height,
@@ -55,6 +56,16 @@ void CameraViewModel::Init()
         return;
     }
 
+    const int paramRes = m_camera->SetCameraParameters(m_exposureTime, m_gain);
+    if (paramRes != MV_OK) {
+        qWarning() << "Camera parameter apply failed"
+                   << m_serialNum
+                   << QString("0x%1").arg(paramRes, 0, 16)
+                   << m_camera->LastErrorString();
+        setStatusText(QStringLiteral("参数设置失败"));
+        return;
+    }
+
     m_captureWorker = new CaptureWorker(m_width, m_height, m_channel, m_camera.get(), m_imageBuffer, m_frameQueue.get());
     m_processWorker = new ProcessWorker(m_width,
                                         m_height,
@@ -63,6 +74,7 @@ void CameraViewModel::Init()
                                         m_frameQueue.get(),
                                         m_cameraIndex,
                                         m_dropQueue);
+    m_processWorker->SetDetectionConfig(m_detectionConfig);
     m_captureThread = new QThread(this);
     m_processThread = new QThread(this);
 
@@ -114,6 +126,53 @@ void CameraViewModel::Stop()
 
     CleanupThreads();
     setStatusText(QStringLiteral("已停止"));
+}
+
+void CameraViewModel::SetDetectionConfig(const DetectionRoiConfig& config)
+{
+    const int currentDropThres = m_detectionConfig.dropThres;
+    m_detectionConfig = config;
+    m_detectionConfig.dropThres = currentDropThres;
+    if (m_processWorker) {
+        m_processWorker->SetDetectionConfig(m_detectionConfig);
+    }
+}
+
+bool CameraViewModel::SetCameraParameter(double exposureTime, double gain, int dropThres)
+{
+    if (!std::isfinite(exposureTime) || !std::isfinite(gain) || exposureTime <= 0.0 || gain < 0.0 || dropThres < 0) {
+        qWarning() << "Invalid camera parameter"
+                   << m_serialNum
+                   << exposureTime
+                   << gain
+                   << dropThres;
+        return false;
+    }
+
+    m_exposureTime = static_cast<float>(exposureTime);
+    m_gain = static_cast<float>(gain);
+    m_detectionConfig.dropThres = dropThres;
+
+    if (m_processWorker) {
+        m_processWorker->SetDetectionConfig(m_detectionConfig);
+    }
+
+    if (!m_camera || !m_camera->IsOpened()) {
+        return true;
+    }
+
+    const int res = m_camera->SetCameraParameters(m_exposureTime, m_gain);
+    if (res != MV_OK) {
+        qWarning() << "Set camera parameter failed"
+                   << m_serialNum
+                   << QString("0x%1").arg(res, 0, 16)
+                   << m_camera->LastErrorString();
+        setStatusText(QStringLiteral("参数设置失败"));
+        return false;
+    }
+
+    setStatusText(m_started ? QStringLiteral("运行中") : QStringLiteral("已连接"));
+    return true;
 }
 
 void CameraViewModel::CleanupThreads()
