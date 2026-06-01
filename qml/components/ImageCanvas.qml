@@ -74,7 +74,7 @@ Item {
           }
       }
       Repeater {
-          model: root.roiManager ? root.roiManager.roiList : []
+          model: root.roiManager ? root.roiManager.roiItems : []
 
             delegate: RoiItem {
                 required property var modelData
@@ -86,6 +86,18 @@ Item {
                 Component.onCompleted: {
                     console.log("RoiItem delegate created, modelData =", modelData)
                 }
+            }
+      }
+
+      Repeater {
+          model: root.roiManager ? root.roiManager.offsetRoiItems : []
+
+            delegate: RoiItem {
+                required property var modelData
+
+                imageCanvas: root
+                roiManager: root.roiManager
+                roiData: modelData
             }
       }
 

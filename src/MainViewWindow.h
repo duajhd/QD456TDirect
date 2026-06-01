@@ -17,6 +17,7 @@ private:
    QVector<CameraViewModel*> m_cameras;
    QVector<RoiManager*> m_roiManagers;
    std::unique_ptr<moodycamel::ReaderWriterQueue<int>> m_dropQueue;
+   DetectionAlgorithmParams m_algorithmParams;
    GPIOController* m_gpioController = nullptr;
    QThread* m_gpioThread = nullptr;
    // std::array<std::unique_ptr<CameraFrameItem>, 4> m_cameraItem;

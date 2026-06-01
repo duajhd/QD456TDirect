@@ -30,14 +30,21 @@ void MianViewModel::Initialize(){
     QVector<CameraConfig> cameras;
     QString error;
 
+    const QString configPath = "D:/zhijain/QT456TDirect/config/camera_config.json";
+
     bool ok = ConfigReader::loadCameraConfig(
-        "D:/zhijain/QT456TDirect/config/camera_config.json",
+        configPath,
         cameras,
         &error
         );
 
     if (!ok) {
         qDebug() << "读取相机配置失败:" << error;
+        return;
+    }
+
+    if (!ConfigReader::loadAlgorithmParams(configPath, m_algorithmParams, &error)) {
+        qDebug() << "Read algorithm params failed:" << error;
         return;
     }
 
@@ -48,10 +55,12 @@ void MianViewModel::Initialize(){
                                        cfg.serialNumber,
                                        cfg.channel,
                                        i,
+                                       m_algorithmParams,
                                        m_dropQueue.get(),
                                        this);
         m_cameras.push_back(vm);
         auto* roiManager = new RoiManager(this);
+        roiManager->SetAlgorithmParams(m_algorithmParams);
         m_roiManagers.push_back(roiManager);
         qDebug() << "Camera" << i
                  << "SN:" << cfg.serialNumber

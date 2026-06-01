@@ -25,6 +25,7 @@ public:
                              QString serialNum,
                              int channel,
                              int cameraIndex,
+                             const DetectionAlgorithmParams& algorithmParams,
                              moodycamel::ReaderWriterQueue<int>* dropQueue,
                              QObject* parent = nullptr);
       ~CameraViewModel() override;

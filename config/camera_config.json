@@ -1,25 +1,49 @@
 {
+  "algorithm": {
+    "topThresholdMin": 0,
+    "topThresholdMax": 170,
+    "downThresholdMin": 0,
+    "downThresholdMax": 170,
+    "topRatioMin": 0,
+    "topRatioMax": 3,
+    "topHeightMin": 1,
+    "topHeightMax": 20,
+    "topWidthMin": 30,
+    "topWidthMax": 300,
+    "downRatioMin": 3,
+    "downRatioMax": 40,
+    "downHeightMin": 90,
+    "downHeightMax": 2000,
+    "downWidthMin": 1,
+    "downWidthMax": 15,
+    "inspectAngleDeg": 10,
+    "inspectTopColumnOffset": 365,
+    "inspectRectHalfWidth": 90,
+    "inspectRectHalfHeight": 25
+  },
   "cameras": [
     {
-      "serialNumber": "DA12345678",
-      "imageWidth": 1024,
-      "imageHeight": 1024,
+      "serialNumber": "DB0883973",
+      "imageWidth": 1440,
+      "imageHeight": 1080,
       "channel": 1
     },
     {
-      "serialNumber": "DA87654321",
-      "imageWidth": 1024,
-      "imageHeight": 1024
+      "serialNumber": "DB0883861",
+      "imageWidth": 1440,
+      "imageHeight": 1080,
+ 	"channel": 1
+
     },
  {
-      "serialNumber": "DA87654325",
-      "imageWidth": 1024,
-      "imageHeight": 1024
+      "serialNumber": "DB0883909",
+      "imageWidth": 1440,
+      "imageHeight": 1080
     }
 , {
-      "serialNumber": "DA87654326",
-      "imageWidth": 1024,
-      "imageHeight": 1024
+      "serialNumber": "DB0883911",
+      "imageWidth": 1440,
+      "imageHeight": 1080
     }
 
   ]

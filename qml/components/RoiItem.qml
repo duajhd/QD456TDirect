@@ -125,6 +125,8 @@ Item {
         onPositionChanged: function(mouse) {
             if (!pressed || !root.roiData)
                 return
+            if (!imageCanvas || imageCanvas.displayScale <= 0)
+                return
 
             const p = mapToItem(imageCanvas, mouse.x, mouse.y)
             const angleRad = Math.atan2(p.y - centerSceneY, p.x - centerSceneX)
@@ -219,6 +221,8 @@ Item {
 
         onPositionChanged: function(mouse) {
             if (!pressed || !root.roiData || pressedButtons !== Qt.LeftButton)
+                return
+            if (!imageCanvas || imageCanvas.displayScale <= 0)
                 return
 
             const p = mapToItem(imageCanvas, mouse.x, mouse.y)

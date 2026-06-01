@@ -40,8 +40,10 @@ Page {
             index = 0
 
         var roiManager = mainViewModel.getRoiManager(index)
-        if (!roiManager)
+        if (!roiManager) {
             console.warn("Opening ROI editor with null roiManager for camera", index)
+            return
+        }
 
         stackViewRef.push(roiEditorPageComponent, {
             cameraIndex: index,
@@ -64,6 +66,8 @@ Page {
             property string imageSource: ""
             property real offsetBaseX: 512
             property real offsetBaseY: 512
+            property real sidePanelWidth: 340
+            property bool pageAlive: true
 
             function selectedRoiColor() {
                 if (roiTypeBox.currentIndex < 0)
@@ -119,18 +123,69 @@ Page {
                 return isNaN(value) ? fallbackValue : value
             }
 
+            function halconParamMap() {
+                return {
+                    topThresholdMin: fieldNumber(topThresholdMinField, 0),
+                    topThresholdMax: fieldNumber(topThresholdMaxField, 240),
+                    downThresholdMin: fieldNumber(downThresholdMinField, 0),
+                    downThresholdMax: fieldNumber(downThresholdMaxField, 240),
+                    topRatioMin: fieldNumber(topRatioMinField, 0),
+                    topRatioMax: fieldNumber(topRatioMaxField, 3),
+                    topHeightMin: fieldNumber(topHeightMinField, 1),
+                    topHeightMax: fieldNumber(topHeightMaxField, 20),
+                    topWidthMin: fieldNumber(topWidthMinField, 30),
+                    topWidthMax: fieldNumber(topWidthMaxField, 300),
+                    downRatioMin: fieldNumber(downRatioMinField, 3),
+                    downRatioMax: fieldNumber(downRatioMaxField, 40),
+                    downHeightMin: fieldNumber(downHeightMinField, 90),
+                    downHeightMax: fieldNumber(downHeightMaxField, 2000),
+                    downWidthMin: fieldNumber(downWidthMinField, 1),
+                    downWidthMax: fieldNumber(downWidthMaxField, 15)
+                }
+            }
+
+            function setHalconParamFields(params) {
+                if (!params)
+                    return
+                if (!topThresholdMinField || !topThresholdMaxField ||
+                    !downThresholdMinField || !downThresholdMaxField ||
+                    !topRatioMinField || !topRatioMaxField ||
+                    !topHeightMinField || !topHeightMaxField ||
+                    !topWidthMinField || !topWidthMaxField ||
+                    !downRatioMinField || !downRatioMaxField ||
+                    !downHeightMinField || !downHeightMaxField ||
+                    !downWidthMinField || !downWidthMaxField)
+                    return
+
+                topThresholdMinField.text = String(params.topThresholdMin !== undefined ? params.topThresholdMin : 0)
+                topThresholdMaxField.text = String(params.topThresholdMax !== undefined ? params.topThresholdMax : 240)
+                downThresholdMinField.text = String(params.downThresholdMin !== undefined ? params.downThresholdMin : 0)
+                downThresholdMaxField.text = String(params.downThresholdMax !== undefined ? params.downThresholdMax : 240)
+                topRatioMinField.text = String(params.topRatioMin !== undefined ? params.topRatioMin : 0)
+                topRatioMaxField.text = String(params.topRatioMax !== undefined ? params.topRatioMax : 3)
+                topHeightMinField.text = String(params.topHeightMin !== undefined ? params.topHeightMin : 1)
+                topHeightMaxField.text = String(params.topHeightMax !== undefined ? params.topHeightMax : 20)
+                topWidthMinField.text = String(params.topWidthMin !== undefined ? params.topWidthMin : 30)
+                topWidthMaxField.text = String(params.topWidthMax !== undefined ? params.topWidthMax : 300)
+                downRatioMinField.text = String(params.downRatioMin !== undefined ? params.downRatioMin : 3)
+                downRatioMaxField.text = String(params.downRatioMax !== undefined ? params.downRatioMax : 40)
+                downHeightMinField.text = String(params.downHeightMin !== undefined ? params.downHeightMin : 90)
+                downHeightMaxField.text = String(params.downHeightMax !== undefined ? params.downHeightMax : 2000)
+                downWidthMinField.text = String(params.downWidthMin !== undefined ? params.downWidthMin : 1)
+                downWidthMaxField.text = String(params.downWidthMax !== undefined ? params.downWidthMax : 15)
+            }
+
             function createTopOffsetRoi() {
                 if (!roiManager)
                     return
 
-                var angle = fieldNumber(rotationField, 0)
+                var angle = fieldNumber(topRotationField, 0)
                 var topOffsetX = fieldNumber(topOffsetXField, 0)
                 var topOffsetY = fieldNumber(topOffsetYField, 0)
                 var topWidth = Math.max(1, fieldNumber(topWidthField, 160))
                 var topHeight = Math.max(1, fieldNumber(topHeightField, 100))
 
-                roiManager.RemoveRoisByType("TopROI")
-                roiManager.AddOffsetRoi("TopROI",
+                roiManager.AddOffsetRoi("TopOffsetROI",
                                         offsetBaseX,
                                         offsetBaseY,
                                         topOffsetX,
@@ -147,14 +202,13 @@ Page {
                 if (!roiManager)
                     return
 
-                var angle = fieldNumber(rotationField, 0)
+                var angle = fieldNumber(downRotationField, 0)
                 var downOffsetX = fieldNumber(downOffsetXField, 0)
                 var downOffsetY = fieldNumber(downOffsetYField, 0)
                 var downWidth = Math.max(1, fieldNumber(downWidthField, 160))
                 var downHeight = Math.max(1, fieldNumber(downHeightField, 100))
 
-                roiManager.RemoveRoisByType("DownROI")
-                roiManager.AddOffsetRoi("DownROI",
+                roiManager.AddOffsetRoi("DownOffsetROI",
                                         offsetBaseX,
                                         offsetBaseY,
                                         downOffsetX,
@@ -171,7 +225,8 @@ Page {
                 if (!roiManager)
                     return
 
-                var angle = fieldNumber(rotationField, 0)
+                var topAngle = fieldNumber(topRotationField, 0)
+                var downAngle = fieldNumber(downRotationField, 0)
                 var topOffsetX = fieldNumber(topOffsetXField, 0)
                 var topOffsetY = fieldNumber(topOffsetYField, 0)
                 var topWidth = Math.max(1, fieldNumber(topWidthField, 160))
@@ -181,23 +236,23 @@ Page {
                 var downWidth = Math.max(1, fieldNumber(downWidthField, 160))
                 var downHeight = Math.max(1, fieldNumber(downHeightField, 100))
 
-                roiManager.AddOffsetRoi("TopROI",
+                roiManager.AddOffsetRoi("TopOffsetROI",
                                         offsetBaseX,
                                         offsetBaseY,
                                         topOffsetX,
                                         topOffsetY,
                                         topWidth,
                                         topHeight,
-                                        angle,
+                                        topAngle,
                                         "#1677ff")
-                roiManager.AddOffsetRoi("DownROI",
+                roiManager.AddOffsetRoi("DownOffsetROI",
                                         offsetBaseX,
                                         offsetBaseY,
                                         downOffsetX,
                                         downOffsetY,
                                         downWidth,
                                         downHeight,
-                                        angle,
+                                        downAngle,
                                         "#22c55e")
                 statusLabel.text = "已创建TopROI/DownROI偏移组"
             }
@@ -206,6 +261,7 @@ Page {
                 if (!roiManager)
                     return
 
+                roiManager.SetHalconParams(halconParamMap())
                 var result = roiManager.ExecuteHalcon(localFilePath(roiPage.imageSource))
                 if (result.ok) {
                     roiPage.offsetBaseX = result.baseX
@@ -213,6 +269,18 @@ Page {
                 }
 
                 statusLabel.text = result.message
+            }
+
+            Component.onCompleted: {
+                if (roiManager)
+                    Qt.callLater(function() {
+                        if (pageAlive && roiManager)
+                            setHalconParamFields(roiManager.GetHalconParams())
+                    })
+            }
+
+            Component.onDestruction: {
+                pageAlive = false
             }
 
             background: Rectangle {
@@ -262,51 +330,59 @@ Page {
                 spacing: 0
 
                 Rectangle {
-                    Layout.preferredWidth: 240
+                    Layout.preferredWidth: roiPage.sidePanelWidth
+                    Layout.minimumWidth: 280
+                    Layout.maximumWidth: 520
                     Layout.fillHeight: true
                     color: "#2b2b2b"
 
-                    ColumnLayout {
+                    ScrollView {
                         anchors.fill: parent
                         anchors.margins: 14
-                        spacing: 12
+                        clip: true
+                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                        ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
-                        Label {
-                            text: "ROI类型"
-                            color: "#ffffff"
-                            font.pixelSize: 14
-                            font.bold: true
-                        }
+                        ColumnLayout {
+                            width: parent.availableWidth
+                            spacing: 12
 
-                        ComboBox {
-                            id: roiTypeBox
-                            Layout.fillWidth: true
-                            textRole: "label"
-
-                            model: ListModel {
-                                id: roiTypeModel
-                                ListElement { label: "TopROI"; roiType: "TopROI"; roiColor: "#1677ff" }
-                                ListElement { label: "DownROI"; roiType: "DownROI"; roiColor: "#22c55e" }
+                            Label {
+                                text: "ROI类型"
+                                color: "#ffffff"
+                                font.pixelSize: 14
+                                font.bold: true
                             }
-                        }
 
-                        Button {
-                            Layout.fillWidth: true
-                            text: "加载图片"
-                            onClicked: imageDialog.open()
-                        }
+                            ComboBox {
+                                id: roiTypeBox
+                                Layout.fillWidth: true
+                                textRole: "label"
 
-                        Button {
-                            Layout.fillWidth: true
-                            text: "添加"
-                            onClicked: roiPage.addRoi()
-                        }
+                                model: ListModel {
+                                    id: roiTypeModel
+                                    ListElement { label: "TopROI"; roiType: "TopROI"; roiColor: "#1677ff" }
+                                    ListElement { label: "DownROI"; roiType: "DownROI"; roiColor: "#22c55e" }
+                                }
+                            }
 
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 1
-                            color: "#3f3f46"
-                        }
+                            Button {
+                                Layout.fillWidth: true
+                                text: "加载图片"
+                                onClicked: imageDialog.open()
+                            }
+
+                            Button {
+                                Layout.fillWidth: true
+                                text: "添加"
+                                onClicked: roiPage.addRoi()
+                            }
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 1
+                                color: "#3f3f46"
+                            }
 
                         Label {
                             text: "偏移创建"
@@ -439,8 +515,15 @@ Page {
                                 font.pixelSize: 12
                             }
                             TextField {
-                                id: rotationField
-                                Layout.columnSpan: 2
+                                id: topRotationField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "0"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+                            TextField {
+                                id: downRotationField
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 30
                                 text: "0"
@@ -465,6 +548,56 @@ Page {
                             Layout.fillWidth: true
                             text: "执行halcond"
                             onClicked: roiPage.executeHalcon()
+                        }
+
+                        Label {
+                            text: "HALCON Params"
+                            color: "#ffffff"
+                            font.pixelSize: 14
+                            font.bold: true
+                        }
+
+                        GridLayout {
+                            Layout.fillWidth: true
+                            columns: 3
+                            columnSpacing: 8
+                            rowSpacing: 6
+
+                            Label { text: "param"; color: "#94a3b8"; font.pixelSize: 12 }
+                            Label { text: "min"; color: "#94a3b8"; font.pixelSize: 12 }
+                            Label { text: "max"; color: "#94a3b8"; font.pixelSize: 12 }
+
+                            Label { text: "Top th"; color: "#d1d5db"; font.pixelSize: 12 }
+                            TextField { id: topThresholdMinField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "0"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+                            TextField { id: topThresholdMaxField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "240"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+
+                            Label { text: "Down th"; color: "#d1d5db"; font.pixelSize: 12 }
+                            TextField { id: downThresholdMinField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "0"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+                            TextField { id: downThresholdMaxField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "240"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+
+                            Label { text: "Top ratio"; color: "#d1d5db"; font.pixelSize: 12 }
+                            TextField { id: topRatioMinField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "0"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+                            TextField { id: topRatioMaxField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "3"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+
+                            Label { text: "Top h"; color: "#d1d5db"; font.pixelSize: 12 }
+                            TextField { id: topHeightMinField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "1"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+                            TextField { id: topHeightMaxField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "20"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+
+                            Label { text: "Top w"; color: "#d1d5db"; font.pixelSize: 12 }
+                            TextField { id: topWidthMinField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "30"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+                            TextField { id: topWidthMaxField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "300"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+
+                            Label { text: "Down ratio"; color: "#d1d5db"; font.pixelSize: 12 }
+                            TextField { id: downRatioMinField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "3"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+                            TextField { id: downRatioMaxField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "40"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+
+                            Label { text: "Down h"; color: "#d1d5db"; font.pixelSize: 12 }
+                            TextField { id: downHeightMinField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "90"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+                            TextField { id: downHeightMaxField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "2000"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+
+                            Label { text: "Down w"; color: "#d1d5db"; font.pixelSize: 12 }
+                            TextField { id: downWidthMinField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "1"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
+                            TextField { id: downWidthMaxField; Layout.fillWidth: true; Layout.preferredHeight: 28; text: "15"; selectByMouse: true; inputMethodHints: Qt.ImhFormattedNumbersOnly }
                         }
 
                         Rectangle {
@@ -500,6 +633,38 @@ Page {
                     }
                 }
 
+                    Rectangle {
+                        width: 6
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        color: resizeMouseArea.containsMouse || resizeMouseArea.pressed ? "#64748b" : "transparent"
+
+                        MouseArea {
+                            id: resizeMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.SizeHorCursor
+
+                            property real pressX: 0
+                            property real startWidth: 0
+
+                            onPressed: function(mouse) {
+                                pressX = mouse.x
+                                startWidth = roiPage.sidePanelWidth
+                            }
+
+                            onPositionChanged: function(mouse) {
+                                if (!pressed)
+                                    return
+
+                                var nextWidth = startWidth + mouse.x - pressX
+                                roiPage.sidePanelWidth = Math.max(280, Math.min(520, nextWidth))
+                            }
+                        }
+                    }
+                }
+
                 ImageCanvas {
                     id: imageCanvas
                     Layout.fillWidth: true
@@ -526,6 +691,7 @@ Page {
                     if (!roiPage.roiManager)
                         return
                     var path = roiPage.jsonPath(selectedFile)
+                    roiPage.roiManager.SetHalconParams(roiPage.halconParamMap())
                     statusLabel.text = roiPage.roiManager.SaveToJson(path)
                                      ? "已保存: " + path
                                      : "保存失败: " + path
@@ -542,6 +708,7 @@ Page {
                         return
                     var path = roiPage.localFilePath(selectedFile)
                     if (roiPage.roiManager.LoadFromJson(path)) {
+                        roiPage.setHalconParamFields(roiPage.roiManager.GetHalconParams())
                         var applied = mainViewModel.ApplyRoiConfig(roiPage.cameraIndex)
                         statusLabel.text = applied
                                          ? "已读取并应用: " + path

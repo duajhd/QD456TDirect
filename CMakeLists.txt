@@ -83,6 +83,18 @@ target_link_libraries(appQT456TDirect
 
 )
 
+set(RM_RUNTIME_DLLS
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/RM/libs/librockmong.dll
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/RM/libs/libusb-1.0.dll
+)
+
+add_custom_command(TARGET appQT456TDirect POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${RM_RUNTIME_DLLS}
+            $<TARGET_FILE_DIR:appQT456TDirect>
+    COMMENT "Copying RM runtime DLLs"
+)
+
 include(GNUInstallDirs)
 install(TARGETS appQT456TDirect
     BUNDLE DESTINATION .

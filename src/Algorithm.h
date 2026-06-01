@@ -1,6 +1,8 @@
 #ifndef ALGORITHM_H
 #define ALGORITHM_H
 
+#include "DetectionRoiConfig.h"
+
 #include <HalconCpp.h>
 
 namespace VisionAlgorithm {
@@ -19,6 +21,9 @@ DirectionResult DirectionRecognize(const HalconCpp::HObject& image,
                                    int offsetY,
                                    int offsetXDown,
                                    int offsetYDown,
+                                   double topOffsetRotationDeg,
+                                   double downOffsetRotationDeg,
+                                   const DetectionAlgorithmParams& params,
                                    int dropThres);
 
 }

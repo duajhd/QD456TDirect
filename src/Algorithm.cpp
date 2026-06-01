@@ -12,6 +12,9 @@ DirectionResult DirectionRecognize(const HObject& image,
                                    int offsetY,
                                    int offsetXDown,
                                    int offsetYDown,
+                                   double topOffsetRotationDeg,
+                                   double downOffsetRotationDeg,
+                                   const DetectionAlgorithmParams& params,
                                    int dropThres)
 {
     try {
@@ -30,8 +33,8 @@ DirectionResult DirectionRecognize(const HObject& image,
         ReduceDomain(image, topRectangle, &topReducedDomain);
         ReduceDomain(image, downRectangle, &downReducedDomain);
 
-        Threshold(topReducedDomain, &topRegion, 0, 170);
-        Threshold(downReducedDomain, &downRegion, 0, 170);
+        Threshold(topReducedDomain, &topRegion, params.topThresholdMin, params.topThresholdMax);
+        Threshold(downReducedDomain, &downRegion, params.downThresholdMin, params.downThresholdMax);
 
         Connection(topRegion, &topConnectedRegion);
         Connection(downRegion, &downConnectedRegion);
@@ -40,15 +43,15 @@ DirectionResult DirectionRecognize(const HObject& image,
                     &topSelectedRegion,
                     HTuple("ratio").Append("height").Append("width"),
                     "and",
-                    HTuple(0).Append(1).Append(30),
-                    HTuple(3).Append(20).Append(300));
+                    HTuple(params.topRatioMin).Append(params.topHeightMin).Append(params.topWidthMin),
+                    HTuple(params.topRatioMax).Append(params.topHeightMax).Append(params.topWidthMax));
 
         SelectShape(downConnectedRegion,
                     &downSelectedRegion,
                     HTuple("ratio").Append("height").Append("width"),
                     "and",
-                    HTuple(3).Append(90).Append(1),
-                    HTuple(40).Append(2000).Append(15));
+                    HTuple(params.downRatioMin).Append(params.downHeightMin).Append(params.downWidthMin),
+                    HTuple(params.downRatioMax).Append(params.downHeightMax).Append(params.downWidthMax));
 
         CountObj(topSelectedRegion, &topNumber);
         CountObj(downSelectedRegion, &downNumber);
@@ -66,11 +69,21 @@ DirectionResult DirectionRecognize(const HObject& image,
 
 
 
-        // 如果你这里不是 10 度而是水平矩形，应改成 0.0
-        const double phi = 10.0 * 3.14159265358979323846 / 180.0;
+        const double topPhi = topOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+        const double downPhi = downOffsetRotationDeg * 3.14159265358979323846 / 180.0;
 
-        GenRectangle2(&genTopRegion,  refRow + offsetX,  refCol+offsetY + 365.0, phi, 90.0, 25.0);
-        GenRectangle2(&genDownRegion, refRow + offsetXDown, refCol + offsetYDown, phi, 90.0, 25.0);
+        GenRectangle2(&genTopRegion,
+                      refRow + offsetX,
+                      refCol + offsetY + params.inspectTopColumnOffset,
+                      topPhi,
+                      params.inspectRectHalfWidth,
+                      params.inspectRectHalfHeight);
+        GenRectangle2(&genDownRegion,
+                      refRow + offsetXDown,
+                      refCol + offsetYDown,
+                      downPhi,
+                      params.inspectRectHalfWidth,
+                      params.inspectRectHalfHeight);
 
         Intensity(genTopRegion, image, &meanTop, &topDeviation);
         Intensity(genDownRegion, image, &meanDown, &downDeviation);

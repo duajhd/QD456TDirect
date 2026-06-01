@@ -8,6 +8,7 @@ CameraViewModel::CameraViewModel(int width,
                                  QString serialNum,
                                  int channel,
                                  int cameraIndex,
+                                 const DetectionAlgorithmParams& algorithmParams,
                                  moodycamel::ReaderWriterQueue<int>* dropQueue,
                                  QObject* parent)
     : QObject(parent),
@@ -18,6 +19,7 @@ CameraViewModel::CameraViewModel(int width,
       m_serialNum(serialNum),
       m_dropQueue(dropQueue)
 {
+    m_detectionConfig.algorithmParams = algorithmParams;
 }
 
 CameraViewModel::~CameraViewModel()

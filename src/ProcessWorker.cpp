@@ -79,6 +79,9 @@ void ProcessWorker::StartWork()
                                                 config.top.offsetY,
                                                 config.down.offsetX,
                                                 config.down.offsetY,
+                                                config.top.offsetRotation,
+                                                config.down.offsetRotation,
+                                                config.algorithmParams,
                                                 config.dropThres);
 
         if (result == VisionAlgorithm::DirectionResult::Reject && m_dropQueue) {
