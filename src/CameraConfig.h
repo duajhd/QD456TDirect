@@ -8,5 +8,7 @@ struct CameraConfig
     int imageWidth = 0;
     int imageHeight = 0;
     int channel = 1;   // 默认单通道灰度
+    double exposureTime = 500.0;
+    double gain = 15.0;
 };
 #endif // CAMERACONFIG_H

@@ -42,6 +42,7 @@ public:
                                       double offsetY,
                                       double width,
                                       double height,
+                                      double circleRadius,
                                       double angle,
                                       const QString& color);
 
@@ -58,6 +59,7 @@ public:
     Q_INVOKABLE QVariantMap ExecuteHalcon(const QString& imagePath);
     Q_INVOKABLE QVariantMap GetHalconParams() const;
     Q_INVOKABLE void SetHalconParams(const QVariantMap& params);
+    Q_INVOKABLE void AppendRoiDebugReport(const QString& message) const;
     DetectionAlgorithmParams GetAlgorithmParams() const;
     void SetAlgorithmParams(const DetectionAlgorithmParams& params);
 

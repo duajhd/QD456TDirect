@@ -32,11 +32,13 @@ SOURCES src/MainViewWindow.cpp
 SOURCES src/Algorithm.h
 
 SOURCES src/Algorithm.cpp
+SOURCES src/AppLogger.h src/AppLogger.cpp
 #QML_FILES qml/components/CameraTile.qml
 #QML_FILES qml/pages/DashboardPage.qml
 QML_FILES qml/theme/theme.qml
 QML_FILES qml/components/CameraTile.qml qml/pages/DashboardPage.qml
 QML_FILES qml/components/RoiItem.qml
+QML_FILES qml/components/RoiRegionItem.qml
 QML_FILES qml/components/ImageCanvas.qml
 SOURCES
 SOURCES
@@ -60,7 +62,16 @@ set_target_properties(appQT456TDirect PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
+target_compile_definitions(appQT456TDirect PRIVATE NOMINMAX)
 target_include_directories(appQT456TDirect PRIVATE
+    ${Qt6_DIR}/../../../include/QtCore/6.8.3
+    ${Qt6_DIR}/../../../include/QtCore/6.8.3/QtCore
+    ${Qt6_DIR}/../../../include/QtGui/6.8.3
+    ${Qt6_DIR}/../../../include/QtGui/6.8.3/QtGui
+    ${Qt6_DIR}/../../../include/QtQml/6.8.3
+    ${Qt6_DIR}/../../../include/QtQml/6.8.3/QtQml
+    ${Qt6_DIR}/../../../include/QtQuick/6.8.3
+    ${Qt6_DIR}/../../../include/QtQuick/6.8.3/QtQuick
     ${CMAKE_SOURCE_DIR}/third_party/HikCamera/includes
     ${CMAKE_SOURCE_DIR}/third_party/halcon/includes
     ${CMAKE_SOURCE_DIR}/third_party/halcon/includes/hlib

@@ -12,6 +12,8 @@ DirectionResult DirectionRecognize(const HObject& image,
                                    int offsetY,
                                    int offsetXDown,
                                    int offsetYDown,
+                                   double topOffsetCircleRadius,
+                                   double downOffsetCircleRadius,
                                    double topOffsetRotationDeg,
                                    double downOffsetRotationDeg,
                                    const DetectionAlgorithmParams& params,
@@ -23,6 +25,8 @@ DirectionResult DirectionRecognize(const HObject& image,
         HObject topConnectedRegion, downConnectedRegion;
         HObject topSelectedRegion, downSelectedRegion;
         HObject genTopRegion, genDownRegion;
+        HObject topCircle, downCircle;
+        HObject topDiff, downDiff;
 
         HTuple topNumber, downNumber;
         HTuple topArea, topRow, topColumn;
@@ -85,8 +89,20 @@ DirectionResult DirectionRecognize(const HObject& image,
                       params.inspectRectHalfWidth,
                       params.inspectRectHalfHeight);
 
-        Intensity(genTopRegion, image, &meanTop, &topDeviation);
-        Intensity(genDownRegion, image, &meanDown, &downDeviation);
+        GenCircle(&topCircle,
+                  refRow + offsetX,
+                  refCol + offsetY + params.inspectTopColumnOffset,
+                  topOffsetCircleRadius);
+        GenCircle(&downCircle,
+                  refRow + offsetXDown,
+                  refCol + offsetYDown,
+                  downOffsetCircleRadius);
+
+        Difference(genTopRegion, topCircle, &topDiff);
+        Difference(genDownRegion, downCircle, &downDiff);
+
+        Intensity(topDiff, image, &meanTop, &topDeviation);
+        Intensity(downDiff, image, &meanDown, &downDeviation);
 
         if (std::abs(topDeviation[0].D() - downDeviation[0].D()) > dropThres) {
             return DirectionResult::Reject;

@@ -1,8 +1,14 @@
 #include "RoiManager.h"
+#include "AppLogger.h"
 #include <HalconCpp.h>
 #include <QUrl>
 #include <QUuid>
 #include <QtMath>
+#include <QVariantList>
+#include <QDebug>
+#include <QDateTime>
+#include <QTextStream>
+#include <algorithm>
 #include <cmath>
 
 namespace {
@@ -127,6 +133,99 @@ void GenRectangleFromRoi(RoiData* roi, HalconCpp::HObject* rectangle)
                              roi->GetRoiHeight() * 0.5);
 }
 
+QVariantList OffsetDifferenceRegionRuns(double centerX,
+                                        double centerY,
+                                        double width,
+                                        double height,
+                                        double circleRadius,
+                                        double angle)
+{
+    QVariantList runs;
+    if (width <= 0.0 || height <= 0.0 || circleRadius <= 0.0) {
+        AppLogger::appendRoiReport(QString("OffsetDifferenceRegionRuns invalid size center=(%1,%2) size=(%3,%4) radius=%5 angle=%6")
+                                       .arg(centerX)
+                                       .arg(centerY)
+                                       .arg(width)
+                                       .arg(height)
+                                       .arg(circleRadius)
+                                       .arg(angle));
+        qWarning() << "OffsetDifferenceRegionRuns invalid size"
+                   << "centerX" << centerX
+                   << "centerY" << centerY
+                   << "width" << width
+                   << "height" << height
+                   << "circleRadius" << circleRadius
+                   << "angle" << angle;
+        return runs;
+    }
+
+    try {
+        using namespace HalconCpp;
+
+        HObject rectangle;
+        HObject circle;
+        HObject difference;
+        HTuple rows;
+        HTuple columnsBegin;
+        HTuple columnsEnd;
+
+        GenRectangle2(&rectangle,
+                      centerY,
+                      centerX,
+                      qDegreesToRadians(angle),
+                      width * 0.5,
+                      height * 0.5);
+        GenCircle(&circle, centerY, centerX, circleRadius);
+        Difference(rectangle, circle, &difference);
+        GetRegionRuns(difference, &rows, &columnsBegin, &columnsEnd);
+
+        const Hlong runCount = rows.Length();
+        runs.reserve(static_cast<qsizetype>(runCount));
+        for (Hlong i = 0; i < runCount; ++i) {
+            QVariantList run;
+            run.reserve(3);
+            run.append(rows[i].D());
+            run.append(columnsBegin[i].D());
+            run.append(columnsEnd[i].D());
+            runs.append(QVariant::fromValue(run));
+        }
+        qDebug() << "OffsetDifferenceRegionRuns generated"
+                 << "centerX" << centerX
+                 << "centerY" << centerY
+                 << "width" << width
+                 << "height" << height
+                 << "angle" << angle
+                 << "circleRadius" << circleRadius
+                 << "runCount" << runCount;
+        AppLogger::appendRoiReport(QString("OffsetDifferenceRegionRuns generated center=(%1,%2) size=(%3,%4) angle=%5 circleRadius=%6 runCount=%7")
+                                       .arg(centerX)
+                                       .arg(centerY)
+                                       .arg(width)
+                                       .arg(height)
+                                       .arg(angle)
+                                       .arg(circleRadius)
+                                       .arg(runCount));
+    } catch (const HalconCpp::HException&) {
+        AppLogger::appendRoiReport(QString("OffsetDifferenceRegionRuns HALCON exception center=(%1,%2) size=(%3,%4) radius=%5 angle=%6")
+                                       .arg(centerX)
+                                       .arg(centerY)
+                                       .arg(width)
+                                       .arg(height)
+                                       .arg(circleRadius)
+                                       .arg(angle));
+        qWarning() << "OffsetDifferenceRegionRuns HALCON exception"
+                   << "centerX" << centerX
+                   << "centerY" << centerY
+                   << "width" << width
+                   << "height" << height
+                   << "circleRadius" << circleRadius
+                   << "angle" << angle;
+        runs.clear();
+    }
+
+    return runs;
+}
+
 double ParamDouble(const QVariantMap& params, const QString& key)
 {
     return params.value(key, DefaultHalconParams().value(key)).toDouble();
@@ -156,6 +255,7 @@ QJsonObject RoiToJsonObject(RoiData* roi)
     obj["offsetY"] = roi->GetOffsetY();
     obj["width"] = roi->GetWidth();
     obj["height"] = roi->GetHeight();
+    obj["circleRadius"] = roi->GetCircleRadius();
     obj["color"] = roi->GetColor();
     obj["selected"] = roi->GetSelected();
     return obj;
@@ -182,6 +282,9 @@ QJsonObject CoreRoiToJsonObject(RoiData* roi,
     obj["offsetROIY"] = offsetRoi ? offsetRoi->GetOffsetY() : 0.0;
     obj["offsetWidth"] = offsetRoi ? offsetRoi->GetRoiWidth() : roi->GetRoiWidth();
     obj["offsetHeight"] = offsetRoi ? offsetRoi->GetRoiHeight() : roi->GetRoiHeight();
+    obj["offsetCircleRadius"] = offsetRoi
+        ? offsetRoi->GetCircleRadius()
+        : qMin(roi->GetRoiWidth(), roi->GetRoiHeight()) * 0.5;
     obj["offsetRotation"] = offsetRoi ? offsetRoi->GetAngle() : params.inspectAngleDeg;
 
     obj[prefix + "ThresholdMin"] = isTop ? params.topThresholdMin : params.downThresholdMin;
@@ -326,6 +429,7 @@ RoiData* RoiManager::CreateRoi(const QString& roiType,
     roi->SetOffsetY(0.0);
     roi->SetWidth(roiWidth);
     roi->SetHeight(roiHeight);
+    roi->SetCircleRadius(qMin(roiWidth, roiHeight) * 0.5);
     roi->SetColor(color);
     roi->SetSelected(false);
     return roi;
@@ -338,6 +442,7 @@ RoiData* RoiManager::AddOffsetRoi(const QString& roiType,
                                   double offsetY,
                                   double width,
                                   double height,
+                                  double circleRadius,
                                   double angle,
                                   const QString& color)
 {
@@ -355,7 +460,36 @@ RoiData* RoiManager::AddOffsetRoi(const QString& roiType,
     roi->SetOffsetY(offsetY);
     roi->SetWidth(width);
     roi->SetHeight(height);
+    roi->SetCircleRadius(circleRadius);
     roi->SetColor(color);
+    roi->SetRegionRuns(OffsetDifferenceRegionRuns(roi->GetCenterX(),
+                                                  roi->GetCenterY(),
+                                                  roi->GetRoiWidth(),
+                                                  roi->GetRoiHeight(),
+                                                  roi->GetCircleRadius(),
+                                                  roi->GetAngle()));
+    qDebug() << "AddOffsetRoi report"
+             << "type" << roiType
+             << "centerX" << roi->GetCenterX()
+             << "centerY" << roi->GetCenterY()
+             << "offsetX" << roi->GetOffsetX()
+             << "offsetY" << roi->GetOffsetY()
+             << "width" << roi->GetRoiWidth()
+             << "height" << roi->GetRoiHeight()
+             << "circleRadius" << roi->GetCircleRadius()
+             << "angle" << roi->GetAngle()
+             << "regionRuns" << roi->GetRegionRuns().size();
+    AppLogger::appendRoiReport(QString("AddOffsetRoi type=%1 center=(%2,%3) offset=(%4,%5) size=(%6,%7) radius=%8 angle=%9 regionRuns=%10")
+                                   .arg(roiType)
+                                   .arg(roi->GetCenterX())
+                                   .arg(roi->GetCenterY())
+                                   .arg(roi->GetOffsetX())
+                                   .arg(roi->GetOffsetY())
+                                   .arg(roi->GetRoiWidth())
+                                   .arg(roi->GetRoiHeight())
+                                   .arg(roi->GetCircleRadius())
+                                   .arg(roi->GetAngle())
+                                   .arg(roi->GetRegionRuns().size()));
 
     if (existingIndex < 0) {
         m_offsetRoiList.append(roi);
@@ -639,6 +773,8 @@ bool RoiManager::LoadFromJson(const QString& filePath)
             const double offsetY = JsonDoubleOrDefault(obj, "offsetROIY", JsonDoubleOrDefault(obj, "offsetY", 0.0));
             const double offsetWidth = JsonDoubleOrDefault(obj, "offsetWidth", width);
             const double offsetHeight = JsonDoubleOrDefault(obj, "offsetHeight", height);
+            const double offsetCircleRadius =
+                JsonDoubleOrDefault(obj, "offsetCircleRadius", qMin(offsetWidth, offsetHeight) * 0.5);
             const double offsetRotation = JsonDoubleOrDefault(obj, "offsetRotation", rotation);
 
             RoiData* offsetRoi = CreateRoi(offsetRoiType,
@@ -650,6 +786,13 @@ bool RoiManager::LoadFromJson(const QString& filePath)
                                            color);
             offsetRoi->SetOffsetX(offsetX);
             offsetRoi->SetOffsetY(offsetY);
+            offsetRoi->SetCircleRadius(offsetCircleRadius);
+            offsetRoi->SetRegionRuns(OffsetDifferenceRegionRuns(offsetRoi->GetCenterX(),
+                                                                offsetRoi->GetCenterY(),
+                                                                offsetRoi->GetRoiWidth(),
+                                                                offsetRoi->GetRoiHeight(),
+                                                                offsetRoi->GetCircleRadius(),
+                                                                offsetRoi->GetAngle()));
             m_offsetRoiList.append(offsetRoi);
         };
 
@@ -692,8 +835,19 @@ bool RoiManager::LoadFromJson(const QString& filePath)
             roi->SetOffsetY(obj["offsetY"].toDouble());
             roi->SetWidth(obj.contains("width") ? obj["width"].toDouble() : roi->GetRoiWidth());
             roi->SetHeight(obj.contains("height") ? obj["height"].toDouble() : roi->GetRoiHeight());
+            roi->SetCircleRadius(obj.contains("circleRadius")
+                                     ? obj["circleRadius"].toDouble()
+                                     : qMin(roi->GetRoiWidth(), roi->GetRoiHeight()) * 0.5);
             roi->SetColor(obj["color"].toString());
             roi->SetSelected(obj["selected"].toBool(false));
+            if (targetList == &m_offsetRoiList) {
+                roi->SetRegionRuns(OffsetDifferenceRegionRuns(roi->GetCenterX(),
+                                                              roi->GetCenterY(),
+                                                              roi->GetRoiWidth(),
+                                                              roi->GetRoiHeight(),
+                                                              roi->GetCircleRadius(),
+                                                              roi->GetAngle()));
+            }
 
             targetList->append(roi);
         }
@@ -745,15 +899,26 @@ bool RoiManager::LoadFromJson(const QString& filePath)
             const double centerY = obj.value("centerY").toDouble();
             const double offsetX = obj.value("offsetX").toDouble();
             const double offsetY = obj.value("offsetY").toDouble();
+            const double offsetWidth = obj.value("offsetWidth").toDouble(obj.value("roiWidth").toDouble(obj.value("width").toDouble(1.0)));
+            const double offsetHeight = obj.value("offsetHeight").toDouble(obj.value("roiHeight").toDouble(obj.value("height").toDouble(1.0)));
+            const double offsetCircleRadius = obj.value("offsetCircleRadius").toDouble(
+                obj.value("circleRadius").toDouble(qMin(offsetWidth, offsetHeight) * 0.5));
             RoiData* roi = CreateRoi(roiType,
                                      centerX + offsetX,
                                      centerY + offsetY,
-                                     obj.value("offsetWidth").toDouble(obj.value("roiWidth").toDouble(obj.value("width").toDouble(1.0))),
-                                     obj.value("offsetHeight").toDouble(obj.value("roiHeight").toDouble(obj.value("height").toDouble(1.0))),
+                                     offsetWidth,
+                                     offsetHeight,
                                      obj.value("offsetRotation").toDouble(obj.value("rotation").toDouble()),
                                      color);
             roi->SetOffsetX(offsetX);
             roi->SetOffsetY(offsetY);
+            roi->SetCircleRadius(offsetCircleRadius);
+            roi->SetRegionRuns(OffsetDifferenceRegionRuns(roi->GetCenterX(),
+                                                          roi->GetCenterY(),
+                                                          roi->GetRoiWidth(),
+                                                          roi->GetRoiHeight(),
+                                                          roi->GetCircleRadius(),
+                                                          roi->GetAngle()));
             m_offsetRoiList.append(roi);
         };
 
@@ -799,6 +964,9 @@ bool RoiManager::BuildDetectionConfig(DetectionRoiConfig* config) const
     nextConfig.top.angle = topRoi->GetAngle();
     nextConfig.top.offsetX = static_cast<int>(std::lround(topOffsetRoi ? topOffsetRoi->GetOffsetX() : topRoi->GetOffsetX()));
     nextConfig.top.offsetY = static_cast<int>(std::lround(topOffsetRoi ? topOffsetRoi->GetOffsetY() : topRoi->GetOffsetY()));
+    nextConfig.top.offsetCircleRadius = topOffsetRoi
+        ? topOffsetRoi->GetCircleRadius()
+        : qMin(topRoi->GetRoiWidth(), topRoi->GetRoiHeight()) * 0.5;
     nextConfig.top.offsetRotation = topOffsetRoi ? topOffsetRoi->GetAngle() : nextConfig.algorithmParams.inspectAngleDeg;
 
     nextConfig.down.centerX = downRoi->GetCenterX();
@@ -808,6 +976,9 @@ bool RoiManager::BuildDetectionConfig(DetectionRoiConfig* config) const
     nextConfig.down.angle = downRoi->GetAngle();
     nextConfig.down.offsetX = static_cast<int>(std::lround(downOffsetRoi ? downOffsetRoi->GetOffsetX() : downRoi->GetOffsetX()));
     nextConfig.down.offsetY = static_cast<int>(std::lround(downOffsetRoi ? downOffsetRoi->GetOffsetY() : downRoi->GetOffsetY()));
+    nextConfig.down.offsetCircleRadius = downOffsetRoi
+        ? downOffsetRoi->GetCircleRadius()
+        : qMin(downRoi->GetRoiWidth(), downRoi->GetRoiHeight()) * 0.5;
     nextConfig.down.offsetRotation = downOffsetRoi ? downOffsetRoi->GetAngle() : nextConfig.algorithmParams.inspectAngleDeg;
 
     *config = nextConfig;
@@ -839,6 +1010,11 @@ void RoiManager::SetHalconParams(const QVariantMap& params)
 
     m_halconParams = nextParams;
     emit HalconParamsChanged();
+}
+
+void RoiManager::AppendRoiDebugReport(const QString& message) const
+{
+    AppLogger::appendRoiReport(message);
 }
 
 QVariantMap RoiManager::ExecuteHalcon(const QString& imagePath)

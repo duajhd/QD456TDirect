@@ -33,7 +33,11 @@ private:
     CameraViewModel* m_cameraVm = nullptr;
 
     QMutex m_mutex;
-    QImage m_pendingImage;
+    unsigned char* m_pendingFrameAddr = nullptr;
+    int m_pendingWidth = 0;
+    int m_pendingHeight = 0;
+    int m_pendingBytesPerLine = 0;
+    QImage::Format m_pendingFormat = QImage::Format_Invalid;
 };
 
 #endif // CAMERAFRAMEITEM_H

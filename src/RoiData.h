@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QString>
 #include <QColor>
+#include <QVariantList>
 
 class RoiData : public QObject
 {
@@ -25,9 +26,11 @@ class RoiData : public QObject
     Q_PROPERTY(double offsetY READ GetOffsetY WRITE SetOffsetY NOTIFY RoiChanged)
     Q_PROPERTY(double width READ GetWidth WRITE SetWidth NOTIFY RoiChanged)
     Q_PROPERTY(double height READ GetHeight WRITE SetHeight NOTIFY RoiChanged)
+    Q_PROPERTY(double circleRadius READ GetCircleRadius WRITE SetCircleRadius NOTIFY RoiChanged)
 
     Q_PROPERTY(QString color READ GetColor WRITE SetColor NOTIFY RoiChanged)
     Q_PROPERTY(bool selected READ GetSelected WRITE SetSelected NOTIFY RoiChanged)
+    Q_PROPERTY(QVariantList regionRuns READ GetRegionRuns WRITE SetRegionRuns NOTIFY RoiChanged)
 
 public:
     explicit RoiData(QObject* parent = nullptr);
@@ -68,11 +71,17 @@ public:
     double GetHeight() const;
     void SetHeight(double value);
 
+    double GetCircleRadius() const;
+    void SetCircleRadius(double value);
+
     QString GetColor() const;
     void SetColor(const QString& value);
 
     bool GetSelected() const;
     void SetSelected(bool value);
+
+    QVariantList GetRegionRuns() const;
+    void SetRegionRuns(const QVariantList& value);
 
 signals:
     void RoiChanged();
@@ -91,7 +100,9 @@ private:
     double m_offsetY;
     double m_width;
     double m_height;
+    double m_circleRadius;
 
     QString m_color;
     bool m_selected;
+    QVariantList m_regionRuns;
 };

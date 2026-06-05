@@ -79,6 +79,8 @@ void ProcessWorker::StartWork()
                                                 config.top.offsetY,
                                                 config.down.offsetX,
                                                 config.down.offsetY,
+                                                config.top.offsetCircleRadius,
+                                                config.down.offsetCircleRadius,
                                                 config.top.offsetRotation,
                                                 config.down.offsetRotation,
                                                 config.algorithmParams,

@@ -1,4 +1,4 @@
-import QtQuick
+﻿import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import AppItems 1.0
@@ -83,36 +83,8 @@ Rectangle {
             CameraFrameItem {
                 anchors.fill: parent
                 cameraVm: root.cameraVm
-              //  keepAspect: true
             }
 
-            Rectangle {
-                anchors.left: parent.left
-                anchors.bottom: parent.bottom
-                anchors.margins: 10
-                radius: 8
-                color: "#66000000"
-                border.color: "#33ffffff"
-                implicitWidth: 170
-                implicitHeight: 34
-
-                Row {
-                    anchors.centerIn: parent
-                    spacing: 10
-
-                    Text {
-                        text: cameraVm ? ("Frame: " + cameraVm.frameId) : "Frame: -"
-                        color: "white"
-                        font.pixelSize: 12
-                    }
-
-                    Text {
-                        text: cameraVm ? (cameraVm.width + "×" + cameraVm.height) : "0×0"
-                        color: "#d1d5db"
-                        font.pixelSize: 12
-                    }
-                }
-            }
 
             Rectangle {
                 anchors.right: parent.right

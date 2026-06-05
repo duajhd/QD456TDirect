@@ -76,6 +76,8 @@ bool ConfigReader::loadCameraConfig(const QString& filePath,
         cfg.imageWidth = obj.value("imageWidth").toInt();
         cfg.imageHeight = obj.value("imageHeight").toInt();
         cfg.channel = obj.contains("channel") ? obj.value("channel").toInt(1) : 1;
+        cfg.exposureTime = JsonDoubleOrDefault(obj, "exposureTime", cfg.exposureTime);
+        cfg.gain = JsonDoubleOrDefault(obj, "gain", cfg.gain);
 
         if (cfg.serialNumber.isEmpty()) {
             if (errorString) {
@@ -93,6 +95,14 @@ bool ConfigReader::loadCameraConfig(const QString& filePath,
 
         if (cfg.channel <= 0) {
             cfg.channel = 1;
+        }
+
+        if (cfg.exposureTime <= 0.0) {
+            cfg.exposureTime = 500.0;
+        }
+
+        if (cfg.gain < 0.0) {
+            cfg.gain = 15.0;
         }
 
         cameras.append(cfg);

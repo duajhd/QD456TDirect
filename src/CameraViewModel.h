@@ -13,6 +13,9 @@
 class CameraViewModel: public QObject{
     Q_OBJECT
     Q_PROPERTY(QString name READ name CONSTANT)
+    Q_PROPERTY(QString serialNumber READ serialNumber CONSTANT)
+    Q_PROPERTY(double exposureTime READ exposureTime NOTIFY cameraParametersChanged)
+    Q_PROPERTY(double gain READ gain NOTIFY cameraParametersChanged)
     Q_PROPERTY(QString statusText READ statusText NOTIFY statusTextChanged)
     Q_PROPERTY(int frameId READ frameId NOTIFY frameIdChanged)
     Q_PROPERTY(int width READ width CONSTANT)
@@ -25,6 +28,8 @@ public:
                              QString serialNum,
                              int channel,
                              int cameraIndex,
+                             double exposureTime,
+                             double gain,
                              const DetectionAlgorithmParams& algorithmParams,
                              moodycamel::ReaderWriterQueue<int>* dropQueue,
                              QObject* parent = nullptr);
@@ -44,8 +49,8 @@ private:
     bool m_initialize = false;
     bool m_started = false;
     int m_frameId = -1;
-    float m_exposureTime = 5000.0f;
-    float m_gain = 1.0f;
+    float m_exposureTime = 500.0f;
+    float m_gain = 15.0f;
     DetectionRoiConfig m_detectionConfig;
     QString m_statusText = QStringLiteral("未连接");
 
@@ -64,6 +69,7 @@ public:
      void frameUpdated(int frameId);
      void statusTextChanged();
      void frameIdChanged();
+     void cameraParametersChanged();
 
 
 public:
@@ -78,6 +84,9 @@ public:
     int imageHeight() const { return m_height; }
     int channel() const { return m_channel; }
     QString name() const;
+    QString serialNumber() const;
+    double exposureTime() const;
+    double gain() const;
     QString statusText() const;
     int frameId() const;
     int width() const;

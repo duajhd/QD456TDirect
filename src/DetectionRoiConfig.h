@@ -10,6 +10,7 @@ struct DetectionRoiShape
     double angle = 0.0;
     int offsetX = 0;
     int offsetY = 0;
+    double offsetCircleRadius = 0.0;
     double offsetRotation = 0.0;
 };
 

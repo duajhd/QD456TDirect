@@ -1,4 +1,4 @@
-import QtQuick
+﻿import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
@@ -8,6 +8,32 @@ import "../theme"
 Page {
     id: root
     property var stackViewRef: null
+    property var cameraOptions: [
+        cameraOptionText(0),
+        cameraOptionText(1),
+        cameraOptionText(2),
+        cameraOptionText(3)
+    ]
+
+    function cameraOptionText(index) {
+        var camera = mainViewModel.getCamera(index)
+        if (!camera)
+            return "相机" + (index + 1)
+        return camera.name + " - " + camera.serialNumber
+    }
+
+    function syncCameraParameterFields() {
+        var index = cameraSelectBox.currentIndex
+        if (index < 0)
+            index = 0
+
+        var camera = mainViewModel.getCamera(index)
+        if (!camera)
+            return
+
+        exposureField.text = String(camera.exposureTime)
+        gainField.text = String(camera.gain)
+    }
 
     function applyCameraSettings() {
         var index = cameraSelectBox.currentIndex
@@ -184,18 +210,27 @@ Page {
                 var topOffsetY = fieldNumber(topOffsetYField, 0)
                 var topWidth = Math.max(1, fieldNumber(topWidthField, 160))
                 var topHeight = Math.max(1, fieldNumber(topHeightField, 100))
+                var topCircleRadius = Math.max(1, fieldNumber(topCircleRadiusField, Math.min(topWidth, topHeight) * 0.5))
 
-                roiManager.AddOffsetRoi("TopOffsetROI",
-                                        offsetBaseX,
-                                        offsetBaseY,
-                                        topOffsetX,
-                                        topOffsetY,
-                                        topWidth,
-                                        topHeight,
-                                        angle,
-                                        "#1677ff")
+                var roi = roiManager.AddOffsetRoi("TopOffsetROI",
+                                                  offsetBaseX,
+                                                  offsetBaseY,
+                                                  topOffsetX,
+                                                  topOffsetY,
+                                                  topWidth,
+                                                  topHeight,
+                                                  topCircleRadius,
+                                                  angle,
+                                                  "#1677ff")
                 var applied = mainViewModel.ApplyRoiConfig(roiPage.cameraIndex)
-                statusLabel.text = applied ? "已创建并应用TopROI偏移" : "已创建TopROI偏移"
+                var runs = roi && roi.regionRuns ? roi.regionRuns.length : -1
+                var report = "TopROI偏移报告 runs=" + runs
+                           + " center=(" + (roi ? roi.centerX.toFixed(1) : "-") + ", " + (roi ? roi.centerY.toFixed(1) : "-") + ")"
+                           + " size=(" + topWidth + ", " + topHeight + ")"
+                           + " radius=" + topCircleRadius
+                           + " angle=" + angle
+                roiManager.AppendRoiDebugReport(report)
+                statusLabel.text = applied ? report + " 已应用" : report + " 未应用"
             }
 
             function createDownOffsetRoi() {
@@ -207,18 +242,27 @@ Page {
                 var downOffsetY = fieldNumber(downOffsetYField, 0)
                 var downWidth = Math.max(1, fieldNumber(downWidthField, 160))
                 var downHeight = Math.max(1, fieldNumber(downHeightField, 100))
+                var downCircleRadius = Math.max(1, fieldNumber(downCircleRadiusField, Math.min(downWidth, downHeight) * 0.5))
 
-                roiManager.AddOffsetRoi("DownOffsetROI",
-                                        offsetBaseX,
-                                        offsetBaseY,
-                                        downOffsetX,
-                                        downOffsetY,
-                                        downWidth,
-                                        downHeight,
-                                        angle,
-                                        "#22c55e")
+                var roi = roiManager.AddOffsetRoi("DownOffsetROI",
+                                                  offsetBaseX,
+                                                  offsetBaseY,
+                                                  downOffsetX,
+                                                  downOffsetY,
+                                                  downWidth,
+                                                  downHeight,
+                                                  downCircleRadius,
+                                                  angle,
+                                                  "#22c55e")
                 var applied = mainViewModel.ApplyRoiConfig(roiPage.cameraIndex)
-                statusLabel.text = applied ? "已创建并应用DownROI偏移" : "已创建DownROI偏移"
+                var runs = roi && roi.regionRuns ? roi.regionRuns.length : -1
+                var report = "DownROI偏移报告 runs=" + runs
+                           + " center=(" + (roi ? roi.centerX.toFixed(1) : "-") + ", " + (roi ? roi.centerY.toFixed(1) : "-") + ")"
+                           + " size=(" + downWidth + ", " + downHeight + ")"
+                           + " radius=" + downCircleRadius
+                           + " angle=" + angle
+                roiManager.AppendRoiDebugReport(report)
+                statusLabel.text = applied ? report + " 已应用" : report + " 未应用"
             }
 
             function createOffsetRoi() {
@@ -231,10 +275,12 @@ Page {
                 var topOffsetY = fieldNumber(topOffsetYField, 0)
                 var topWidth = Math.max(1, fieldNumber(topWidthField, 160))
                 var topHeight = Math.max(1, fieldNumber(topHeightField, 100))
+                var topCircleRadius = Math.max(1, fieldNumber(topCircleRadiusField, Math.min(topWidth, topHeight) * 0.5))
                 var downOffsetX = fieldNumber(downOffsetXField, 0)
                 var downOffsetY = fieldNumber(downOffsetYField, 0)
                 var downWidth = Math.max(1, fieldNumber(downWidthField, 160))
                 var downHeight = Math.max(1, fieldNumber(downHeightField, 100))
+                var downCircleRadius = Math.max(1, fieldNumber(downCircleRadiusField, Math.min(downWidth, downHeight) * 0.5))
 
                 roiManager.AddOffsetRoi("TopOffsetROI",
                                         offsetBaseX,
@@ -243,6 +289,7 @@ Page {
                                         topOffsetY,
                                         topWidth,
                                         topHeight,
+                                        topCircleRadius,
                                         topAngle,
                                         "#1677ff")
                 roiManager.AddOffsetRoi("DownOffsetROI",
@@ -252,6 +299,7 @@ Page {
                                         downOffsetY,
                                         downWidth,
                                         downHeight,
+                                        downCircleRadius,
                                         downAngle,
                                         "#22c55e")
                 statusLabel.text = "已创建TopROI/DownROI偏移组"
@@ -505,6 +553,28 @@ Page {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 30
                                 text: "100"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+
+                            Label {
+                                text: "circle radius"
+                                color: "#d1d5db"
+                                font.pixelSize: 12
+                            }
+                            TextField {
+                                id: topCircleRadiusField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "50"
+                                selectByMouse: true
+                                inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            }
+                            TextField {
+                                id: downCircleRadiusField
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                text: "50"
                                 selectByMouse: true
                                 inputMethodHints: Qt.ImhFormattedNumbersOnly
                             }
@@ -874,12 +944,9 @@ Page {
                         Layout.preferredWidth: 220
                         Layout.preferredHeight: 32
 
-                        model: [
-                            "相机1 - SN001",
-                            "相机2 - SN002",
-                            "相机3 - SN003",
-                            "相机4 - SN004"
-                        ]
+                        model: root.cameraOptions
+                        Component.onCompleted: root.syncCameraParameterFields()
+                        onCurrentIndexChanged: root.syncCameraParameterFields()
 
                         background: Rectangle {
                             radius: 6
@@ -928,7 +995,7 @@ Page {
                         id: exposureField
                         Layout.preferredWidth: 120
                         Layout.preferredHeight: 32
-                        text: "5000"
+                        text: "500"
                         selectByMouse: true
                         inputMethodHints: Qt.ImhFormattedNumbersOnly
                         padding: 0
@@ -963,7 +1030,7 @@ Page {
                         id: gainField
                         Layout.preferredWidth: 120
                         Layout.preferredHeight: 32
-                        text: "1.0"
+                        text: "15"
                         selectByMouse: true
                         inputMethodHints: Qt.ImhFormattedNumbersOnly
                         padding: 0

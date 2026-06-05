@@ -3,9 +3,11 @@
 #include <QQmlContext>
 #include <RoiData.h>
 #include <MainViewWindow.h>
+#include <AppLogger.h>
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    AppLogger::install();
   qmlRegisterType<CameraFrameItem>("AppItems", 1, 0, "CameraFrameItem");
     qmlRegisterUncreatableType<RoiData>("MyApp", 1, 0, "RoiData", "Created by RoiManager only");
      MianViewModel mVM;

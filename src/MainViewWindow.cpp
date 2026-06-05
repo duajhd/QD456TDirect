@@ -55,6 +55,8 @@ void MianViewModel::Initialize(){
                                        cfg.serialNumber,
                                        cfg.channel,
                                        i,
+                                       cfg.exposureTime,
+                                       cfg.gain,
                                        m_algorithmParams,
                                        m_dropQueue.get(),
                                        this);
@@ -66,7 +68,9 @@ void MianViewModel::Initialize(){
                  << "SN:" << cfg.serialNumber
                  << "Width:" << cfg.imageWidth
                  << "Height:" << cfg.imageHeight
-                 << "Channel:" << cfg.channel;
+                 << "Channel:" << cfg.channel
+                 << "Exposure:" << cfg.exposureTime
+                 << "Gain:" << cfg.gain;
     }
 
 };

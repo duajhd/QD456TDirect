@@ -3,6 +3,7 @@
 #include <QQuickWindow>
 #include <QSGSimpleTextureNode>
 #include <QSGTexture>
+#include <QtQuick/private/qsgplaintexture_p.h>
 #include <QMutexLocker>
 #include <QDebug>
 
@@ -46,7 +47,11 @@ void CameraFrameItem::setCameraVm(QObject* vmObj)
                 Qt::QueuedConnection);
     } else {
         QMutexLocker locker(&m_mutex);
-        m_pendingImage = QImage();
+        m_pendingFrameAddr = nullptr;
+        m_pendingWidth = 0;
+        m_pendingHeight = 0;
+        m_pendingBytesPerLine = 0;
+        m_pendingFormat = QImage::Format_Invalid;
     }
 
     emit cameraVmChanged();
@@ -77,31 +82,26 @@ void CameraFrameItem::onFrameUpdated(int frameId)
     unsigned char* imageByteAddr =
         m_cameraVm->m_imageBuffer + static_cast<qsizetype>(slotIndex) * frameBytes;
 
-    QImage image;
+    int bytesPerLine = 0;
+    QImage::Format format = QImage::Format_Invalid;
 
     if (channel == 1) {
-        image = QImage(
-                    imageByteAddr,
-                    width,
-                    height,
-                    width,
-                    QImage::Format_Grayscale8
-                    ).copy();
+        bytesPerLine = width;
+        format = QImage::Format_Grayscale8;
     } else if (channel == 3) {
-        image = QImage(
-                    imageByteAddr,
-                    width,
-                    height,
-                    width * 3,
-                    QImage::Format_RGB888
-                    ).copy();
+        bytesPerLine = width * 3;
+        format = QImage::Format_RGB888;
     } else {
         return;
     }
 
     {
         QMutexLocker locker(&m_mutex);
-        m_pendingImage = image;
+        m_pendingFrameAddr = imageByteAddr;
+        m_pendingWidth = width;
+        m_pendingHeight = height;
+        m_pendingBytesPerLine = bytesPerLine;
+        m_pendingFormat = format;
     }
 
     update();
@@ -109,32 +109,59 @@ void CameraFrameItem::onFrameUpdated(int frameId)
 
 QSGNode* CameraFrameItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
-    QImage image;
+    unsigned char* frameAddr = nullptr;
+    int width = 0;
+    int height = 0;
+    int bytesPerLine = 0;
+    QImage::Format format = QImage::Format_Invalid;
     {
         QMutexLocker locker(&m_mutex);
-        image = m_pendingImage;
+        frameAddr = m_pendingFrameAddr;
+        width = m_pendingWidth;
+        height = m_pendingHeight;
+        bytesPerLine = m_pendingBytesPerLine;
+        format = m_pendingFormat;
     }
 
-    if (image.isNull() || !window()) {
+    if (!frameAddr || width <= 0 || height <= 0 || bytesPerLine <= 0 || format == QImage::Format_Invalid || !window()) {
         delete oldNode;
         return nullptr;
     }
+
+    QImage image(frameAddr, width, height, bytesPerLine, format);
 
     auto* node = static_cast<QSGSimpleTextureNode*>(oldNode);
     if (!node) {
         node = new QSGSimpleTextureNode();
     }
 
-    QSGTexture* texture = window()->createTextureFromImage(image);
-
+    auto* texture = static_cast<QSGPlainTexture*>(node->texture());
     if (!texture) {
-        delete node;
-        return nullptr;
+        texture = new QSGPlainTexture();
+        node->setTexture(texture);
+        node->setOwnsTexture(true);
+    }
+    texture->setImage(image);
+
+    const QRectF bounds = boundingRect();
+    const QSize imageSize = image.size();
+    QRectF targetRect = bounds;
+
+    if (imageSize.width() > 0 &&
+        imageSize.height() > 0 &&
+        bounds.width() > 0.0 &&
+        bounds.height() > 0.0) {
+        const qreal scale = qMin(bounds.width() / imageSize.width(),
+                                 bounds.height() / imageSize.height());
+        const qreal targetWidth = imageSize.width() * scale;
+        const qreal targetHeight = imageSize.height() * scale;
+        targetRect = QRectF(bounds.x() + (bounds.width() - targetWidth) * 0.5,
+                            bounds.y() + (bounds.height() - targetHeight) * 0.5,
+                            targetWidth,
+                            targetHeight);
     }
 
-    node->setTexture(texture);
-    node->setOwnsTexture(true);
-    node->setRect(boundingRect());
+    node->setRect(targetRect);
 
     return node;
 }

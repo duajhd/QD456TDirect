@@ -11,6 +11,7 @@ RoiData::RoiData(QObject* parent)
     m_offsetY(0.0),
     m_width(100.0),
     m_height(80.0),
+    m_circleRadius(40.0),
     m_color("#00AEEF"),
     m_selected(false)
 {
@@ -160,6 +161,18 @@ void RoiData::SetHeight(double value)
     emit RoiChanged();
 }
 
+double RoiData::GetCircleRadius() const
+{
+    return m_circleRadius;
+}
+
+void RoiData::SetCircleRadius(double value)
+{
+    if (qFuzzyCompare(m_circleRadius, value)) return;
+    m_circleRadius = value;
+    emit RoiChanged();
+}
+
 QString RoiData::GetColor() const
 {
     return m_color;
@@ -181,5 +194,17 @@ void RoiData::SetSelected(bool value)
 {
     if (m_selected == value) return;
     m_selected = value;
+    emit RoiChanged();
+}
+
+QVariantList RoiData::GetRegionRuns() const
+{
+    return m_regionRuns;
+}
+
+void RoiData::SetRegionRuns(const QVariantList& value)
+{
+    if (m_regionRuns == value) return;
+    m_regionRuns = value;
     emit RoiChanged();
 }

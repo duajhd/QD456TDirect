@@ -8,6 +8,8 @@ CameraViewModel::CameraViewModel(int width,
                                  QString serialNum,
                                  int channel,
                                  int cameraIndex,
+                                 double exposureTime,
+                                 double gain,
                                  const DetectionAlgorithmParams& algorithmParams,
                                  moodycamel::ReaderWriterQueue<int>* dropQueue,
                                  QObject* parent)
@@ -17,6 +19,8 @@ CameraViewModel::CameraViewModel(int width,
       m_channel(channel),
       m_cameraIndex(cameraIndex),
       m_serialNum(serialNum),
+      m_exposureTime(static_cast<float>(exposureTime)),
+      m_gain(static_cast<float>(gain)),
       m_dropQueue(dropQueue)
 {
     m_detectionConfig.algorithmParams = algorithmParams;
@@ -154,6 +158,7 @@ bool CameraViewModel::SetCameraParameter(double exposureTime, double gain, int d
     m_exposureTime = static_cast<float>(exposureTime);
     m_gain = static_cast<float>(gain);
     m_detectionConfig.dropThres = dropThres;
+    emit cameraParametersChanged();
 
     if (m_processWorker) {
         m_processWorker->SetDetectionConfig(m_detectionConfig);
@@ -231,6 +236,21 @@ void CameraViewModel::CleanupThreads()
 QString CameraViewModel::name() const
 {
     return QStringLiteral("相机 %1").arg(m_cameraIndex + 1);
+}
+
+QString CameraViewModel::serialNumber() const
+{
+    return m_serialNum;
+}
+
+double CameraViewModel::exposureTime() const
+{
+    return m_exposureTime;
+}
+
+double CameraViewModel::gain() const
+{
+    return m_gain;
 }
 
 QString CameraViewModel::statusText() const

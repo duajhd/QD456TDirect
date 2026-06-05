@@ -92,7 +92,7 @@ Item {
       Repeater {
           model: root.roiManager ? root.roiManager.offsetRoiItems : []
 
-            delegate: RoiItem {
+            delegate: RoiRegionItem {
                 required property var modelData
 
                 imageCanvas: root
