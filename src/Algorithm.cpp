@@ -32,23 +32,6 @@ void SaveCamera3CropImages(const HObject& topReducedDomain,
     WriteImage(downCropImage, "bmp", 0, downPath.toLocal8Bit().constData());
 }
 
-QVariantList RegionRunsFromHObject(const HObject& region)
-{
-    QVariantList runs;
-    HTuple rows;
-    HTuple columnsBegin;
-    HTuple columnsEnd;
-    GetRegionRuns(region, &rows, &columnsBegin, &columnsEnd);
-    const Hlong count = rows.Length();
-    runs.reserve(static_cast<qsizetype>(count));
-    for (Hlong i = 0; i < count; ++i) {
-        QVariantList run;
-        run << rows[i].I() << columnsBegin[i].I() << columnsEnd[i].I();
-        runs.append(run);
-    }
-    return runs;
-}
-
 }
 DirectionResult DirectionRecognizeCamera1(const HObject& image,
                                           const HObject& topRectangle,
@@ -63,10 +46,8 @@ DirectionResult DirectionRecognizeCamera1(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionOverlayRegions* overlayRegions)
+                                          double* rejectDiff)
 {
-    Q_UNUSED(overlayRegions);
-
     try {
         HObject topReducedDomain, downReducedDomain;
         HObject topRegion, downRegion;
@@ -119,27 +100,31 @@ DirectionResult DirectionRecognizeCamera1(const HObject& image,
         const double refCol = downColumn[0].D();
         const double topPhi = topOffsetRotationDeg * 3.14159265358979323846 / 180.0;
         const double downPhi = downOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+        HTuple imageWidth, imageHeight;
+        GetImageSize(image, &imageWidth, &imageHeight);
+        SetSystem("width", imageWidth);
+        SetSystem("height", imageHeight);
 
         GenRectangle2(&genTopRegion,
-                      refRow + offsetX,
-                      refCol + offsetY + params.inspectTopColumnOffset,
+                      refRow + offsetY,
+                      refCol + offsetX,
                       topPhi,
                       params.inspectRectHalfWidth,
                       params.inspectRectHalfHeight);
         GenRectangle2(&genDownRegion,
-                      refRow + offsetXDown,
-                      refCol + offsetYDown,
+                      refRow + offsetYDown,
+                      refCol + offsetXDown,
                       downPhi,
                       params.inspectRectHalfWidth,
                       params.inspectRectHalfHeight);
 
         GenCircle(&topCircle,
-                  refRow + offsetX,
-                  refCol + offsetY + params.inspectTopColumnOffset,
+                  refRow + offsetY,
+                  refCol + offsetX,
                   topOffsetCircleRadius);
         GenCircle(&downCircle,
-                  refRow + offsetXDown,
-                  refCol + offsetYDown,
+                  refRow + offsetYDown,
+                  refCol + offsetXDown,
                   downOffsetCircleRadius);
 
         Difference(genTopRegion, topCircle, &topDiff);
@@ -148,7 +133,11 @@ DirectionResult DirectionRecognizeCamera1(const HObject& image,
         Intensity(topDiff, image, &meanTop, &topDeviation);
         Intensity(downDiff, image, &meanDown, &downDeviation);
 
-        if (std::abs(meanTop[0].D() - meanDown[0].D()) <= dropThres) {
+        const double diffValue = std::abs(meanTop[0].D() - meanDown[0].D());
+        if (diffValue <= dropThres) {
+            if (rejectDiff) {
+                *rejectDiff = diffValue;
+            }
             return DirectionResult::Reject;
         }
 
@@ -171,10 +160,8 @@ DirectionResult DirectionRecognizeCamera2(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionOverlayRegions* overlayRegions)
+                                          double* rejectDiff)
 {
-    Q_UNUSED(overlayRegions);
-
     try {
         HObject topReducedDomain, downReducedDomain;
         HObject topRegion, downRegion;
@@ -227,27 +214,31 @@ DirectionResult DirectionRecognizeCamera2(const HObject& image,
         const double refCol = downColumn[0].D();
         const double topPhi = topOffsetRotationDeg * 3.14159265358979323846 / 180.0;
         const double downPhi = downOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+        HTuple imageWidth, imageHeight;
+        GetImageSize(image, &imageWidth, &imageHeight);
+        SetSystem("width", imageWidth);
+        SetSystem("height", imageHeight);
 
         GenRectangle2(&genTopRegion,
-                      refRow + offsetX,
-                      refCol + offsetY + params.inspectTopColumnOffset,
+                      refRow + offsetY,
+                      refCol + offsetX,
                       topPhi,
                       params.inspectRectHalfWidth,
                       params.inspectRectHalfHeight);
         GenRectangle2(&genDownRegion,
-                      refRow + offsetXDown,
-                      refCol + offsetYDown,
+                      refRow + offsetYDown,
+                      refCol + offsetXDown,
                       downPhi,
                       params.inspectRectHalfWidth,
                       params.inspectRectHalfHeight);
 
         GenCircle(&topCircle,
-                  refRow + offsetX,
-                  refCol + offsetY + params.inspectTopColumnOffset,
+                  refRow + offsetY,
+                  refCol + offsetX,
                   topOffsetCircleRadius);
         GenCircle(&downCircle,
-                  refRow + offsetXDown,
-                  refCol + offsetYDown,
+                  refRow + offsetYDown,
+                  refCol + offsetXDown,
                   downOffsetCircleRadius);
 
         Difference(genTopRegion, topCircle, &topDiff);
@@ -256,7 +247,11 @@ DirectionResult DirectionRecognizeCamera2(const HObject& image,
         Intensity(topDiff, image, &meanTop, &topDeviation);
         Intensity(downDiff, image, &meanDown, &downDeviation);
 
-        if (std::abs(meanTop[0].D() - meanDown[0].D()) <= dropThres) {
+        const double diffValue = std::abs(meanTop[0].D() - meanDown[0].D());
+        if (diffValue <= dropThres) {
+            if (rejectDiff) {
+                *rejectDiff = diffValue;
+            }
             return DirectionResult::Reject;
         }
 
@@ -279,13 +274,8 @@ DirectionResult DirectionRecognizeCamera3(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionOverlayRegions* overlayRegions)
+                                          double* rejectDiff)
 {
-    if (overlayRegions) {
-        overlayRegions->topDiffRuns.clear();
-        overlayRegions->downDiffRuns.clear();
-    }
-
     try {
         HObject topReducedDomain, downReducedDomain;
         HObject topRegion, downRegion;
@@ -342,27 +332,31 @@ DirectionResult DirectionRecognizeCamera3(const HObject& image,
         const double refCol = downColumn[0].D();
         const double topPhi = topOffsetRotationDeg * 3.14159265358979323846 / 180.0;
         const double downPhi = downOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+        HTuple imageWidth, imageHeight;
+        GetImageSize(image, &imageWidth, &imageHeight);
+        SetSystem("width", imageWidth);
+        SetSystem("height", imageHeight);
 
         GenRectangle2(&genTopRegion,
-                      refRow + offsetX,
-                      refCol + offsetY + params.inspectTopColumnOffset,
+                      refRow + offsetY,
+                      refCol + offsetX,
                       topPhi,
                       params.inspectRectHalfWidth,
                       params.inspectRectHalfHeight);
         GenRectangle2(&genDownRegion,
-                      refRow + offsetXDown,
-                      refCol + offsetYDown,
+                      refRow + offsetYDown,
+                      refCol + offsetXDown,
                       downPhi,
                       params.inspectRectHalfWidth,
                       params.inspectRectHalfHeight);
 
         GenCircle(&topCircle,
-                  refRow + offsetX,
-                  refCol + offsetY + params.inspectTopColumnOffset,
+                  refRow + offsetY,
+                  refCol + offsetX,
                   topOffsetCircleRadius);
         GenCircle(&downCircle,
-                  refRow + offsetXDown,
-                  refCol + offsetYDown,
+                  refRow + offsetYDown,
+                  refCol + offsetXDown,
                   downOffsetCircleRadius);
 
         Difference(genTopRegion, topCircle, &topDiff);
@@ -371,10 +365,10 @@ DirectionResult DirectionRecognizeCamera3(const HObject& image,
         Intensity(topDiff, image, &meanTop, &topDeviation);
         Intensity(downDiff, image, &meanDown, &downDeviation);
 
-        if (std::abs(meanTop[0].D() - meanDown[0].D()) <= dropThres) {
-            if (overlayRegions) {
-                overlayRegions->topDiffRuns = RegionRunsFromHObject(topDiff);
-                overlayRegions->downDiffRuns = RegionRunsFromHObject(downDiff);
+        const double diffValue = std::abs(meanTop[0].D() - meanDown[0].D());
+        if (diffValue <= dropThres) {
+            if (rejectDiff) {
+                *rejectDiff = diffValue;
             }
             return DirectionResult::Reject;
         }
@@ -398,10 +392,8 @@ DirectionResult DirectionRecognizeCamera4(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionOverlayRegions* overlayRegions)
+                                          double* rejectDiff)
 {
-    Q_UNUSED(overlayRegions);
-
     try {
         HObject topReducedDomain, downReducedDomain;
         HObject topRegion, downRegion;
@@ -454,27 +446,31 @@ DirectionResult DirectionRecognizeCamera4(const HObject& image,
         const double refCol = downColumn[0].D();
         const double topPhi = topOffsetRotationDeg * 3.14159265358979323846 / 180.0;
         const double downPhi = downOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+        HTuple imageWidth, imageHeight;
+        GetImageSize(image, &imageWidth, &imageHeight);
+        SetSystem("width", imageWidth);
+        SetSystem("height", imageHeight);
 
         GenRectangle2(&genTopRegion,
-                      refRow + offsetX,
-                      refCol + offsetY + params.inspectTopColumnOffset,
+                      refRow + offsetY,
+                      refCol + offsetX,
                       topPhi,
                       params.inspectRectHalfWidth,
                       params.inspectRectHalfHeight);
         GenRectangle2(&genDownRegion,
-                      refRow + offsetXDown,
-                      refCol + offsetYDown,
+                      refRow + offsetYDown,
+                      refCol + offsetXDown,
                       downPhi,
                       params.inspectRectHalfWidth,
                       params.inspectRectHalfHeight);
 
         GenCircle(&topCircle,
-                  refRow + offsetX,
-                  refCol + offsetY + params.inspectTopColumnOffset,
+                  refRow + offsetY,
+                  refCol + offsetX,
                   topOffsetCircleRadius);
         GenCircle(&downCircle,
-                  refRow + offsetXDown,
-                  refCol + offsetYDown,
+                  refRow + offsetYDown,
+                  refCol + offsetXDown,
                   downOffsetCircleRadius);
 
         Difference(genTopRegion, topCircle, &topDiff);
@@ -483,7 +479,11 @@ DirectionResult DirectionRecognizeCamera4(const HObject& image,
         Intensity(topDiff, image, &meanTop, &topDeviation);
         Intensity(downDiff, image, &meanDown, &downDeviation);
 
-        if (std::abs(meanTop[0].D() - meanDown[0].D()) <= dropThres) {
+        const double diffValue = std::abs(meanTop[0].D() - meanDown[0].D());
+        if (diffValue <= dropThres) {
+            if (rejectDiff) {
+                *rejectDiff = diffValue;
+            }
             return DirectionResult::Reject;
         }
 

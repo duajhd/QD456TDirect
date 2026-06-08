@@ -87,7 +87,7 @@ void ProcessWorker::StartWork()
             double,
             const DetectionAlgorithmParams&,
             int,
-            VisionAlgorithm::DirectionOverlayRegions*);
+            double*);
 
         DirectionRecognizeFn directionRecognize = VisionAlgorithm::DirectionRecognizeCamera1;
         switch (m_cameraIndex) {
@@ -108,7 +108,7 @@ void ProcessWorker::StartWork()
             break;
         }
 
-        VisionAlgorithm::DirectionOverlayRegions overlayRegions;
+        double rejectDiffValue = 0.0;
         const VisionAlgorithm::DirectionResult result =
             directionRecognize(DetecImage,
                                topRectangle,
@@ -123,16 +123,13 @@ void ProcessWorker::StartWork()
                                config.down.offsetRotation,
                                config.algorithmParams,
                                config.dropThres,
-                               &overlayRegions);
-        if (result != VisionAlgorithm::DirectionResult::NotFound) {
+                               &rejectDiffValue);
+        if (result == VisionAlgorithm::DirectionResult::Reject) {
             emit algorithmFrameAccepted();
-        }
-
-        if (result == VisionAlgorithm::DirectionResult::Reject && m_dropQueue) {
-            if (m_cameraIndex == 2) {
-                emit diffRegionsUpdated(overlayRegions.topDiffRuns, overlayRegions.downDiffRuns);
+            emit rejectDiffUpdated(rejectDiffValue);
+            if (m_dropQueue) {
+                m_dropQueue->try_enqueue(m_cameraIndex);
             }
-            m_dropQueue->try_enqueue(m_cameraIndex);
         }
 
         emit frameUpdated(frameId);

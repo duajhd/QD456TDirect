@@ -7,7 +7,6 @@
 #include <HikCamera.h>
 #include <QThread>
 #include <QObject>
-#include <QVariantList>
 #include <CaptureWorker.h>
 #include <ProcessWorker.h>
 #include <memory>
@@ -21,8 +20,7 @@ class CameraViewModel: public QObject{
     Q_PROPERTY(int frameId READ frameId NOTIFY frameIdChanged)
     Q_PROPERTY(int algorithmFrameCount READ algorithmFrameCount NOTIFY algorithmFrameCountChanged)
     Q_PROPERTY(int rejectFrameCount READ rejectFrameCount NOTIFY rejectFrameCountChanged)
-    Q_PROPERTY(QVariantList topDiffRuns READ topDiffRuns NOTIFY diffRegionRunsChanged)
-    Q_PROPERTY(QVariantList downDiffRuns READ downDiffRuns NOTIFY diffRegionRunsChanged)
+    Q_PROPERTY(double rejectDiffValue READ rejectDiffValue NOTIFY rejectDiffValueChanged)
     Q_PROPERTY(int width READ width CONSTANT)
     Q_PROPERTY(int height READ height CONSTANT)
 public:
@@ -56,8 +54,7 @@ private:
     int m_frameId = -1;
     int m_algorithmFrameCount = 0;
     int m_rejectFrameCount = 0;
-    QVariantList m_topDiffRuns;
-    QVariantList m_downDiffRuns;
+    double m_rejectDiffValue = 0.0;
     float m_exposureTime = 500.0f;
     float m_gain = 15.0f;
     DetectionRoiConfig m_detectionConfig;
@@ -80,7 +77,7 @@ public:
      void frameIdChanged();
      void algorithmFrameCountChanged();
      void rejectFrameCountChanged();
-     void diffRegionRunsChanged();
+     void rejectDiffValueChanged();
      void cameraParametersChanged();
      void frameSourceReset();
 
@@ -104,14 +101,13 @@ public:
     int frameId() const;
     int algorithmFrameCount() const;
     int rejectFrameCount() const;
-    QVariantList topDiffRuns() const;
-    QVariantList downDiffRuns() const;
+    double rejectDiffValue() const;
     int width() const;
     int height() const;
     void incrementAlgorithmFrameCount();
     void setAlgorithmFrameCount(int value);
     void incrementRejectFrameCount();
-    void setDiffRegionRuns(const QVariantList& topDiffRuns, const QVariantList& downDiffRuns);
+    void setRejectDiffValue(double value);
 
 };
 #endif

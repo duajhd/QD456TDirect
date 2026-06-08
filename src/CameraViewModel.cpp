@@ -109,9 +109,9 @@ void CameraViewModel::Init()
             &CameraViewModel::incrementAlgorithmFrameCount,
             Qt::QueuedConnection);
     connect(m_processWorker,
-            &ProcessWorker::diffRegionsUpdated,
+            &ProcessWorker::rejectDiffUpdated,
             this,
-            &CameraViewModel::setDiffRegionRuns,
+            &CameraViewModel::setRejectDiffValue,
             Qt::QueuedConnection);
 
     m_initialize = true;
@@ -285,14 +285,9 @@ int CameraViewModel::rejectFrameCount() const
     return m_rejectFrameCount;
 }
 
-QVariantList CameraViewModel::topDiffRuns() const
+double CameraViewModel::rejectDiffValue() const
 {
-    return m_topDiffRuns;
-}
-
-QVariantList CameraViewModel::downDiffRuns() const
-{
-    return m_downDiffRuns;
+    return m_rejectDiffValue;
 }
 
 int CameraViewModel::width() const
@@ -347,9 +342,12 @@ void CameraViewModel::incrementRejectFrameCount()
     emit rejectFrameCountChanged();
 }
 
-void CameraViewModel::setDiffRegionRuns(const QVariantList& topDiffRuns, const QVariantList& downDiffRuns)
+void CameraViewModel::setRejectDiffValue(double value)
 {
-    m_topDiffRuns = topDiffRuns;
-    m_downDiffRuns = downDiffRuns;
-    emit diffRegionRunsChanged();
+    if (qFuzzyCompare(m_rejectDiffValue, value)) {
+        return;
+    }
+
+    m_rejectDiffValue = value;
+    emit rejectDiffValueChanged();
 }

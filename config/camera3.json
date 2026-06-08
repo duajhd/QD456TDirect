@@ -11,7 +11,7 @@
         "downWidthMax": 25,
         "downWidthMin": 1,
         "height": 136.7786572266392,
-        "offsetCircleRadius": 40,
+        "offsetCircleRadius": 30,
         "offsetHeight": 35,
         "offsetROIX": 365,
         "offsetROIY": 65,
@@ -23,8 +23,8 @@
     "TopROI": {
         "centerX": 543.1858407079649,
         "centerY": 833.0973451327436,
-        "height": 66.54867256637168,
-        "offsetCircleRadius": 40,
+        "height": 89.50399644150345,
+        "offsetCircleRadius": 30,
         "offsetHeight": 35,
         "offsetROIX": 405,
         "offsetROIY": -555,
@@ -39,7 +39,7 @@
         "topThresholdMin": 0,
         "topWidthMax": 300,
         "topWidthMin": 30,
-        "width": 66.01769911504442
+        "width": 69.0306467121652
     },
     "dropThres": 27,
     "inspect": {
