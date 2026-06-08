@@ -55,6 +55,7 @@ void ProcessWorker::StartWork()
                              m_height,
                              HalconCpp::HTuple(reinterpret_cast<Hlong>(imageByte)));
 
+
         DetectionRoiConfig config;
         HalconCpp::HObject topRectangle;
         HalconCpp::HObject downRectangle;
@@ -72,7 +73,6 @@ void ProcessWorker::StartWork()
             continue;
         }
 
-        VisionAlgorithm::DirectionDebugInfo debugInfo;
         using DirectionRecognizeFn = VisionAlgorithm::DirectionResult (*)(
             const HalconCpp::HObject&,
             const HalconCpp::HObject&,
@@ -87,7 +87,7 @@ void ProcessWorker::StartWork()
             double,
             const DetectionAlgorithmParams&,
             int,
-            VisionAlgorithm::DirectionDebugInfo*);
+            VisionAlgorithm::DirectionOverlayRegions*);
 
         DirectionRecognizeFn directionRecognize = VisionAlgorithm::DirectionRecognizeCamera1;
         switch (m_cameraIndex) {
@@ -108,6 +108,7 @@ void ProcessWorker::StartWork()
             break;
         }
 
+        VisionAlgorithm::DirectionOverlayRegions overlayRegions;
         const VisionAlgorithm::DirectionResult result =
             directionRecognize(DetecImage,
                                topRectangle,
@@ -122,29 +123,15 @@ void ProcessWorker::StartWork()
                                config.down.offsetRotation,
                                config.algorithmParams,
                                config.dropThres,
-                               &debugInfo);
-        emit algorithmRegionCountsUpdated(debugInfo.topConnectedCount,
-                                          debugInfo.downConnectedCount,
-                                          debugInfo.downSelectedCount);
-        /*
-        qDebug() << "DirectionRecognize debug"
-                 << "camera" << m_cameraIndex
-                 << "topConnected" << debugInfo.topConnectedCount
-                 << "downConnected" << debugInfo.downConnectedCount
-                 << "topSelected" << debugInfo.topSelectedCount
-                 << "downSelected" << debugInfo.downSelectedCount
-                 << "topThresholdArea" << debugInfo.topRegionArea
-                 << "downThresholdArea" << debugInfo.downRegionArea
-                 << "downROI center=(" << config.down.centerX << "," << config.down.centerY << ")"
-                 << "size=(" << config.down.width << "," << config.down.height << ")"
-                 << "angle" << config.down.angle
-                 << "downThreshold=(" << config.algorithmParams.downThresholdMin << "," << config.algorithmParams.downThresholdMax << ")"
-                 << "downRatio=(" << config.algorithmParams.downRatioMin << "," << config.algorithmParams.downRatioMax << ")"
-                 << "downHeight=(" << config.algorithmParams.downHeightMin << "," << config.algorithmParams.downHeightMax << ")"
-                 << "downWidth=(" << config.algorithmParams.downWidthMin << "," << config.algorithmParams.downWidthMax << ")";
-        */
+                               &overlayRegions);
+        if (result != VisionAlgorithm::DirectionResult::NotFound) {
+            emit algorithmFrameAccepted();
+        }
 
         if (result == VisionAlgorithm::DirectionResult::Reject && m_dropQueue) {
+            if (m_cameraIndex == 2) {
+                emit diffRegionsUpdated(overlayRegions.topDiffRuns, overlayRegions.downDiffRuns);
+            }
             m_dropQueue->try_enqueue(m_cameraIndex);
         }
 
@@ -172,6 +159,8 @@ void ProcessWorker::SetDetectionConfig(const DetectionRoiConfig& config)
     }
 
     try {
+        HalconCpp::SetSystem("width", m_width);
+        HalconCpp::SetSystem("height", m_height);
         HalconCpp::GenRectangle2(&m_topRectangle,
                                  m_detectionConfig.top.centerY,
                                  m_detectionConfig.top.centerX,

@@ -146,6 +146,62 @@ Rectangle {
                         }
                     }
                 }
+
+                Canvas {
+                    id: diffRegionCanvas
+                    anchors.fill: parent
+
+                    function paintRuns(ctx, runs, color) {
+                        if (!runs || runs.length <= 0 || roiOverlay.displayScale <= 0)
+                            return
+
+                        ctx.fillStyle = color
+                        ctx.globalAlpha = 0.42
+                        for (let i = 0; i < runs.length; ++i) {
+                            const run = runs[i]
+                            if (!run)
+                                continue
+
+                            const row = Number(run[0])
+                            const colBegin = Number(run[1])
+                            const colEnd = Number(run[2])
+                            if (isNaN(row) || isNaN(colBegin) || isNaN(colEnd))
+                                continue
+
+                            const x = roiOverlay.imageToViewX(colBegin)
+                            const y = roiOverlay.imageToViewY(row)
+                            const w = Math.max(roiOverlay.displayScale, (colEnd - colBegin + 1) * roiOverlay.displayScale)
+                            const h = Math.max(1, roiOverlay.displayScale)
+                            ctx.fillRect(x, y, w, h)
+                        }
+                        ctx.globalAlpha = 1.0
+                    }
+
+                    onPaint: {
+                        const ctx = getContext("2d")
+                        ctx.clearRect(0, 0, width, height)
+
+                        if (!root.cameraVm || roiOverlay.imageWidth <= 0 || roiOverlay.imageHeight <= 0)
+                            return
+
+                        paintRuns(ctx, root.cameraVm.topDiffRuns, "#ff4d4f")
+                        paintRuns(ctx, root.cameraVm.downDiffRuns, "#faad14")
+                    }
+
+                    Connections {
+                        target: root.cameraVm
+                        function onDiffRegionRunsChanged() {
+                            diffRegionCanvas.requestPaint()
+                        }
+                    }
+
+                    Connections {
+                        target: roiOverlay
+                        function onDisplayScaleChanged() { diffRegionCanvas.requestPaint() }
+                        function onImageOffsetXChanged() { diffRegionCanvas.requestPaint() }
+                        function onImageOffsetYChanged() { diffRegionCanvas.requestPaint() }
+                    }
+                }
             }
 
             Rectangle {
@@ -204,25 +260,6 @@ Rectangle {
                 }
             }
 
-            Rectangle {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 10
-                radius: 6
-                color: "#99000000"
-                implicitWidth: regionCountText.implicitWidth + 18
-                implicitHeight: 26
-
-                Text {
-                    id: regionCountText
-                    anchors.centerIn: parent
-                    text: "TC:" + (root.cameraVm ? root.cameraVm.topConnectedCount : -1)
-                          + " DC:" + (root.cameraVm ? root.cameraVm.downConnectedCount : -1)
-                    color: "white"
-                    font.pixelSize: 12
-                    font.bold: true
-                }
-            }
         }
     }
 }

@@ -32,6 +32,23 @@ void SaveCamera3CropImages(const HObject& topReducedDomain,
     WriteImage(downCropImage, "bmp", 0, downPath.toLocal8Bit().constData());
 }
 
+QVariantList RegionRunsFromHObject(const HObject& region)
+{
+    QVariantList runs;
+    HTuple rows;
+    HTuple columnsBegin;
+    HTuple columnsEnd;
+    GetRegionRuns(region, &rows, &columnsBegin, &columnsEnd);
+    const Hlong count = rows.Length();
+    runs.reserve(static_cast<qsizetype>(count));
+    for (Hlong i = 0; i < count; ++i) {
+        QVariantList run;
+        run << rows[i].I() << columnsBegin[i].I() << columnsEnd[i].I();
+        runs.append(run);
+    }
+    return runs;
+}
+
 }
 DirectionResult DirectionRecognizeCamera1(const HObject& image,
                                           const HObject& topRectangle,
@@ -46,11 +63,9 @@ DirectionResult DirectionRecognizeCamera1(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionDebugInfo* debugInfo)
+                                          DirectionOverlayRegions* overlayRegions)
 {
-    if (debugInfo) {
-        *debugInfo = DirectionDebugInfo();
-    }
+    Q_UNUSED(overlayRegions);
 
     try {
         HObject topReducedDomain, downReducedDomain;
@@ -62,9 +77,6 @@ DirectionResult DirectionRecognizeCamera1(const HObject& image,
         HObject topDiff, downDiff;
 
         HTuple topNumber, downNumber;
-        HTuple topConnectedNumber, downConnectedNumber;
-        HTuple topRegionArea, topRegionRow, topRegionColumn;
-        HTuple downRegionArea, downRegionRow, downRegionColumn;
         HTuple topArea, topRow, topColumn;
         HTuple downArea, downRow, downColumn;
         HTuple meanTop, meanDown;
@@ -75,13 +87,9 @@ DirectionResult DirectionRecognizeCamera1(const HObject& image,
 
         Threshold(topReducedDomain, &topRegion, params.topThresholdMin, params.topThresholdMax);
         Threshold(downReducedDomain, &downRegion, params.downThresholdMin, params.downThresholdMax);
-        AreaCenter(topRegion, &topRegionArea, &topRegionRow, &topRegionColumn);
-        AreaCenter(downRegion, &downRegionArea, &downRegionRow, &downRegionColumn);
 
         Connection(topRegion, &topConnectedRegion);
         Connection(downRegion, &downConnectedRegion);
-        CountObj(topConnectedRegion, &topConnectedNumber);
-        CountObj(downConnectedRegion, &downConnectedNumber);
 
         SelectShape(topConnectedRegion,
                     &topSelectedRegion,
@@ -99,14 +107,6 @@ DirectionResult DirectionRecognizeCamera1(const HObject& image,
 
         CountObj(topSelectedRegion, &topNumber);
         CountObj(downSelectedRegion, &downNumber);
-        if (debugInfo) {
-            debugInfo->topConnectedCount = topConnectedNumber[0].I();
-            debugInfo->downConnectedCount = downConnectedNumber[0].I();
-            debugInfo->topSelectedCount = topNumber[0].I();
-            debugInfo->downSelectedCount = downNumber[0].I();
-            debugInfo->topRegionArea = topRegionArea.Length() > 0 ? topRegionArea[0].D() : -1.0;
-            debugInfo->downRegionArea = downRegionArea.Length() > 0 ? downRegionArea[0].D() : -1.0;
-        }
 
         if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
             return DirectionResult::NotFound;
@@ -171,11 +171,9 @@ DirectionResult DirectionRecognizeCamera2(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionDebugInfo* debugInfo)
+                                          DirectionOverlayRegions* overlayRegions)
 {
-    if (debugInfo) {
-        *debugInfo = DirectionDebugInfo();
-    }
+    Q_UNUSED(overlayRegions);
 
     try {
         HObject topReducedDomain, downReducedDomain;
@@ -187,9 +185,6 @@ DirectionResult DirectionRecognizeCamera2(const HObject& image,
         HObject topDiff, downDiff;
 
         HTuple topNumber, downNumber;
-        HTuple topConnectedNumber, downConnectedNumber;
-        HTuple topRegionArea, topRegionRow, topRegionColumn;
-        HTuple downRegionArea, downRegionRow, downRegionColumn;
         HTuple topArea, topRow, topColumn;
         HTuple downArea, downRow, downColumn;
         HTuple meanTop, meanDown;
@@ -200,13 +195,9 @@ DirectionResult DirectionRecognizeCamera2(const HObject& image,
 
         Threshold(topReducedDomain, &topRegion, params.topThresholdMin, params.topThresholdMax);
         Threshold(downReducedDomain, &downRegion, params.downThresholdMin, params.downThresholdMax);
-        AreaCenter(topRegion, &topRegionArea, &topRegionRow, &topRegionColumn);
-        AreaCenter(downRegion, &downRegionArea, &downRegionRow, &downRegionColumn);
 
         Connection(topRegion, &topConnectedRegion);
         Connection(downRegion, &downConnectedRegion);
-        CountObj(topConnectedRegion, &topConnectedNumber);
-        CountObj(downConnectedRegion, &downConnectedNumber);
 
         SelectShape(topConnectedRegion,
                     &topSelectedRegion,
@@ -224,14 +215,6 @@ DirectionResult DirectionRecognizeCamera2(const HObject& image,
 
         CountObj(topSelectedRegion, &topNumber);
         CountObj(downSelectedRegion, &downNumber);
-        if (debugInfo) {
-            debugInfo->topConnectedCount = topConnectedNumber[0].I();
-            debugInfo->downConnectedCount = downConnectedNumber[0].I();
-            debugInfo->topSelectedCount = topNumber[0].I();
-            debugInfo->downSelectedCount = downNumber[0].I();
-            debugInfo->topRegionArea = topRegionArea.Length() > 0 ? topRegionArea[0].D() : -1.0;
-            debugInfo->downRegionArea = downRegionArea.Length() > 0 ? downRegionArea[0].D() : -1.0;
-        }
 
         if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
             return DirectionResult::NotFound;
@@ -296,10 +279,11 @@ DirectionResult DirectionRecognizeCamera3(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionDebugInfo* debugInfo)
+                                          DirectionOverlayRegions* overlayRegions)
 {
-    if (debugInfo) {
-        *debugInfo = DirectionDebugInfo();
+    if (overlayRegions) {
+        overlayRegions->topDiffRuns.clear();
+        overlayRegions->downDiffRuns.clear();
     }
 
     try {
@@ -312,28 +296,23 @@ DirectionResult DirectionRecognizeCamera3(const HObject& image,
         HObject topDiff, downDiff;
 
         HTuple topNumber, downNumber;
-        HTuple topConnectedNumber, downConnectedNumber;
-        HTuple topRegionArea, topRegionRow, topRegionColumn;
-        HTuple downRegionArea, downRegionRow, downRegionColumn;
         HTuple topArea, topRow, topColumn;
         HTuple downArea, downRow, downColumn;
         HTuple meanTop, meanDown;
         HTuple topDeviation, downDeviation;
-
-
-        WriteImage(image,"bmp",0,"D:\\zhijain\\QT456TDirect\\build\\Desktop_Qt_6_8_3_MSVC2022_64bit-Debug\\t.bmp");
         ReduceDomain(image, topRectangle, &topReducedDomain);
         ReduceDomain(image, downRectangle, &downReducedDomain);
-       // SaveCamera3CropImages(topReducedDomain, downReducedDomain);
+
+
+
+     //   WriteImage(topCropImage,"bmp",0,"D:\\zhijain\\QT456TDirect\\build\\Desktop_Qt_6_8_3_MSVC2022_64bit-Debug\\t.bmp");
+
+
         Threshold(topReducedDomain, &topRegion, params.topThresholdMin, params.topThresholdMax);
         Threshold(downReducedDomain, &downRegion, params.downThresholdMin, params.downThresholdMax);
-        AreaCenter(topRegion, &topRegionArea, &topRegionRow, &topRegionColumn);
-        AreaCenter(downRegion, &downRegionArea, &downRegionRow, &downRegionColumn);
 
         Connection(topRegion, &topConnectedRegion);
         Connection(downRegion, &downConnectedRegion);
-        CountObj(topConnectedRegion, &topConnectedNumber);
-        CountObj(downConnectedRegion, &downConnectedNumber);
 
         SelectShape(topConnectedRegion,
                     &topSelectedRegion,
@@ -351,14 +330,6 @@ DirectionResult DirectionRecognizeCamera3(const HObject& image,
 
         CountObj(topSelectedRegion, &topNumber);
         CountObj(downSelectedRegion, &downNumber);
-        if (debugInfo) {
-            debugInfo->topConnectedCount = topConnectedNumber[0].I();
-            debugInfo->downConnectedCount = downConnectedNumber[0].I();
-            debugInfo->topSelectedCount = topNumber[0].I();
-            debugInfo->downSelectedCount = downNumber[0].I();
-            debugInfo->topRegionArea = topRegionArea.Length() > 0 ? topRegionArea[0].D() : -1.0;
-            debugInfo->downRegionArea = downRegionArea.Length() > 0 ? downRegionArea[0].D() : -1.0;
-        }
 
         if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
             return DirectionResult::NotFound;
@@ -401,6 +372,10 @@ DirectionResult DirectionRecognizeCamera3(const HObject& image,
         Intensity(downDiff, image, &meanDown, &downDeviation);
 
         if (std::abs(meanTop[0].D() - meanDown[0].D()) <= dropThres) {
+            if (overlayRegions) {
+                overlayRegions->topDiffRuns = RegionRunsFromHObject(topDiff);
+                overlayRegions->downDiffRuns = RegionRunsFromHObject(downDiff);
+            }
             return DirectionResult::Reject;
         }
 
@@ -423,11 +398,9 @@ DirectionResult DirectionRecognizeCamera4(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionDebugInfo* debugInfo)
+                                          DirectionOverlayRegions* overlayRegions)
 {
-    if (debugInfo) {
-        *debugInfo = DirectionDebugInfo();
-    }
+    Q_UNUSED(overlayRegions);
 
     try {
         HObject topReducedDomain, downReducedDomain;
@@ -439,9 +412,6 @@ DirectionResult DirectionRecognizeCamera4(const HObject& image,
         HObject topDiff, downDiff;
 
         HTuple topNumber, downNumber;
-        HTuple topConnectedNumber, downConnectedNumber;
-        HTuple topRegionArea, topRegionRow, topRegionColumn;
-        HTuple downRegionArea, downRegionRow, downRegionColumn;
         HTuple topArea, topRow, topColumn;
         HTuple downArea, downRow, downColumn;
         HTuple meanTop, meanDown;
@@ -452,13 +422,9 @@ DirectionResult DirectionRecognizeCamera4(const HObject& image,
 
         Threshold(topReducedDomain, &topRegion, params.topThresholdMin, params.topThresholdMax);
         Threshold(downReducedDomain, &downRegion, params.downThresholdMin, params.downThresholdMax);
-        AreaCenter(topRegion, &topRegionArea, &topRegionRow, &topRegionColumn);
-        AreaCenter(downRegion, &downRegionArea, &downRegionRow, &downRegionColumn);
 
         Connection(topRegion, &topConnectedRegion);
         Connection(downRegion, &downConnectedRegion);
-        CountObj(topConnectedRegion, &topConnectedNumber);
-        CountObj(downConnectedRegion, &downConnectedNumber);
 
         SelectShape(topConnectedRegion,
                     &topSelectedRegion,
@@ -476,14 +442,6 @@ DirectionResult DirectionRecognizeCamera4(const HObject& image,
 
         CountObj(topSelectedRegion, &topNumber);
         CountObj(downSelectedRegion, &downNumber);
-        if (debugInfo) {
-            debugInfo->topConnectedCount = topConnectedNumber[0].I();
-            debugInfo->downConnectedCount = downConnectedNumber[0].I();
-            debugInfo->topSelectedCount = topNumber[0].I();
-            debugInfo->downSelectedCount = downNumber[0].I();
-            debugInfo->topRegionArea = topRegionArea.Length() > 0 ? topRegionArea[0].D() : -1.0;
-            debugInfo->downRegionArea = downRegionArea.Length() > 0 ? downRegionArea[0].D() : -1.0;
-        }
 
         if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
             return DirectionResult::NotFound;

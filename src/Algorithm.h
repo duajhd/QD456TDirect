@@ -4,6 +4,7 @@
 #include "DetectionRoiConfig.h"
 
 #include <HalconCpp.h>
+#include <QVariantList>
 
 namespace VisionAlgorithm {
 
@@ -14,14 +15,10 @@ enum class DirectionResult
     Reject   = 2
 };
 
-struct DirectionDebugInfo
+struct DirectionOverlayRegions
 {
-    int topConnectedCount = -1;
-    int downConnectedCount = -1;
-    int topSelectedCount = -1;
-    int downSelectedCount = -1;
-    double topRegionArea = -1.0;
-    double downRegionArea = -1.0;
+    QVariantList topDiffRuns;
+    QVariantList downDiffRuns;
 };
 
 DirectionResult DirectionRecognizeCamera1(const HalconCpp::HObject& image,
@@ -37,7 +34,7 @@ DirectionResult DirectionRecognizeCamera1(const HalconCpp::HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionDebugInfo* debugInfo = nullptr);
+                                          DirectionOverlayRegions* overlayRegions = nullptr);
 
 DirectionResult DirectionRecognizeCamera2(const HalconCpp::HObject& image,
                                           const HalconCpp::HObject& topRectangle,
@@ -52,7 +49,7 @@ DirectionResult DirectionRecognizeCamera2(const HalconCpp::HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionDebugInfo* debugInfo = nullptr);
+                                          DirectionOverlayRegions* overlayRegions = nullptr);
 
 DirectionResult DirectionRecognizeCamera3(const HalconCpp::HObject& image,
                                           const HalconCpp::HObject& topRectangle,
@@ -67,7 +64,7 @@ DirectionResult DirectionRecognizeCamera3(const HalconCpp::HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionDebugInfo* debugInfo = nullptr);
+                                          DirectionOverlayRegions* overlayRegions = nullptr);
 
 DirectionResult DirectionRecognizeCamera4(const HalconCpp::HObject& image,
                                           const HalconCpp::HObject& topRectangle,
@@ -82,7 +79,7 @@ DirectionResult DirectionRecognizeCamera4(const HalconCpp::HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
-                                          DirectionDebugInfo* debugInfo = nullptr);
+                                          DirectionOverlayRegions* overlayRegions = nullptr);
 
 }
 

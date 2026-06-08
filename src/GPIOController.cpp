@@ -38,6 +38,9 @@ int GPIOController::Initialize()
         initStruct_Tx[i].Mode = 1;
         initStruct_Tx[i].Pull = 0;
     }
+    for (int i = 0; i < 4; i++) {
+        IO_WritePin(SerialNumbers[0],i , 1);
+    }
 
     ret = IO_InitMultiPin(SerialNumbers[0], initStruct_Tx, initStruct_Rx, 16);
     if (ret < 0) {
@@ -86,6 +89,8 @@ void GPIOController::StopWork()
 
 void GPIOController::Drop(int index)
 {
-    qDebug() << "Drop camera index:" << index;
+  IO_WritePin(SerialNumbers[0], index, 0);//开启吹起
+    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+  IO_WritePin(SerialNumbers[0], index, 1);//关闭吹气
     emit dropped(index);
 }

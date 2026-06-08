@@ -104,9 +104,14 @@ void CameraViewModel::Init()
             },
             Qt::QueuedConnection);
     connect(m_processWorker,
-            &ProcessWorker::algorithmRegionCountsUpdated,
+            &ProcessWorker::algorithmFrameAccepted,
             this,
-            &CameraViewModel::setAlgorithmRegionCounts,
+            &CameraViewModel::incrementAlgorithmFrameCount,
+            Qt::QueuedConnection);
+    connect(m_processWorker,
+            &ProcessWorker::diffRegionsUpdated,
+            this,
+            &CameraViewModel::setDiffRegionRuns,
             Qt::QueuedConnection);
 
     m_initialize = true;
@@ -275,19 +280,19 @@ int CameraViewModel::algorithmFrameCount() const
     return m_algorithmFrameCount;
 }
 
-int CameraViewModel::topConnectedCount() const
-{
-    return m_topConnectedCount;
-}
-
-int CameraViewModel::downConnectedCount() const
-{
-    return m_downConnectedCount;
-}
-
 int CameraViewModel::rejectFrameCount() const
 {
     return m_rejectFrameCount;
+}
+
+QVariantList CameraViewModel::topDiffRuns() const
+{
+    return m_topDiffRuns;
+}
+
+QVariantList CameraViewModel::downDiffRuns() const
+{
+    return m_downDiffRuns;
 }
 
 int CameraViewModel::width() const
@@ -336,28 +341,15 @@ void CameraViewModel::setAlgorithmFrameCount(int value)
     emit algorithmFrameCountChanged();
 }
 
-void CameraViewModel::setAlgorithmRegionCounts(int topConnectedCount, int downConnectedCount, int downSelectedCount)
-{
-    bool regionChanged = false;
-    if (m_topConnectedCount != topConnectedCount) {
-        m_topConnectedCount = topConnectedCount;
-        regionChanged = true;
-    }
-    if (m_downConnectedCount != downConnectedCount) {
-        m_downConnectedCount = downConnectedCount;
-        regionChanged = true;
-    }
-    if (m_algorithmFrameCount != downSelectedCount) {
-        m_algorithmFrameCount = downSelectedCount;
-        emit algorithmFrameCountChanged();
-    }
-    if (regionChanged) {
-        emit regionCountsChanged();
-    }
-}
-
 void CameraViewModel::incrementRejectFrameCount()
 {
     ++m_rejectFrameCount;
     emit rejectFrameCountChanged();
+}
+
+void CameraViewModel::setDiffRegionRuns(const QVariantList& topDiffRuns, const QVariantList& downDiffRuns)
+{
+    m_topDiffRuns = topDiffRuns;
+    m_downDiffRuns = downDiffRuns;
+    emit diffRegionRunsChanged();
 }

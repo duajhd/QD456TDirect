@@ -5,6 +5,7 @@
 #include <HalconCpp.h>
 #include <QMutex>
 #include <QObject>
+#include <QVariantList>
 #include <atomic>
 #include <cstddef>
 
@@ -44,7 +45,8 @@ private:
 signals:
     void finished();
      void frameUpdated(int frameId);
-     void algorithmRegionCountsUpdated(int topConnectedCount, int downConnectedCount, int downSelectedCount);
+     void algorithmFrameAccepted();
+     void diffRegionsUpdated(const QVariantList& topDiffRuns, const QVariantList& downDiffRuns);
 public slots:
   void OnFrameArrived(int frameId);
   void StartWork();

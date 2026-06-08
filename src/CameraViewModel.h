@@ -7,6 +7,7 @@
 #include <HikCamera.h>
 #include <QThread>
 #include <QObject>
+#include <QVariantList>
 #include <CaptureWorker.h>
 #include <ProcessWorker.h>
 #include <memory>
@@ -19,9 +20,9 @@ class CameraViewModel: public QObject{
     Q_PROPERTY(QString statusText READ statusText NOTIFY statusTextChanged)
     Q_PROPERTY(int frameId READ frameId NOTIFY frameIdChanged)
     Q_PROPERTY(int algorithmFrameCount READ algorithmFrameCount NOTIFY algorithmFrameCountChanged)
-    Q_PROPERTY(int topConnectedCount READ topConnectedCount NOTIFY regionCountsChanged)
-    Q_PROPERTY(int downConnectedCount READ downConnectedCount NOTIFY regionCountsChanged)
     Q_PROPERTY(int rejectFrameCount READ rejectFrameCount NOTIFY rejectFrameCountChanged)
+    Q_PROPERTY(QVariantList topDiffRuns READ topDiffRuns NOTIFY diffRegionRunsChanged)
+    Q_PROPERTY(QVariantList downDiffRuns READ downDiffRuns NOTIFY diffRegionRunsChanged)
     Q_PROPERTY(int width READ width CONSTANT)
     Q_PROPERTY(int height READ height CONSTANT)
 public:
@@ -54,9 +55,9 @@ private:
     bool m_started = false;
     int m_frameId = -1;
     int m_algorithmFrameCount = 0;
-    int m_topConnectedCount = -1;
-    int m_downConnectedCount = -1;
     int m_rejectFrameCount = 0;
+    QVariantList m_topDiffRuns;
+    QVariantList m_downDiffRuns;
     float m_exposureTime = 500.0f;
     float m_gain = 15.0f;
     DetectionRoiConfig m_detectionConfig;
@@ -78,8 +79,8 @@ public:
      void statusTextChanged();
      void frameIdChanged();
      void algorithmFrameCountChanged();
-     void regionCountsChanged();
      void rejectFrameCountChanged();
+     void diffRegionRunsChanged();
      void cameraParametersChanged();
      void frameSourceReset();
 
@@ -102,15 +103,15 @@ public:
     QString statusText() const;
     int frameId() const;
     int algorithmFrameCount() const;
-    int topConnectedCount() const;
-    int downConnectedCount() const;
     int rejectFrameCount() const;
+    QVariantList topDiffRuns() const;
+    QVariantList downDiffRuns() const;
     int width() const;
     int height() const;
     void incrementAlgorithmFrameCount();
     void setAlgorithmFrameCount(int value);
-    void setAlgorithmRegionCounts(int topConnectedCount, int downConnectedCount, int downSelectedCount);
     void incrementRejectFrameCount();
+    void setDiffRegionRuns(const QVariantList& topDiffRuns, const QVariantList& downDiffRuns);
 
 };
 #endif
