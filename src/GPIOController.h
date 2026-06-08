@@ -34,6 +34,7 @@ public slots:
 
 signals:
     void finished();
+    void dropped(int index);
 
 public:
     int Initialize();

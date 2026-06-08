@@ -124,6 +124,11 @@ Page {
             }
 
             function loadImage(fileUrl) {
+                if (roiManager && !roiManager.LoadImageFrame(fileUrl.toString())) {
+                    statusLabel.text = "图片帧数据加载失败: " + localFilePath(fileUrl)
+                    return
+                }
+
                 roiPage.imageSource = fileUrl.toString()
                 statusLabel.text = "已加载图片: " + localFilePath(fileUrl)
             }
@@ -305,18 +310,82 @@ Page {
                 statusLabel.text = "已创建TopROI/DownROI偏移组"
             }
 
+            function loadedOffsetSnapshot(roiType) {
+                if (!roiManager)
+                    return null
+
+                var roi = roiManager.GetLastOffsetRoiByType(roiType)
+                if (!roi)
+                    return null
+
+                return {
+                    offsetX: Number(roi.offsetX),
+                    offsetY: Number(roi.offsetY),
+                    width: Number(roi.roiWidth),
+                    height: Number(roi.roiHeight),
+                    circleRadius: Number(roi.circleRadius),
+                    angle: Number(roi.angle)
+                }
+            }
+
+            function setOffsetFieldsFromSnapshots(topSnapshot, downSnapshot) {
+                if (topSnapshot) {
+                    topOffsetXField.text = String(topSnapshot.offsetX)
+                    topOffsetYField.text = String(topSnapshot.offsetY)
+                    topWidthField.text = String(topSnapshot.width)
+                    topHeightField.text = String(topSnapshot.height)
+                    topCircleRadiusField.text = String(topSnapshot.circleRadius)
+                    topRotationField.text = String(topSnapshot.angle)
+                }
+
+                if (downSnapshot) {
+                    downOffsetXField.text = String(downSnapshot.offsetX)
+                    downOffsetYField.text = String(downSnapshot.offsetY)
+                    downWidthField.text = String(downSnapshot.width)
+                    downHeightField.text = String(downSnapshot.height)
+                    downCircleRadiusField.text = String(downSnapshot.circleRadius)
+                    downRotationField.text = String(downSnapshot.angle)
+                }
+            }
+
+            function recreateOffsetRoiFromSnapshot(roiType, snapshot, color) {
+                if (!roiManager || !snapshot)
+                    return null
+
+                return roiManager.AddOffsetRoi(roiType,
+                                               offsetBaseX,
+                                               offsetBaseY,
+                                               snapshot.offsetX,
+                                               snapshot.offsetY,
+                                               Math.max(1, snapshot.width),
+                                               Math.max(1, snapshot.height),
+                                               Math.max(1, snapshot.circleRadius),
+                                               snapshot.angle,
+                                               color)
+            }
+
+            function recreateLoadedOffsetRois(topSnapshot, downSnapshot) {
+                var topRoi = recreateOffsetRoiFromSnapshot("TopOffsetROI", topSnapshot, "#1677ff")
+                var downRoi = recreateOffsetRoiFromSnapshot("DownOffsetROI", downSnapshot, "#22c55e")
+                return {
+                    topRuns: topRoi && topRoi.regionRuns ? topRoi.regionRuns.length : -1,
+                    downRuns: downRoi && downRoi.regionRuns ? downRoi.regionRuns.length : -1
+                }
+            }
+
             function executeHalcon() {
                 if (!roiManager)
-                    return
+                    return { ok: false, message: "roiManager is null" }
 
                 roiManager.SetHalconParams(halconParamMap())
-                var result = roiManager.ExecuteHalcon(localFilePath(roiPage.imageSource))
+                var result = roiManager.ExecuteHalcon(roiPage.imageSource)
                 if (result.ok) {
                     roiPage.offsetBaseX = result.baseX
                     roiPage.offsetBaseY = result.baseY
                 }
 
                 statusLabel.text = result.message
+                return result
             }
 
             Component.onCompleted: {
@@ -778,10 +847,20 @@ Page {
                         return
                     var path = roiPage.localFilePath(selectedFile)
                     if (roiPage.roiManager.LoadFromJson(path)) {
+                        var topSnapshot = roiPage.loadedOffsetSnapshot("TopOffsetROI")
+                        var downSnapshot = roiPage.loadedOffsetSnapshot("DownOffsetROI")
                         roiPage.setHalconParamFields(roiPage.roiManager.GetHalconParams())
+                        roiPage.setOffsetFieldsFromSnapshots(topSnapshot, downSnapshot)
+                        var halconResult = roiPage.executeHalcon()
+                        var offsetReport = { topRuns: -1, downRuns: -1 }
+                        if (halconResult && halconResult.ok)
+                            offsetReport = roiPage.recreateLoadedOffsetRois(topSnapshot, downSnapshot)
                         var applied = mainViewModel.ApplyRoiConfig(roiPage.cameraIndex)
                         statusLabel.text = applied
                                          ? "已读取并应用: " + path
+                                           + " base=(" + roiPage.offsetBaseX.toFixed(1) + ", " + roiPage.offsetBaseY.toFixed(1) + ")"
+                                           + " TopRuns=" + offsetReport.topRuns
+                                           + " DownRuns=" + offsetReport.downRuns
                                          : "已读取，应用失败: " + path
                     } else {
                         statusLabel.text = "读取失败: " + path
@@ -1231,6 +1310,7 @@ Page {
                     Layout.fillHeight: true
                     cameraIndex: index
                     cameraVm: mainViewModel.getCamera(index)
+                    roiManager: mainViewModel.getRoiManager(index)
                     stackViewRef: root.stackViewRef
                 }
             }

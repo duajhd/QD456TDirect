@@ -87,4 +87,5 @@ void GPIOController::StopWork()
 void GPIOController::Drop(int index)
 {
     qDebug() << "Drop camera index:" << index;
+    emit dropped(index);
 }

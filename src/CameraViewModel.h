@@ -18,6 +18,10 @@ class CameraViewModel: public QObject{
     Q_PROPERTY(double gain READ gain NOTIFY cameraParametersChanged)
     Q_PROPERTY(QString statusText READ statusText NOTIFY statusTextChanged)
     Q_PROPERTY(int frameId READ frameId NOTIFY frameIdChanged)
+    Q_PROPERTY(int algorithmFrameCount READ algorithmFrameCount NOTIFY algorithmFrameCountChanged)
+    Q_PROPERTY(int topConnectedCount READ topConnectedCount NOTIFY regionCountsChanged)
+    Q_PROPERTY(int downConnectedCount READ downConnectedCount NOTIFY regionCountsChanged)
+    Q_PROPERTY(int rejectFrameCount READ rejectFrameCount NOTIFY rejectFrameCountChanged)
     Q_PROPERTY(int width READ width CONSTANT)
     Q_PROPERTY(int height READ height CONSTANT)
 public:
@@ -49,6 +53,10 @@ private:
     bool m_initialize = false;
     bool m_started = false;
     int m_frameId = -1;
+    int m_algorithmFrameCount = 0;
+    int m_topConnectedCount = -1;
+    int m_downConnectedCount = -1;
+    int m_rejectFrameCount = 0;
     float m_exposureTime = 500.0f;
     float m_gain = 15.0f;
     DetectionRoiConfig m_detectionConfig;
@@ -69,7 +77,11 @@ public:
      void frameUpdated(int frameId);
      void statusTextChanged();
      void frameIdChanged();
+     void algorithmFrameCountChanged();
+     void regionCountsChanged();
+     void rejectFrameCountChanged();
      void cameraParametersChanged();
+     void frameSourceReset();
 
 
 public:
@@ -89,8 +101,16 @@ public:
     double gain() const;
     QString statusText() const;
     int frameId() const;
+    int algorithmFrameCount() const;
+    int topConnectedCount() const;
+    int downConnectedCount() const;
+    int rejectFrameCount() const;
     int width() const;
     int height() const;
+    void incrementAlgorithmFrameCount();
+    void setAlgorithmFrameCount(int value);
+    void setAlgorithmRegionCounts(int topConnectedCount, int downConnectedCount, int downSelectedCount);
+    void incrementRejectFrameCount();
 
 };
 #endif

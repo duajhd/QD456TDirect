@@ -103,6 +103,11 @@ void CameraViewModel::Init()
                 emit frameUpdated(frameId);
             },
             Qt::QueuedConnection);
+    connect(m_processWorker,
+            &ProcessWorker::algorithmRegionCountsUpdated,
+            this,
+            &CameraViewModel::setAlgorithmRegionCounts,
+            Qt::QueuedConnection);
 
     m_initialize = true;
     setStatusText(QStringLiteral("已连接"));
@@ -225,6 +230,8 @@ void CameraViewModel::CleanupThreads()
         m_processThread = nullptr;
     }
 
+    emit frameSourceReset();
+
     m_started = false;
     m_initialize = false;
     m_camera.reset();
@@ -263,6 +270,26 @@ int CameraViewModel::frameId() const
     return m_frameId;
 }
 
+int CameraViewModel::algorithmFrameCount() const
+{
+    return m_algorithmFrameCount;
+}
+
+int CameraViewModel::topConnectedCount() const
+{
+    return m_topConnectedCount;
+}
+
+int CameraViewModel::downConnectedCount() const
+{
+    return m_downConnectedCount;
+}
+
+int CameraViewModel::rejectFrameCount() const
+{
+    return m_rejectFrameCount;
+}
+
 int CameraViewModel::width() const
 {
     return m_width;
@@ -291,4 +318,46 @@ void CameraViewModel::setFrameId(int frameId)
 
     m_frameId = frameId;
     emit frameIdChanged();
+}
+
+void CameraViewModel::incrementAlgorithmFrameCount()
+{
+    ++m_algorithmFrameCount;
+    emit algorithmFrameCountChanged();
+}
+
+void CameraViewModel::setAlgorithmFrameCount(int value)
+{
+    if (m_algorithmFrameCount == value) {
+        return;
+    }
+
+    m_algorithmFrameCount = value;
+    emit algorithmFrameCountChanged();
+}
+
+void CameraViewModel::setAlgorithmRegionCounts(int topConnectedCount, int downConnectedCount, int downSelectedCount)
+{
+    bool regionChanged = false;
+    if (m_topConnectedCount != topConnectedCount) {
+        m_topConnectedCount = topConnectedCount;
+        regionChanged = true;
+    }
+    if (m_downConnectedCount != downConnectedCount) {
+        m_downConnectedCount = downConnectedCount;
+        regionChanged = true;
+    }
+    if (m_algorithmFrameCount != downSelectedCount) {
+        m_algorithmFrameCount = downSelectedCount;
+        emit algorithmFrameCountChanged();
+    }
+    if (regionChanged) {
+        emit regionCountsChanged();
+    }
+}
+
+void CameraViewModel::incrementRejectFrameCount()
+{
+    ++m_rejectFrameCount;
+    emit rejectFrameCountChanged();
 }

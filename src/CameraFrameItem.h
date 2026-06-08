@@ -28,8 +28,11 @@ protected:
 
 private slots:
     void onFrameUpdated(int frameId);
+    void onFrameSourceReset();
 
 private:
+    void clearPendingFrame();
+
     CameraViewModel* m_cameraVm = nullptr;
 
     QMutex m_mutex;

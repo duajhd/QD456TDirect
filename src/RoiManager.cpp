@@ -7,9 +7,12 @@
 #include <QVariantList>
 #include <QDebug>
 #include <QDateTime>
+#include <QFileInfo>
+#include <QImage>
 #include <QTextStream>
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 
 namespace {
 
@@ -115,12 +118,16 @@ int FirstRoiIndexOfType(const QList<RoiData*>& roiList, const QString& roiType)
 
 QString NormalizeImagePath(const QString& imagePath)
 {
+    if (imagePath.isEmpty()) {
+        return QString();
+    }
+
     const QUrl url(imagePath);
     if (url.isLocalFile()) {
         return url.toLocalFile();
     }
 
-    return imagePath;
+    return QFileInfo(imagePath).absoluteFilePath();
 }
 
 void GenRectangleFromRoi(RoiData* roi, HalconCpp::HObject* rectangle)
@@ -158,6 +165,7 @@ QVariantList OffsetDifferenceRegionRuns(double centerX,
                    << "angle" << angle;
         return runs;
     }
+
 
     try {
         using namespace HalconCpp;
@@ -636,6 +644,11 @@ RoiData* RoiManager::GetRoiById(const QString& roiId)
     return nullptr;
 }
 
+RoiData* RoiManager::GetLastOffsetRoiByType(const QString& roiType) const
+{
+    return LastRoiOfType(m_offsetRoiList, roiType);
+}
+
 qsizetype RoiManager::RoiListCount(QQmlListProperty<RoiData>* property)
 {
     auto* roiList = property
@@ -1017,6 +1030,53 @@ void RoiManager::AppendRoiDebugReport(const QString& message) const
     AppLogger::appendRoiReport(message);
 }
 
+bool RoiManager::LoadImageFrame(const QString& imagePath)
+{
+    const QString normalizedImagePath = NormalizeImagePath(imagePath);
+    if (normalizedImagePath.isEmpty()) {
+        return false;
+    }
+
+    const QFileInfo imageFileInfo(normalizedImagePath);
+    if (!imageFileInfo.exists() || !imageFileInfo.isFile()) {
+        qWarning() << "Image file not found" << normalizedImagePath;
+        return false;
+    }
+
+    QImage image(normalizedImagePath);
+    if (image.isNull()) {
+        qWarning() << "QImage load failed" << normalizedImagePath;
+        return false;
+    }
+
+    if (image.depth() != 8) {
+        qWarning() << "Loaded image is not 8-bit grayscale" << normalizedImagePath
+                   << "format" << image.format()
+                   << "depth" << image.depth();
+        return false;
+    }
+
+    const qsizetype frameBytes =
+        static_cast<qsizetype>(image.width()) *
+        static_cast<qsizetype>(image.height());
+    if (frameBytes <= 0) {
+        return false;
+    }
+
+    m_loadedImageFrame.resize(frameBytes);
+    unsigned char* dst = reinterpret_cast<unsigned char*>(m_loadedImageFrame.data());
+    for (int row = 0; row < image.height(); ++row) {
+        std::memcpy(dst + static_cast<qsizetype>(row) * image.width(),
+                    image.constScanLine(row),
+                    static_cast<std::size_t>(image.width()));
+    }
+
+    m_loadedImagePath = normalizedImagePath;
+    m_loadedImageWidth = image.width();
+    m_loadedImageHeight = image.height();
+    return true;
+}
+
 QVariantMap RoiManager::ExecuteHalcon(const QString& imagePath)
 {
     QVariantMap result;
@@ -1026,15 +1086,26 @@ QVariantMap RoiManager::ExecuteHalcon(const QString& imagePath)
     RoiData* downRoi = FirstRoiOfType(m_roiList, "DownROI");
 
     if (!topRoi || !downRoi) {
-        result["message"] = "需要至少一个TopROI和一个DownROI";
+        result["message"] = QStringLiteral("Need TopROI and DownROI");
         return result;
     }
 
     const QString normalizedImagePath = NormalizeImagePath(imagePath);
     if (normalizedImagePath.isEmpty()) {
-        result["message"] = "请先加载图片";
+        result["message"] = QStringLiteral("Please load image first");
         return result;
     }
+
+    if (m_loadedImageFrame.isEmpty() ||
+        m_loadedImageWidth <= 0 ||
+        m_loadedImageHeight <= 0 ||
+        m_loadedImagePath != normalizedImagePath) {
+        result["failedStep"] = QStringLiteral("Check loaded frame");
+        result["message"] = QStringLiteral("Loaded image frame not available: %1").arg(normalizedImagePath);
+        return result;
+    }
+
+    QString halconStep = QStringLiteral("Prepare");
 
     try {
         using namespace HalconCpp;
@@ -1048,29 +1119,42 @@ QVariantMap RoiManager::ExecuteHalcon(const QString& imagePath)
         HTuple topNumber, downNumber;
         HTuple topRows, downColumns;
 
-        const QByteArray pathBytes = normalizedImagePath.toLocal8Bit();
-        ReadImage(&image, pathBytes.constData());
+        halconStep = QStringLiteral("GenImage1 from loaded frame");
+        GenImage1(&image,
+                  "byte",
+                  m_loadedImageWidth,
+                  m_loadedImageHeight,
+                  HTuple(reinterpret_cast<Hlong>(m_loadedImageFrame.constData())));
 
+        halconStep = QStringLiteral("GenRectangle2 TopROI");
         GenRectangleFromRoi(topRoi, &topRectangle);
+        halconStep = QStringLiteral("GenRectangle2 DownROI");
         GenRectangleFromRoi(downRoi, &downRectangle);
 
+        halconStep = QStringLiteral("ReduceDomain TopROI");
         ReduceDomain(image, topRectangle, &topReducedDomain);
+        halconStep = QStringLiteral("ReduceDomain DownROI");
         ReduceDomain(image, downRectangle, &downReducedDomain);
 
         const QVariantMap params = m_halconParams;
 
+        halconStep = QStringLiteral("Threshold TopROI");
         Threshold(topReducedDomain,
                   &topRegion,
                   ParamDouble(params, "topThresholdMin"),
                   ParamDouble(params, "topThresholdMax"));
+        halconStep = QStringLiteral("Threshold DownROI");
         Threshold(downReducedDomain,
                   &downRegion,
                   ParamDouble(params, "downThresholdMin"),
                   ParamDouble(params, "downThresholdMax"));
 
+        halconStep = QStringLiteral("Connection TopROI");
         Connection(topRegion, &topConnectedRegion);
+        halconStep = QStringLiteral("Connection DownROI");
         Connection(downRegion, &downConnectedRegion);
 
+        halconStep = QStringLiteral("SelectShape TopROI");
         SelectShape(topConnectedRegion,
                     &topSelectedRegion,
                     HTuple("ratio").Append("height").Append("width"),
@@ -1082,6 +1166,7 @@ QVariantMap RoiManager::ExecuteHalcon(const QString& imagePath)
                         .Append(ParamDouble(params, "topHeightMax"))
                         .Append(ParamDouble(params, "topWidthMax")));
 
+        halconStep = QStringLiteral("SelectShape DownROI");
         SelectShape(downConnectedRegion,
                     &downSelectedRegion,
                     HTuple("ratio").Append("height").Append("width"),
@@ -1093,7 +1178,9 @@ QVariantMap RoiManager::ExecuteHalcon(const QString& imagePath)
                         .Append(ParamDouble(params, "downHeightMax"))
                         .Append(ParamDouble(params, "downWidthMax")));
 
+        halconStep = QStringLiteral("CountObj TopROI");
         CountObj(topSelectedRegion, &topNumber);
+        halconStep = QStringLiteral("CountObj DownROI");
         CountObj(downSelectedRegion, &downNumber);
 
         const int topCount = topNumber[0].I();
@@ -1103,23 +1190,31 @@ QVariantMap RoiManager::ExecuteHalcon(const QString& imagePath)
         result["downCount"] = downCount;
 
         if (topCount != 1 || downCount != 1) {
-            result["message"] = QString("区域数量不满足要求: TopROI=%1, DownROI=%2")
+            result["failedStep"] = QStringLiteral("Object count check");
+            result["message"] = QStringLiteral("Region count mismatch: TopROI=%1, DownROI=%2")
                                     .arg(topCount)
                                     .arg(downCount);
             return result;
         }
 
+        halconStep = QStringLiteral("RegionFeatures TopROI row");
         RegionFeatures(topSelectedRegion, "row", &topRows);
+        halconStep = QStringLiteral("RegionFeatures DownROI column");
         RegionFeatures(downSelectedRegion, "column", &downColumns);
 
         result["baseY"] = topRows[0].D();
         result["baseX"] = downColumns[0].D();
         result["ok"] = true;
-        result["message"] = "HALCON执行完成";
+        result["message"] = QStringLiteral("HALCON finished");
         return result;
     }
-    catch (const HalconCpp::HException&) {
-        result["message"] = "HALCON执行失败";
+    catch (const HalconCpp::HException& ex) {
+        result["failedStep"] = halconStep;
+        result["halconErrorCode"] = static_cast<int>(ex.ErrorCode());
+        result["message"] = QStringLiteral("HALCON failed at %1, error=%2, %3")
+                                .arg(halconStep)
+                                .arg(static_cast<int>(ex.ErrorCode()))
+                                .arg(QString::fromLocal8Bit(ex.ErrorMessage().Text()));
         return result;
     }
 }

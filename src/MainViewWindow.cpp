@@ -64,13 +64,22 @@ void MianViewModel::Initialize(){
         auto* roiManager = new RoiManager(this);
         roiManager->SetAlgorithmParams(m_algorithmParams);
         m_roiManagers.push_back(roiManager);
+        if (!cfg.path.isEmpty()) {
+            if (roiManager->LoadFromJson(cfg.path)) {
+                ApplyRoiConfig(i);
+                qDebug() << "Loaded ROI config for camera" << i << cfg.path;
+            } else {
+                qWarning() << "Load ROI config failed for camera" << i << cfg.path;
+            }
+        }
         qDebug() << "Camera" << i
                  << "SN:" << cfg.serialNumber
                  << "Width:" << cfg.imageWidth
                  << "Height:" << cfg.imageHeight
                  << "Channel:" << cfg.channel
                  << "Exposure:" << cfg.exposureTime
-                 << "Gain:" << cfg.gain;
+                 << "Gain:" << cfg.gain
+                 << "ROI config:" << cfg.path;
     }
 
 };
@@ -138,6 +147,20 @@ void MianViewModel::StartDetect()
 
     if (m_gpioThread && !m_gpioThread->isRunning()) {
         m_gpioController->moveToThread(m_gpioThread);
+        connect(m_gpioController,
+                &GPIOController::dropped,
+                this,
+                [this](int cameraIndex) {
+                    if (cameraIndex < 0 || cameraIndex >= m_cameras.size()) {
+                        qWarning() << "Invalid dropped camera index" << cameraIndex;
+                        return;
+                    }
+
+                    if (m_cameras[cameraIndex]) {
+                        m_cameras[cameraIndex]->incrementRejectFrameCount();
+                    }
+                },
+                Qt::QueuedConnection);
         connect(m_gpioThread, &QThread::started, m_gpioController, &GPIOController::startWork, Qt::UniqueConnection);
         connect(m_gpioController, &GPIOController::finished, m_gpioThread, &QThread::quit, Qt::UniqueConnection);
         connect(m_gpioController, &GPIOController::finished, m_gpioController, &QObject::deleteLater, Qt::UniqueConnection);

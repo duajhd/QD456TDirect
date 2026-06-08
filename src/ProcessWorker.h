@@ -41,9 +41,10 @@ private:
 
 
 
- signals:
+signals:
     void finished();
      void frameUpdated(int frameId);
+     void algorithmRegionCountsUpdated(int topConnectedCount, int downConnectedCount, int downSelectedCount);
 public slots:
   void OnFrameArrived(int frameId);
   void StartWork();

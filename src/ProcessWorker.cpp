@@ -3,6 +3,7 @@
 #include <Algorithm.h>
 #include <CameraViewModel.h>
 #include <QMutexLocker>
+#include <QDebug>
 #include <QThread>
 #include <QtMath>
 
@@ -71,20 +72,77 @@ void ProcessWorker::StartWork()
             continue;
         }
 
+        VisionAlgorithm::DirectionDebugInfo debugInfo;
+        using DirectionRecognizeFn = VisionAlgorithm::DirectionResult (*)(
+            const HalconCpp::HObject&,
+            const HalconCpp::HObject&,
+            const HalconCpp::HObject&,
+            int,
+            int,
+            int,
+            int,
+            double,
+            double,
+            double,
+            double,
+            const DetectionAlgorithmParams&,
+            int,
+            VisionAlgorithm::DirectionDebugInfo*);
+
+        DirectionRecognizeFn directionRecognize = VisionAlgorithm::DirectionRecognizeCamera1;
+        switch (m_cameraIndex) {
+        case 0:
+            directionRecognize = VisionAlgorithm::DirectionRecognizeCamera1;
+            break;
+        case 1:
+            directionRecognize = VisionAlgorithm::DirectionRecognizeCamera2;
+            break;
+        case 2:
+            directionRecognize = VisionAlgorithm::DirectionRecognizeCamera3;
+            break;
+        case 3:
+            directionRecognize = VisionAlgorithm::DirectionRecognizeCamera4;
+            break;
+        default:
+            qWarning() << "Invalid camera index for DirectionRecognize" << m_cameraIndex;
+            break;
+        }
+
         const VisionAlgorithm::DirectionResult result =
-            VisionAlgorithm::DirectionRecognize(DetecImage,
-                                                topRectangle,
-                                                downRectangle,
-                                                config.top.offsetX,
-                                                config.top.offsetY,
-                                                config.down.offsetX,
-                                                config.down.offsetY,
-                                                config.top.offsetCircleRadius,
-                                                config.down.offsetCircleRadius,
-                                                config.top.offsetRotation,
-                                                config.down.offsetRotation,
-                                                config.algorithmParams,
-                                                config.dropThres);
+            directionRecognize(DetecImage,
+                               topRectangle,
+                               downRectangle,
+                               config.top.offsetX,
+                               config.top.offsetY,
+                               config.down.offsetX,
+                               config.down.offsetY,
+                               config.top.offsetCircleRadius,
+                               config.down.offsetCircleRadius,
+                               config.top.offsetRotation,
+                               config.down.offsetRotation,
+                               config.algorithmParams,
+                               config.dropThres,
+                               &debugInfo);
+        emit algorithmRegionCountsUpdated(debugInfo.topConnectedCount,
+                                          debugInfo.downConnectedCount,
+                                          debugInfo.downSelectedCount);
+        /*
+        qDebug() << "DirectionRecognize debug"
+                 << "camera" << m_cameraIndex
+                 << "topConnected" << debugInfo.topConnectedCount
+                 << "downConnected" << debugInfo.downConnectedCount
+                 << "topSelected" << debugInfo.topSelectedCount
+                 << "downSelected" << debugInfo.downSelectedCount
+                 << "topThresholdArea" << debugInfo.topRegionArea
+                 << "downThresholdArea" << debugInfo.downRegionArea
+                 << "downROI center=(" << config.down.centerX << "," << config.down.centerY << ")"
+                 << "size=(" << config.down.width << "," << config.down.height << ")"
+                 << "angle" << config.down.angle
+                 << "downThreshold=(" << config.algorithmParams.downThresholdMin << "," << config.algorithmParams.downThresholdMax << ")"
+                 << "downRatio=(" << config.algorithmParams.downRatioMin << "," << config.algorithmParams.downRatioMax << ")"
+                 << "downHeight=(" << config.algorithmParams.downHeightMin << "," << config.algorithmParams.downHeightMax << ")"
+                 << "downWidth=(" << config.algorithmParams.downWidthMin << "," << config.algorithmParams.downWidthMax << ")";
+        */
 
         if (result == VisionAlgorithm::DirectionResult::Reject && m_dropQueue) {
             m_dropQueue->try_enqueue(m_cameraIndex);

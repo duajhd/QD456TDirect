@@ -16,6 +16,7 @@ Item {
     property real safeCenterY: roiData ? roiData.centerY : 0
     property real safeWidth: roiData ? roiData.roiWidth : 0
     property real safeHeight: roiData ? roiData.roiHeight : 0
+    property real safeCircleRadius: roiData ? roiData.circleRadius : 0
     property real safeAngle: roiData ? roiData.angle : 0
     property bool paintReportPrinted: false
 
@@ -109,7 +110,7 @@ Item {
                 ctx.rotate(root.safeAngle * Math.PI / 180.0)
                 const rectW = root.imageCanvas.imageToViewW(root.safeWidth)
                 const rectH = root.imageCanvas.imageToViewH(root.safeHeight)
-                const radius = Math.min(rectW, rectH) / 2
+                const radius = root.imageCanvas.imageToViewW(root.safeCircleRadius)
                 ctx.fillRect(-rectW / 2, -rectH / 2, rectW, rectH)
                 ctx.globalCompositeOperation = "destination-out"
                 ctx.beginPath()

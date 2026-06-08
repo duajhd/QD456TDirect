@@ -10,5 +10,6 @@ struct CameraConfig
     int channel = 1;   // 默认单通道灰度
     double exposureTime = 500.0;
     double gain = 15.0;
+    QString path;
 };
 #endif // CAMERACONFIG_H

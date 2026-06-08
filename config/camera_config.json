@@ -23,35 +23,39 @@
   },
   "cameras": [
     {
-      "serialNumber": "DB0883973",
+      "serialNumber": "DB0883909",
       "imageWidth": 1440,
       "imageHeight": 1080,
       "channel": 1,
       "exposureTime": 500,
-      "gain": 15
+      "gain": 15,
+      "path": "camera1.json"
     },
     {
-      "serialNumber": "DB0883861",
+      "serialNumber": "DB0883911",
       "imageWidth": 1440,
       "imageHeight": 1080,
  	"channel": 1,
       "exposureTime": 500,
-      "gain": 15
+      "gain": 15,
+      "path": "camera2.json"
 
     },
  {
-      "serialNumber": "DB0883909",
+      "serialNumber": "DB0883861",
       "imageWidth": 1440,
       "imageHeight": 1080,
       "exposureTime": 500,
-      "gain": 15
+      "gain": 15,
+      "path": "camera3.json"
     }
 , {
-      "serialNumber": "DB0883911",
+      "serialNumber": "DB0883973",
       "imageWidth": 1440,
       "imageHeight": 1080,
       "exposureTime": 500,
-      "gain": 15
+      "gain": 15,
+      "path": "camera4.json"
     }
 
   ]

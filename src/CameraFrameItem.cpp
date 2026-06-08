@@ -35,6 +35,7 @@ void CameraFrameItem::setCameraVm(QObject* vmObj)
 
     if (m_cameraVm) {
         disconnect(m_cameraVm, nullptr, this, nullptr);
+        clearPendingFrame();
     }
 
     m_cameraVm = vm;
@@ -45,13 +46,12 @@ void CameraFrameItem::setCameraVm(QObject* vmObj)
                 this,
                 &CameraFrameItem::onFrameUpdated,
                 Qt::QueuedConnection);
+        connect(m_cameraVm,
+                &CameraViewModel::frameSourceReset,
+                this,
+                &CameraFrameItem::onFrameSourceReset);
     } else {
-        QMutexLocker locker(&m_mutex);
-        m_pendingFrameAddr = nullptr;
-        m_pendingWidth = 0;
-        m_pendingHeight = 0;
-        m_pendingBytesPerLine = 0;
-        m_pendingFormat = QImage::Format_Invalid;
+        clearPendingFrame();
     }
 
     emit cameraVmChanged();
@@ -107,6 +107,22 @@ void CameraFrameItem::onFrameUpdated(int frameId)
     update();
 }
 
+void CameraFrameItem::onFrameSourceReset()
+{
+    clearPendingFrame();
+    update();
+}
+
+void CameraFrameItem::clearPendingFrame()
+{
+    QMutexLocker locker(&m_mutex);
+    m_pendingFrameAddr = nullptr;
+    m_pendingWidth = 0;
+    m_pendingHeight = 0;
+    m_pendingBytesPerLine = 0;
+    m_pendingFormat = QImage::Format_Invalid;
+}
+
 QSGNode* CameraFrameItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
     unsigned char* frameAddr = nullptr;
@@ -130,12 +146,23 @@ QSGNode* CameraFrameItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*
 
     QImage image(frameAddr, width, height, bytesPerLine, format);
 
-    auto* node = static_cast<QSGSimpleTextureNode*>(oldNode);
+    auto* node = dynamic_cast<QSGSimpleTextureNode*>(oldNode);
+    if (oldNode && !node) {
+        delete oldNode;
+        node = nullptr;
+    }
+
     if (!node) {
         node = new QSGSimpleTextureNode();
     }
 
-    auto* texture = static_cast<QSGPlainTexture*>(node->texture());
+    auto* texture = dynamic_cast<QSGPlainTexture*>(node->texture());
+    if (node->texture() && !texture) {
+        delete node;
+        node = new QSGSimpleTextureNode();
+    }
+
+    texture = dynamic_cast<QSGPlainTexture*>(node->texture());
     if (!texture) {
         texture = new QSGPlainTexture();
         node->setTexture(texture);

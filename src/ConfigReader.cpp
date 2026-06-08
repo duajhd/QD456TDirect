@@ -5,6 +5,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QDir>
+#include <QFileInfo>
 
 namespace {
 
@@ -59,6 +61,7 @@ bool ConfigReader::loadCameraConfig(const QString& filePath,
     }
 
     QJsonArray cameraArray = rootObj["cameras"].toArray();
+    const QDir configDir = QFileInfo(filePath).absoluteDir();
 
     for (int i = 0; i < cameraArray.size(); ++i) {
         if (!cameraArray[i].isObject()) {
@@ -78,6 +81,13 @@ bool ConfigReader::loadCameraConfig(const QString& filePath,
         cfg.channel = obj.contains("channel") ? obj.value("channel").toInt(1) : 1;
         cfg.exposureTime = JsonDoubleOrDefault(obj, "exposureTime", cfg.exposureTime);
         cfg.gain = JsonDoubleOrDefault(obj, "gain", cfg.gain);
+        cfg.path = obj.value("path").toString();
+        if (cfg.path.isEmpty()) {
+            cfg.path = QString("camera%1.json").arg(i + 1);
+        }
+        if (QDir::isRelativePath(cfg.path)) {
+            cfg.path = configDir.absoluteFilePath(cfg.path);
+        }
 
         if (cfg.serialNumber.isEmpty()) {
             if (errorString) {

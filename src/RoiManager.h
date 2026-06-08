@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFile>
+#include <QByteArray>
 #include <QVariantMap>
 #include "DetectionRoiConfig.h"
 #include "RoiData.h"
@@ -50,12 +51,14 @@ public:
     Q_INVOKABLE void RemoveRoisByType(const QString& roiType);
     Q_INVOKABLE void ClearAllRois();
     Q_INVOKABLE RoiData* GetRoiById(const QString& roiId);
+    Q_INVOKABLE RoiData* GetLastOffsetRoiByType(const QString& roiType) const;
 
     Q_INVOKABLE void SelectOnly(const QString& roiId);
     Q_INVOKABLE void UnselectAll();
 
     Q_INVOKABLE bool SaveToJson(const QString& filePath);
     Q_INVOKABLE bool LoadFromJson(const QString& filePath);
+    Q_INVOKABLE bool LoadImageFrame(const QString& imagePath);
     Q_INVOKABLE QVariantMap ExecuteHalcon(const QString& imagePath);
     Q_INVOKABLE QVariantMap GetHalconParams() const;
     Q_INVOKABLE void SetHalconParams(const QVariantMap& params);
@@ -74,6 +77,10 @@ private:
     QList<RoiData*> m_roiList;
     QList<RoiData*> m_offsetRoiList;
     QVariantMap m_halconParams;
+    QByteArray m_loadedImageFrame;
+    QString m_loadedImagePath;
+    int m_loadedImageWidth = 0;
+    int m_loadedImageHeight = 0;
 
     QString GenerateRoiId() const;
     RoiData* CreateRoi(const QString& roiType,

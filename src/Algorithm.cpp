@@ -1,24 +1,57 @@
 #include "Algorithm.h"
+#include <QDir>
+#include <QString>
+#include <atomic>
 #include <cmath>
 
 using namespace HalconCpp;
 
 namespace VisionAlgorithm {
 
-DirectionResult DirectionRecognize(const HObject& image,
-                                   const HObject& topRectangle,
-                                   const HObject& downRectangle,
-                                   int offsetX,
-                                   int offsetY,
-                                   int offsetXDown,
-                                   int offsetYDown,
-                                   double topOffsetCircleRadius,
-                                   double downOffsetCircleRadius,
-                                   double topOffsetRotationDeg,
-                                   double downOffsetRotationDeg,
-                                   const DetectionAlgorithmParams& params,
-                                   int dropThres)
+namespace {
+
+std::atomic_int g_camera3CropImageIndex { 0 };
+
+void SaveCamera3CropImages(const HObject& topReducedDomain,
+                           const HObject& downReducedDomain)
 {
+    QDir imageDir(QDir::current().absoluteFilePath(QStringLiteral("images")));
+    if (!imageDir.exists() && !imageDir.mkpath(QStringLiteral("."))) {
+        return;
+    }
+
+    const int index = g_camera3CropImageIndex.fetch_add(1, std::memory_order_relaxed) + 1;
+    const QString topPath = imageDir.absoluteFilePath(QString("TopCropImage_%1.bmp").arg(index));
+    const QString downPath = imageDir.absoluteFilePath(QString("DownCropImage_%1.bmp").arg(index));
+
+    HObject topCropImage;
+    HObject downCropImage;
+    CropDomain(topReducedDomain, &topCropImage);
+    CropDomain(downReducedDomain, &downCropImage);
+    WriteImage(topCropImage, "bmp", 0, topPath.toLocal8Bit().constData());
+    WriteImage(downCropImage, "bmp", 0, downPath.toLocal8Bit().constData());
+}
+
+}
+DirectionResult DirectionRecognizeCamera1(const HObject& image,
+                                          const HObject& topRectangle,
+                                          const HObject& downRectangle,
+                                          int offsetX,
+                                          int offsetY,
+                                          int offsetXDown,
+                                          int offsetYDown,
+                                          double topOffsetCircleRadius,
+                                          double downOffsetCircleRadius,
+                                          double topOffsetRotationDeg,
+                                          double downOffsetRotationDeg,
+                                          const DetectionAlgorithmParams& params,
+                                          int dropThres,
+                                          DirectionDebugInfo* debugInfo)
+{
+    if (debugInfo) {
+        *debugInfo = DirectionDebugInfo();
+    }
+
     try {
         HObject topReducedDomain, downReducedDomain;
         HObject topRegion, downRegion;
@@ -29,6 +62,9 @@ DirectionResult DirectionRecognize(const HObject& image,
         HObject topDiff, downDiff;
 
         HTuple topNumber, downNumber;
+        HTuple topConnectedNumber, downConnectedNumber;
+        HTuple topRegionArea, topRegionRow, topRegionColumn;
+        HTuple downRegionArea, downRegionRow, downRegionColumn;
         HTuple topArea, topRow, topColumn;
         HTuple downArea, downRow, downColumn;
         HTuple meanTop, meanDown;
@@ -39,9 +75,13 @@ DirectionResult DirectionRecognize(const HObject& image,
 
         Threshold(topReducedDomain, &topRegion, params.topThresholdMin, params.topThresholdMax);
         Threshold(downReducedDomain, &downRegion, params.downThresholdMin, params.downThresholdMax);
+        AreaCenter(topRegion, &topRegionArea, &topRegionRow, &topRegionColumn);
+        AreaCenter(downRegion, &downRegionArea, &downRegionRow, &downRegionColumn);
 
         Connection(topRegion, &topConnectedRegion);
         Connection(downRegion, &downConnectedRegion);
+        CountObj(topConnectedRegion, &topConnectedNumber);
+        CountObj(downConnectedRegion, &downConnectedNumber);
 
         SelectShape(topConnectedRegion,
                     &topSelectedRegion,
@@ -59,8 +99,15 @@ DirectionResult DirectionRecognize(const HObject& image,
 
         CountObj(topSelectedRegion, &topNumber);
         CountObj(downSelectedRegion, &downNumber);
+        if (debugInfo) {
+            debugInfo->topConnectedCount = topConnectedNumber[0].I();
+            debugInfo->downConnectedCount = downConnectedNumber[0].I();
+            debugInfo->topSelectedCount = topNumber[0].I();
+            debugInfo->downSelectedCount = downNumber[0].I();
+            debugInfo->topRegionArea = topRegionArea.Length() > 0 ? topRegionArea[0].D() : -1.0;
+            debugInfo->downRegionArea = downRegionArea.Length() > 0 ? downRegionArea[0].D() : -1.0;
+        }
 
-        // 只有上下都找到 1 个目标才继续
         if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
             return DirectionResult::NotFound;
         }
@@ -70,9 +117,6 @@ DirectionResult DirectionRecognize(const HObject& image,
 
         const double refRow = topRow[0].D();
         const double refCol = downColumn[0].D();
-
-
-
         const double topPhi = topOffsetRotationDeg * 3.14159265358979323846 / 180.0;
         const double downPhi = downOffsetRotationDeg * 3.14159265358979323846 / 180.0;
 
@@ -104,7 +148,7 @@ DirectionResult DirectionRecognize(const HObject& image,
         Intensity(topDiff, image, &meanTop, &topDeviation);
         Intensity(downDiff, image, &meanDown, &downDeviation);
 
-        if (std::abs(topDeviation[0].D() - downDeviation[0].D()) > dropThres) {
+        if (std::abs(meanTop[0].D() - meanDown[0].D()) <= dropThres) {
             return DirectionResult::Reject;
         }
 
@@ -114,5 +158,381 @@ DirectionResult DirectionRecognize(const HObject& image,
         return DirectionResult::NotFound;
     }
 }
+DirectionResult DirectionRecognizeCamera2(const HObject& image,
+                                          const HObject& topRectangle,
+                                          const HObject& downRectangle,
+                                          int offsetX,
+                                          int offsetY,
+                                          int offsetXDown,
+                                          int offsetYDown,
+                                          double topOffsetCircleRadius,
+                                          double downOffsetCircleRadius,
+                                          double topOffsetRotationDeg,
+                                          double downOffsetRotationDeg,
+                                          const DetectionAlgorithmParams& params,
+                                          int dropThres,
+                                          DirectionDebugInfo* debugInfo)
+{
+    if (debugInfo) {
+        *debugInfo = DirectionDebugInfo();
+    }
 
+    try {
+        HObject topReducedDomain, downReducedDomain;
+        HObject topRegion, downRegion;
+        HObject topConnectedRegion, downConnectedRegion;
+        HObject topSelectedRegion, downSelectedRegion;
+        HObject genTopRegion, genDownRegion;
+        HObject topCircle, downCircle;
+        HObject topDiff, downDiff;
+
+        HTuple topNumber, downNumber;
+        HTuple topConnectedNumber, downConnectedNumber;
+        HTuple topRegionArea, topRegionRow, topRegionColumn;
+        HTuple downRegionArea, downRegionRow, downRegionColumn;
+        HTuple topArea, topRow, topColumn;
+        HTuple downArea, downRow, downColumn;
+        HTuple meanTop, meanDown;
+        HTuple topDeviation, downDeviation;
+
+        ReduceDomain(image, topRectangle, &topReducedDomain);
+        ReduceDomain(image, downRectangle, &downReducedDomain);
+
+        Threshold(topReducedDomain, &topRegion, params.topThresholdMin, params.topThresholdMax);
+        Threshold(downReducedDomain, &downRegion, params.downThresholdMin, params.downThresholdMax);
+        AreaCenter(topRegion, &topRegionArea, &topRegionRow, &topRegionColumn);
+        AreaCenter(downRegion, &downRegionArea, &downRegionRow, &downRegionColumn);
+
+        Connection(topRegion, &topConnectedRegion);
+        Connection(downRegion, &downConnectedRegion);
+        CountObj(topConnectedRegion, &topConnectedNumber);
+        CountObj(downConnectedRegion, &downConnectedNumber);
+
+        SelectShape(topConnectedRegion,
+                    &topSelectedRegion,
+                    HTuple("ratio").Append("height").Append("width"),
+                    "and",
+                    HTuple(params.topRatioMin).Append(params.topHeightMin).Append(params.topWidthMin),
+                    HTuple(params.topRatioMax).Append(params.topHeightMax).Append(params.topWidthMax));
+
+        SelectShape(downConnectedRegion,
+                    &downSelectedRegion,
+                    HTuple("ratio").Append("height").Append("width"),
+                    "and",
+                    HTuple(params.downRatioMin).Append(params.downHeightMin).Append(params.downWidthMin),
+                    HTuple(params.downRatioMax).Append(params.downHeightMax).Append(params.downWidthMax));
+
+        CountObj(topSelectedRegion, &topNumber);
+        CountObj(downSelectedRegion, &downNumber);
+        if (debugInfo) {
+            debugInfo->topConnectedCount = topConnectedNumber[0].I();
+            debugInfo->downConnectedCount = downConnectedNumber[0].I();
+            debugInfo->topSelectedCount = topNumber[0].I();
+            debugInfo->downSelectedCount = downNumber[0].I();
+            debugInfo->topRegionArea = topRegionArea.Length() > 0 ? topRegionArea[0].D() : -1.0;
+            debugInfo->downRegionArea = downRegionArea.Length() > 0 ? downRegionArea[0].D() : -1.0;
+        }
+
+        if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
+            return DirectionResult::NotFound;
+        }
+
+        AreaCenter(topSelectedRegion, &topArea, &topRow, &topColumn);
+        AreaCenter(downSelectedRegion, &downArea, &downRow, &downColumn);
+
+        const double refRow = topRow[0].D();
+        const double refCol = downColumn[0].D();
+        const double topPhi = topOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+        const double downPhi = downOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+
+        GenRectangle2(&genTopRegion,
+                      refRow + offsetX,
+                      refCol + offsetY + params.inspectTopColumnOffset,
+                      topPhi,
+                      params.inspectRectHalfWidth,
+                      params.inspectRectHalfHeight);
+        GenRectangle2(&genDownRegion,
+                      refRow + offsetXDown,
+                      refCol + offsetYDown,
+                      downPhi,
+                      params.inspectRectHalfWidth,
+                      params.inspectRectHalfHeight);
+
+        GenCircle(&topCircle,
+                  refRow + offsetX,
+                  refCol + offsetY + params.inspectTopColumnOffset,
+                  topOffsetCircleRadius);
+        GenCircle(&downCircle,
+                  refRow + offsetXDown,
+                  refCol + offsetYDown,
+                  downOffsetCircleRadius);
+
+        Difference(genTopRegion, topCircle, &topDiff);
+        Difference(genDownRegion, downCircle, &downDiff);
+
+        Intensity(topDiff, image, &meanTop, &topDeviation);
+        Intensity(downDiff, image, &meanDown, &downDeviation);
+
+        if (std::abs(meanTop[0].D() - meanDown[0].D()) <= dropThres) {
+            return DirectionResult::Reject;
+        }
+
+        return DirectionResult::Normal;
+    }
+    catch (const HException&) {
+        return DirectionResult::NotFound;
+    }
+}
+DirectionResult DirectionRecognizeCamera3(const HObject& image,
+                                          const HObject& topRectangle,
+                                          const HObject& downRectangle,
+                                          int offsetX,
+                                          int offsetY,
+                                          int offsetXDown,
+                                          int offsetYDown,
+                                          double topOffsetCircleRadius,
+                                          double downOffsetCircleRadius,
+                                          double topOffsetRotationDeg,
+                                          double downOffsetRotationDeg,
+                                          const DetectionAlgorithmParams& params,
+                                          int dropThres,
+                                          DirectionDebugInfo* debugInfo)
+{
+    if (debugInfo) {
+        *debugInfo = DirectionDebugInfo();
+    }
+
+    try {
+        HObject topReducedDomain, downReducedDomain;
+        HObject topRegion, downRegion;
+        HObject topConnectedRegion, downConnectedRegion;
+        HObject topSelectedRegion, downSelectedRegion;
+        HObject genTopRegion, genDownRegion;
+        HObject topCircle, downCircle;
+        HObject topDiff, downDiff;
+
+        HTuple topNumber, downNumber;
+        HTuple topConnectedNumber, downConnectedNumber;
+        HTuple topRegionArea, topRegionRow, topRegionColumn;
+        HTuple downRegionArea, downRegionRow, downRegionColumn;
+        HTuple topArea, topRow, topColumn;
+        HTuple downArea, downRow, downColumn;
+        HTuple meanTop, meanDown;
+        HTuple topDeviation, downDeviation;
+
+
+        WriteImage(image,"bmp",0,"D:\\zhijain\\QT456TDirect\\build\\Desktop_Qt_6_8_3_MSVC2022_64bit-Debug\\t.bmp");
+        ReduceDomain(image, topRectangle, &topReducedDomain);
+        ReduceDomain(image, downRectangle, &downReducedDomain);
+       // SaveCamera3CropImages(topReducedDomain, downReducedDomain);
+        Threshold(topReducedDomain, &topRegion, params.topThresholdMin, params.topThresholdMax);
+        Threshold(downReducedDomain, &downRegion, params.downThresholdMin, params.downThresholdMax);
+        AreaCenter(topRegion, &topRegionArea, &topRegionRow, &topRegionColumn);
+        AreaCenter(downRegion, &downRegionArea, &downRegionRow, &downRegionColumn);
+
+        Connection(topRegion, &topConnectedRegion);
+        Connection(downRegion, &downConnectedRegion);
+        CountObj(topConnectedRegion, &topConnectedNumber);
+        CountObj(downConnectedRegion, &downConnectedNumber);
+
+        SelectShape(topConnectedRegion,
+                    &topSelectedRegion,
+                    HTuple("ratio").Append("height").Append("width"),
+                    "and",
+                    HTuple(params.topRatioMin).Append(params.topHeightMin).Append(params.topWidthMin),
+                    HTuple(params.topRatioMax).Append(params.topHeightMax).Append(params.topWidthMax));
+
+        SelectShape(downConnectedRegion,
+                    &downSelectedRegion,
+                    HTuple("ratio").Append("height").Append("width"),
+                    "and",
+                    HTuple(params.downRatioMin).Append(params.downHeightMin).Append(params.downWidthMin),
+                    HTuple(params.downRatioMax).Append(params.downHeightMax).Append(params.downWidthMax));
+
+        CountObj(topSelectedRegion, &topNumber);
+        CountObj(downSelectedRegion, &downNumber);
+        if (debugInfo) {
+            debugInfo->topConnectedCount = topConnectedNumber[0].I();
+            debugInfo->downConnectedCount = downConnectedNumber[0].I();
+            debugInfo->topSelectedCount = topNumber[0].I();
+            debugInfo->downSelectedCount = downNumber[0].I();
+            debugInfo->topRegionArea = topRegionArea.Length() > 0 ? topRegionArea[0].D() : -1.0;
+            debugInfo->downRegionArea = downRegionArea.Length() > 0 ? downRegionArea[0].D() : -1.0;
+        }
+
+        if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
+            return DirectionResult::NotFound;
+        }
+
+        AreaCenter(topSelectedRegion, &topArea, &topRow, &topColumn);
+        AreaCenter(downSelectedRegion, &downArea, &downRow, &downColumn);
+
+        const double refRow = topRow[0].D();
+        const double refCol = downColumn[0].D();
+        const double topPhi = topOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+        const double downPhi = downOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+
+        GenRectangle2(&genTopRegion,
+                      refRow + offsetX,
+                      refCol + offsetY + params.inspectTopColumnOffset,
+                      topPhi,
+                      params.inspectRectHalfWidth,
+                      params.inspectRectHalfHeight);
+        GenRectangle2(&genDownRegion,
+                      refRow + offsetXDown,
+                      refCol + offsetYDown,
+                      downPhi,
+                      params.inspectRectHalfWidth,
+                      params.inspectRectHalfHeight);
+
+        GenCircle(&topCircle,
+                  refRow + offsetX,
+                  refCol + offsetY + params.inspectTopColumnOffset,
+                  topOffsetCircleRadius);
+        GenCircle(&downCircle,
+                  refRow + offsetXDown,
+                  refCol + offsetYDown,
+                  downOffsetCircleRadius);
+
+        Difference(genTopRegion, topCircle, &topDiff);
+        Difference(genDownRegion, downCircle, &downDiff);
+
+        Intensity(topDiff, image, &meanTop, &topDeviation);
+        Intensity(downDiff, image, &meanDown, &downDeviation);
+
+        if (std::abs(meanTop[0].D() - meanDown[0].D()) <= dropThres) {
+            return DirectionResult::Reject;
+        }
+
+        return DirectionResult::Normal;
+    }
+    catch (const HException&) {
+        return DirectionResult::NotFound;
+    }
+}
+DirectionResult DirectionRecognizeCamera4(const HObject& image,
+                                          const HObject& topRectangle,
+                                          const HObject& downRectangle,
+                                          int offsetX,
+                                          int offsetY,
+                                          int offsetXDown,
+                                          int offsetYDown,
+                                          double topOffsetCircleRadius,
+                                          double downOffsetCircleRadius,
+                                          double topOffsetRotationDeg,
+                                          double downOffsetRotationDeg,
+                                          const DetectionAlgorithmParams& params,
+                                          int dropThres,
+                                          DirectionDebugInfo* debugInfo)
+{
+    if (debugInfo) {
+        *debugInfo = DirectionDebugInfo();
+    }
+
+    try {
+        HObject topReducedDomain, downReducedDomain;
+        HObject topRegion, downRegion;
+        HObject topConnectedRegion, downConnectedRegion;
+        HObject topSelectedRegion, downSelectedRegion;
+        HObject genTopRegion, genDownRegion;
+        HObject topCircle, downCircle;
+        HObject topDiff, downDiff;
+
+        HTuple topNumber, downNumber;
+        HTuple topConnectedNumber, downConnectedNumber;
+        HTuple topRegionArea, topRegionRow, topRegionColumn;
+        HTuple downRegionArea, downRegionRow, downRegionColumn;
+        HTuple topArea, topRow, topColumn;
+        HTuple downArea, downRow, downColumn;
+        HTuple meanTop, meanDown;
+        HTuple topDeviation, downDeviation;
+
+        ReduceDomain(image, topRectangle, &topReducedDomain);
+        ReduceDomain(image, downRectangle, &downReducedDomain);
+
+        Threshold(topReducedDomain, &topRegion, params.topThresholdMin, params.topThresholdMax);
+        Threshold(downReducedDomain, &downRegion, params.downThresholdMin, params.downThresholdMax);
+        AreaCenter(topRegion, &topRegionArea, &topRegionRow, &topRegionColumn);
+        AreaCenter(downRegion, &downRegionArea, &downRegionRow, &downRegionColumn);
+
+        Connection(topRegion, &topConnectedRegion);
+        Connection(downRegion, &downConnectedRegion);
+        CountObj(topConnectedRegion, &topConnectedNumber);
+        CountObj(downConnectedRegion, &downConnectedNumber);
+
+        SelectShape(topConnectedRegion,
+                    &topSelectedRegion,
+                    HTuple("ratio").Append("height").Append("width"),
+                    "and",
+                    HTuple(params.topRatioMin).Append(params.topHeightMin).Append(params.topWidthMin),
+                    HTuple(params.topRatioMax).Append(params.topHeightMax).Append(params.topWidthMax));
+
+        SelectShape(downConnectedRegion,
+                    &downSelectedRegion,
+                    HTuple("ratio").Append("height").Append("width"),
+                    "and",
+                    HTuple(params.downRatioMin).Append(params.downHeightMin).Append(params.downWidthMin),
+                    HTuple(params.downRatioMax).Append(params.downHeightMax).Append(params.downWidthMax));
+
+        CountObj(topSelectedRegion, &topNumber);
+        CountObj(downSelectedRegion, &downNumber);
+        if (debugInfo) {
+            debugInfo->topConnectedCount = topConnectedNumber[0].I();
+            debugInfo->downConnectedCount = downConnectedNumber[0].I();
+            debugInfo->topSelectedCount = topNumber[0].I();
+            debugInfo->downSelectedCount = downNumber[0].I();
+            debugInfo->topRegionArea = topRegionArea.Length() > 0 ? topRegionArea[0].D() : -1.0;
+            debugInfo->downRegionArea = downRegionArea.Length() > 0 ? downRegionArea[0].D() : -1.0;
+        }
+
+        if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
+            return DirectionResult::NotFound;
+        }
+
+        AreaCenter(topSelectedRegion, &topArea, &topRow, &topColumn);
+        AreaCenter(downSelectedRegion, &downArea, &downRow, &downColumn);
+
+        const double refRow = topRow[0].D();
+        const double refCol = downColumn[0].D();
+        const double topPhi = topOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+        const double downPhi = downOffsetRotationDeg * 3.14159265358979323846 / 180.0;
+
+        GenRectangle2(&genTopRegion,
+                      refRow + offsetX,
+                      refCol + offsetY + params.inspectTopColumnOffset,
+                      topPhi,
+                      params.inspectRectHalfWidth,
+                      params.inspectRectHalfHeight);
+        GenRectangle2(&genDownRegion,
+                      refRow + offsetXDown,
+                      refCol + offsetYDown,
+                      downPhi,
+                      params.inspectRectHalfWidth,
+                      params.inspectRectHalfHeight);
+
+        GenCircle(&topCircle,
+                  refRow + offsetX,
+                  refCol + offsetY + params.inspectTopColumnOffset,
+                  topOffsetCircleRadius);
+        GenCircle(&downCircle,
+                  refRow + offsetXDown,
+                  refCol + offsetYDown,
+                  downOffsetCircleRadius);
+
+        Difference(genTopRegion, topCircle, &topDiff);
+        Difference(genDownRegion, downCircle, &downDiff);
+
+        Intensity(topDiff, image, &meanTop, &topDeviation);
+        Intensity(downDiff, image, &meanDown, &downDeviation);
+
+        if (std::abs(meanTop[0].D() - meanDown[0].D()) <= dropThres) {
+            return DirectionResult::Reject;
+        }
+
+        return DirectionResult::Normal;
+    }
+    catch (const HException&) {
+        return DirectionResult::NotFound;
+    }
+}
 }

@@ -1,0 +1,51 @@
+{
+    "DownROI": {
+        "centerX": 451.5929203539821,
+        "centerY": 479.46902654867245,
+        "downHeightMax": 2000,
+        "downHeightMin": 90,
+        "downRatioMax": 40,
+        "downRatioMin": 3,
+        "downThresholdMax": 170,
+        "downThresholdMin": 0,
+        "downWidthMax": 25,
+        "downWidthMin": 1,
+        "height": 136.7786572266392,
+        "offsetCircleRadius": 40,
+        "offsetHeight": 60,
+        "offsetROIX": 360,
+        "offsetROIY": 605,
+        "offsetRotation": -3.5,
+        "offsetWidth": 200,
+        "rotation": 5.924581981982627,
+        "width": 91.6433997613295
+    },
+    "TopROI": {
+        "centerX": 579.0265486725665,
+        "centerY": 299.4690265486726,
+        "height": 66.54867256637168,
+        "offsetCircleRadius": 40,
+        "offsetHeight": 60,
+        "offsetROIX": 400,
+        "offsetROIY": -15,
+        "offsetRotation": -4.5,
+        "offsetWidth": 200,
+        "rotation": 3.5322945838908026,
+        "topHeightMax": 20,
+        "topHeightMin": 1,
+        "topRatioMax": 3,
+        "topRatioMin": 0,
+        "topThresholdMax": 170,
+        "topThresholdMin": 0,
+        "topWidthMax": 300,
+        "topWidthMin": 30,
+        "width": 66.01769911504442
+    },
+    "dropThres": 27,
+    "inspect": {
+        "inspectAngleDeg": 10,
+        "inspectRectHalfHeight": 25,
+        "inspectRectHalfWidth": 90,
+        "inspectTopColumnOffset": 365
+    }
+}
