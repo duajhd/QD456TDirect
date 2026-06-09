@@ -27,7 +27,7 @@
       "imageWidth": 1440,
       "imageHeight": 1080,
       "channel": 1,
-      "exposureTime": 500,
+      "exposureTime": 600,
       "gain": 15,
       "path": "camera1.json"
     },
@@ -36,7 +36,7 @@
       "imageWidth": 1440,
       "imageHeight": 1080,
  	"channel": 1,
-      "exposureTime": 500,
+      "exposureTime": 350,
       "gain": 15,
       "path": "camera2.json"
 
