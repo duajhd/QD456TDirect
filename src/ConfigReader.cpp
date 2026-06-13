@@ -180,3 +180,98 @@ bool ConfigReader::loadAlgorithmParams(const QString& filePath,
     params = next;
     return true;
 }
+
+bool ConfigReader::loadGPIOConfig(const QString& filePath,
+                                  QVector<GPIOControllerConfig>& controllers,
+                                  QString* errorString)
+{
+    controllers.clear();
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        if (errorString) {
+            *errorString = "Cannot open GPIO config file: " + filePath;
+        }
+        return false;
+    }
+
+    const QByteArray data = file.readAll();
+    file.close();
+
+    QJsonParseError parseError;
+    const QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
+    if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+        if (errorString) {
+            *errorString = "GPIO config JSON parse failed: " + parseError.errorString();
+        }
+        return false;
+    }
+
+    const QJsonObject rootObj = doc.object();
+    if (!rootObj.value("controllers").isArray()) {
+        if (errorString) {
+            *errorString = "GPIO config missing controllers array";
+        }
+        return false;
+    }
+
+    const QJsonArray controllerArray = rootObj.value("controllers").toArray();
+    for (int i = 0; i < controllerArray.size(); ++i) {
+        if (!controllerArray.at(i).isObject()) {
+            if (errorString) {
+                *errorString = QString("controllers[%1] is not an object").arg(i);
+            }
+            return false;
+        }
+
+        const QJsonObject obj = controllerArray.at(i).toObject();
+        GPIOControllerConfig config;
+        config.serialNumber = obj.value("serialNumber").toInt(0);
+        config.deviceIndex = obj.value("deviceIndex").toInt(i);
+
+        if (!obj.value("routes").isArray()) {
+            if (errorString) {
+                *errorString = QString("controllers[%1] missing routes array").arg(i);
+            }
+            return false;
+        }
+
+        const QJsonArray routeArray = obj.value("routes").toArray();
+        for (int routeIndex = 0; routeIndex < routeArray.size(); ++routeIndex) {
+            if (!routeArray.at(routeIndex).isObject()) {
+                if (errorString) {
+                    *errorString = QString("controllers[%1].routes[%2] is not an object")
+                                       .arg(i)
+                                       .arg(routeIndex);
+                }
+                return false;
+            }
+
+            const QJsonObject routeObj = routeArray.at(routeIndex).toObject();
+            GPIOCameraRoute route;
+            route.cameraIndex = routeObj.value("cameraIndex").toInt(-1);
+            route.pin = routeObj.value("pin").toInt(-1);
+            if (route.cameraIndex < 0 || route.pin < 0) {
+                if (errorString) {
+                    *errorString = QString("controllers[%1].routes[%2] has invalid cameraIndex or pin")
+                                       .arg(i)
+                                       .arg(routeIndex);
+                }
+                return false;
+            }
+
+            config.routes.append(route);
+        }
+
+        if (config.routes.isEmpty()) {
+            if (errorString) {
+                *errorString = QString("controllers[%1] has no GPIO routes").arg(i);
+            }
+            return false;
+        }
+
+        controllers.append(config);
+    }
+
+    return !controllers.isEmpty();
+}

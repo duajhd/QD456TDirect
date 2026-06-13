@@ -33,6 +33,8 @@ Page {
 
         exposureField.text = String(camera.exposureTime)
         gainField.text = String(camera.gain)
+        rejectThresholdField.text = String(camera.dropThres)
+        rejectAllCheckBox.checked = camera.rejectAll
     }
 
     function applyCameraSettings() {
@@ -1290,6 +1292,10 @@ Page {
 
                         onClicked: {
                             rejectAllCheckBox.checked = !rejectAllCheckBox.checked
+                            var index = cameraSelectBox.currentIndex
+                            if (index < 0)
+                                index = 0
+                            mainViewModel.SetRejectAll(index, rejectAllCheckBox.checked)
                         }
                     }
                 }

@@ -87,6 +87,7 @@ void ProcessWorker::StartWork()
             double,
             const DetectionAlgorithmParams&,
             int,
+            bool,
             double*);
 
         DirectionRecognizeFn directionRecognize = VisionAlgorithm::DirectionRecognizeCamera1;
@@ -123,6 +124,7 @@ void ProcessWorker::StartWork()
                                config.down.offsetRotation,
                                config.algorithmParams,
                                config.dropThres,
+                               config.rejectAll,
                                &rejectDiffValue);
         if (result == VisionAlgorithm::DirectionResult::Reject) {
             emit algorithmFrameAccepted();

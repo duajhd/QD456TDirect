@@ -63,6 +63,8 @@ public:
     Q_INVOKABLE QVariantMap GetHalconParams() const;
     Q_INVOKABLE void SetHalconParams(const QVariantMap& params);
     Q_INVOKABLE void AppendRoiDebugReport(const QString& message) const;
+    int DropThres() const;
+    void SetDropThres(int dropThres);
     DetectionAlgorithmParams GetAlgorithmParams() const;
     void SetAlgorithmParams(const DetectionAlgorithmParams& params);
 
@@ -77,6 +79,7 @@ private:
     QList<RoiData*> m_roiList;
     QList<RoiData*> m_offsetRoiList;
     QVariantMap m_halconParams;
+    int m_dropThres = 27;
     QByteArray m_loadedImageFrame;
     QString m_loadedImagePath;
     int m_loadedImageWidth = 0;

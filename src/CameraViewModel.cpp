@@ -10,6 +10,7 @@ CameraViewModel::CameraViewModel(int width,
                                  int cameraIndex,
                                  double exposureTime,
                                  double gain,
+                                 int dropThres,
                                  const DetectionAlgorithmParams& algorithmParams,
                                  moodycamel::ReaderWriterQueue<int>* dropQueue,
                                  QObject* parent)
@@ -21,9 +22,12 @@ CameraViewModel::CameraViewModel(int width,
       m_serialNum(serialNum),
       m_exposureTime(static_cast<float>(exposureTime)),
       m_gain(static_cast<float>(gain)),
+      m_dropThres(dropThres),
       m_dropQueue(dropQueue)
 {
     m_detectionConfig.algorithmParams = algorithmParams;
+    m_detectionConfig.dropThres = m_dropThres;
+    m_detectionConfig.rejectAll = m_rejectAll;
 }
 
 CameraViewModel::~CameraViewModel()
@@ -146,9 +150,10 @@ void CameraViewModel::Stop()
 
 void CameraViewModel::SetDetectionConfig(const DetectionRoiConfig& config)
 {
-    const int currentDropThres = m_detectionConfig.dropThres;
     m_detectionConfig = config;
-    m_detectionConfig.dropThres = currentDropThres;
+    m_dropThres = m_detectionConfig.dropThres;
+    m_detectionConfig.rejectAll = m_rejectAll;
+    emit cameraParametersChanged();
     if (m_processWorker) {
         m_processWorker->SetDetectionConfig(m_detectionConfig);
     }
@@ -167,6 +172,7 @@ bool CameraViewModel::SetCameraParameter(double exposureTime, double gain, int d
 
     m_exposureTime = static_cast<float>(exposureTime);
     m_gain = static_cast<float>(gain);
+    m_dropThres = dropThres;
     m_detectionConfig.dropThres = dropThres;
     emit cameraParametersChanged();
 
@@ -265,6 +271,16 @@ double CameraViewModel::gain() const
     return m_gain;
 }
 
+int CameraViewModel::dropThres() const
+{
+    return m_dropThres;
+}
+
+bool CameraViewModel::rejectAll() const
+{
+    return m_rejectAll;
+}
+
 QString CameraViewModel::statusText() const
 {
     return m_statusText;
@@ -350,4 +366,18 @@ void CameraViewModel::setRejectDiffValue(double value)
 
     m_rejectDiffValue = value;
     emit rejectDiffValueChanged();
+}
+
+void CameraViewModel::SetRejectAll(bool rejectAll)
+{
+    if (m_rejectAll == rejectAll) {
+        return;
+    }
+
+    m_rejectAll = rejectAll;
+    m_detectionConfig.rejectAll = m_rejectAll;
+    if (m_processWorker) {
+        m_processWorker->SetDetectionConfig(m_detectionConfig);
+    }
+    emit rejectAllChanged();
 }

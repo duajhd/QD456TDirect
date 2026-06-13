@@ -46,6 +46,7 @@ DirectionResult DirectionRecognizeCamera1(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
+                                          bool rejectAll,
                                           double* rejectDiff)
 {
     try {
@@ -88,6 +89,13 @@ DirectionResult DirectionRecognizeCamera1(const HObject& image,
 
         CountObj(topSelectedRegion, &topNumber);
         CountObj(downSelectedRegion, &downNumber);
+
+        if (rejectAll && (topNumber[0].I() == 1 || downNumber[0].I() == 1)) {
+            if (rejectDiff) {
+                *rejectDiff = 0.0;
+            }
+            return DirectionResult::Reject;
+        }
 
         if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
             return DirectionResult::NotFound;
@@ -160,6 +168,7 @@ DirectionResult DirectionRecognizeCamera2(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
+                                          bool rejectAll,
                                           double* rejectDiff)
 {
     try {
@@ -202,6 +211,13 @@ DirectionResult DirectionRecognizeCamera2(const HObject& image,
 
         CountObj(topSelectedRegion, &topNumber);
         CountObj(downSelectedRegion, &downNumber);
+
+        if (rejectAll && (topNumber[0].I() == 1 || downNumber[0].I() == 1)) {
+            if (rejectDiff) {
+                *rejectDiff = 0.0;
+            }
+            return DirectionResult::Reject;
+        }
 
         if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
             return DirectionResult::NotFound;
@@ -274,6 +290,7 @@ DirectionResult DirectionRecognizeCamera3(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
+                                          bool rejectAll,
                                           double* rejectDiff)
 {
     try {
@@ -320,6 +337,13 @@ DirectionResult DirectionRecognizeCamera3(const HObject& image,
 
         CountObj(topSelectedRegion, &topNumber);
         CountObj(downSelectedRegion, &downNumber);
+
+        if (rejectAll && (topNumber[0].I() == 1 || downNumber[0].I() == 1)) {
+            if (rejectDiff) {
+                *rejectDiff = 0.0;
+            }
+            return DirectionResult::Reject;
+        }
 
         if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
             return DirectionResult::NotFound;
@@ -392,6 +416,7 @@ DirectionResult DirectionRecognizeCamera4(const HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
+                                          bool rejectAll,
                                           double* rejectDiff)
 {
     try {
@@ -434,6 +459,13 @@ DirectionResult DirectionRecognizeCamera4(const HObject& image,
 
         CountObj(topSelectedRegion, &topNumber);
         CountObj(downSelectedRegion, &downNumber);
+
+        if (rejectAll && (topNumber[0].I() == 1 || downNumber[0].I() == 1)) {
+            if (rejectDiff) {
+                *rejectDiff = 0.0;
+            }
+            return DirectionResult::Reject;
+        }
 
         if (topNumber[0].I() != 1 || downNumber[0].I() != 1) {
             return DirectionResult::NotFound;

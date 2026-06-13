@@ -27,6 +27,7 @@ DirectionResult DirectionRecognizeCamera1(const HalconCpp::HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
+                                          bool rejectAll,
                                           double* rejectDiff = nullptr);
 
 DirectionResult DirectionRecognizeCamera2(const HalconCpp::HObject& image,
@@ -42,6 +43,7 @@ DirectionResult DirectionRecognizeCamera2(const HalconCpp::HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
+                                          bool rejectAll,
                                           double* rejectDiff = nullptr);
 
 DirectionResult DirectionRecognizeCamera3(const HalconCpp::HObject& image,
@@ -57,6 +59,7 @@ DirectionResult DirectionRecognizeCamera3(const HalconCpp::HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
+                                          bool rejectAll,
                                           double* rejectDiff = nullptr);
 
 DirectionResult DirectionRecognizeCamera4(const HalconCpp::HObject& image,
@@ -72,6 +75,7 @@ DirectionResult DirectionRecognizeCamera4(const HalconCpp::HObject& image,
                                           double downOffsetRotationDeg,
                                           const DetectionAlgorithmParams& params,
                                           int dropThres,
+                                          bool rejectAll,
                                           double* rejectDiff = nullptr);
 
 }

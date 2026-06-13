@@ -16,6 +16,8 @@ class CameraViewModel: public QObject{
     Q_PROPERTY(QString serialNumber READ serialNumber CONSTANT)
     Q_PROPERTY(double exposureTime READ exposureTime NOTIFY cameraParametersChanged)
     Q_PROPERTY(double gain READ gain NOTIFY cameraParametersChanged)
+    Q_PROPERTY(int dropThres READ dropThres NOTIFY cameraParametersChanged)
+    Q_PROPERTY(bool rejectAll READ rejectAll NOTIFY rejectAllChanged)
     Q_PROPERTY(QString statusText READ statusText NOTIFY statusTextChanged)
     Q_PROPERTY(int frameId READ frameId NOTIFY frameIdChanged)
     Q_PROPERTY(int algorithmFrameCount READ algorithmFrameCount NOTIFY algorithmFrameCountChanged)
@@ -33,6 +35,7 @@ public:
                              int cameraIndex,
                              double exposureTime,
                              double gain,
+                             int dropThres,
                              const DetectionAlgorithmParams& algorithmParams,
                              moodycamel::ReaderWriterQueue<int>* dropQueue,
                              QObject* parent = nullptr);
@@ -57,6 +60,8 @@ private:
     double m_rejectDiffValue = 0.0;
     float m_exposureTime = 500.0f;
     float m_gain = 15.0f;
+    int m_dropThres = 27;
+    bool m_rejectAll = false;
     DetectionRoiConfig m_detectionConfig;
     QString m_statusText = QStringLiteral("未连接");
 
@@ -78,6 +83,7 @@ public:
      void algorithmFrameCountChanged();
      void rejectFrameCountChanged();
      void rejectDiffValueChanged();
+     void rejectAllChanged();
      void cameraParametersChanged();
      void frameSourceReset();
 
@@ -97,6 +103,8 @@ public:
     QString serialNumber() const;
     double exposureTime() const;
     double gain() const;
+    int dropThres() const;
+    bool rejectAll() const;
     QString statusText() const;
     int frameId() const;
     int algorithmFrameCount() const;
@@ -108,6 +116,7 @@ public:
     void setAlgorithmFrameCount(int value);
     void incrementRejectFrameCount();
     void setRejectDiffValue(double value);
+    void SetRejectAll(bool rejectAll);
 
 };
 #endif

@@ -1,7 +1,7 @@
 {
     "DownROI": {
-        "centerX": 1267.1681415929206,
-        "centerY": 581.4159292035397,
+        "centerX": 1048.9380530973451,
+        "centerY": 455.57522123893807,
         "downHeightMax": 2000,
         "downHeightMin": 90,
         "downRatioMax": 40,
@@ -10,7 +10,7 @@
         "downThresholdMin": 0,
         "downWidthMax": 15,
         "downWidthMin": 1,
-        "height": 187.58809250911378,
+        "height": 170.3093280763213,
         "offsetCircleRadius": 30,
         "offsetHeight": 40,
         "offsetROIX": -405,
@@ -18,15 +18,15 @@
         "offsetRotation": 2.5,
         "offsetWidth": 140,
         "rotation": -1.808739322492272,
-        "width": 97.8016218683734
+        "width": 131.0184124656523
     },
     "TopROI": {
-        "centerX": 1122.2123893805312,
-        "centerY": 281.1504424778762,
-        "height": 63.36283185840705,
+        "centerX": 880.0884955752217,
+        "centerY": 227.7876106194691,
+        "height": 102.38938053097344,
         "offsetCircleRadius": 30,
         "offsetHeight": 40,
-        "offsetROIX": -430,
+        "offsetROIX": -425,
         "offsetROIY": -30,
         "offsetRotation": 2.5,
         "offsetWidth": 140,

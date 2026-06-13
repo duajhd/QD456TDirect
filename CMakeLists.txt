@@ -106,6 +106,13 @@ add_custom_command(TARGET appQT456TDirect POST_BUILD
     COMMENT "Copying RM runtime DLLs"
 )
 
+add_custom_command(TARGET appQT456TDirect POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/config
+            $<TARGET_FILE_DIR:appQT456TDirect>/config
+    COMMENT "Copying runtime config files"
+)
+
 include(GNUInstallDirs)
 install(TARGETS appQT456TDirect
     BUNDLE DESTINATION .

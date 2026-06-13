@@ -711,7 +711,22 @@ bool RoiManager::SaveToJson(const QString& filePath)
     root["TopROI"] = CoreRoiToJsonObject(topRoi, topOffsetRoi, params, "top");
     root["DownROI"] = CoreRoiToJsonObject(downRoi, downOffsetRoi, params, "down");
     root["inspect"] = inspectObject;
-    root["dropThres"] = 27;
+    root["dropThres"] = m_dropThres;
+
+    QFile existingFile(filePath);
+    if (existingFile.open(QIODevice::ReadOnly)) {
+        const QJsonDocument existingDoc = QJsonDocument::fromJson(existingFile.readAll());
+        existingFile.close();
+        if (existingDoc.isObject()) {
+            const QJsonObject existingRoot = existingDoc.object();
+            if (existingRoot.contains("exposureTime")) {
+                root["exposureTime"] = existingRoot.value("exposureTime");
+            }
+            if (existingRoot.contains("gain")) {
+                root["gain"] = existingRoot.value("gain");
+            }
+        }
+    }
 
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly))
@@ -743,6 +758,7 @@ bool RoiManager::LoadFromJson(const QString& filePath)
     }
 
     QJsonObject root = doc.object();
+    m_dropThres = root.value("dropThres").toInt(m_dropThres);
     if (root.value("TopROI").isObject() || root.value("DownROI").isObject()) {
         QJsonObject topObject = root.value("TopROI").toObject();
         QJsonObject downObject = root.value("DownROI").toObject();
@@ -993,6 +1009,7 @@ bool RoiManager::BuildDetectionConfig(DetectionRoiConfig* config) const
         ? downOffsetRoi->GetCircleRadius()
         : qMin(downRoi->GetRoiWidth(), downRoi->GetRoiHeight()) * 0.5;
     nextConfig.down.offsetRotation = downOffsetRoi ? downOffsetRoi->GetAngle() : nextConfig.algorithmParams.inspectAngleDeg;
+    nextConfig.dropThres = m_dropThres;
 
     *config = nextConfig;
     return true;
@@ -1006,6 +1023,16 @@ DetectionAlgorithmParams RoiManager::GetAlgorithmParams() const
 void RoiManager::SetAlgorithmParams(const DetectionAlgorithmParams& params)
 {
     SetHalconParams(AlgorithmParamsToVariantMap(params));
+}
+
+int RoiManager::DropThres() const
+{
+    return m_dropThres;
+}
+
+void RoiManager::SetDropThres(int dropThres)
+{
+    m_dropThres = qMax(0, dropThres);
 }
 
 QVariantMap RoiManager::GetHalconParams() const

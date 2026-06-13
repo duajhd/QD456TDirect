@@ -48,6 +48,7 @@ struct DetectionRoiConfig
     DetectionRoiShape down;
     DetectionAlgorithmParams algorithmParams;
     int dropThres = 27;
+    bool rejectAll = false;
 };
 
 #endif // DETECTIONROICONFIG_H
